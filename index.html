@@ -1,187 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <title>NomSpot</title>
-</head>
- <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NomSpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f2f2f2;
+      background: #e5e5e5; /* pastel background */
+      font-family: Tahoma, sans-serif;
+      font-size: 12px;
       color: #333;
     }
-
+    /* Header with banner */
     header {
-      background: #1e1e1e;
-      color: white;
+      background: #6698cb;
       padding: 1rem;
       text-align: center;
+      color: white;
+      position: relative;
     }
-
-   .profile-banner {
-  position: relative;
-  width: 100%;
-  height: 250px;
-  background: url('https://raw.githubusercontent.com/LoudMouth581/html-NomSpot/main/foodBanner.png') no-repeat center center;
-  background-size: cover;
-}
-
+    .profile-banner {
+      width: 100%;
+      height: 200px;
+      background: url('https://raw.githubusercontent.com/LoudMouth581/html-NomSpot/main/foodBanner.png') no-repeat center center;
+      background-size: cover;
     }
-
     .profile-picture {
-      width: 150px;
-      height: 150px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      border: 5px solid white;
+      border: 4px solid white;
       position: absolute;
-      bottom: -75px;
+      bottom: -60px;
       left: 50%;
       transform: translateX(-50%);
     }
-
-    .profile-content {
+    /* Sidebar + Main layout */
+    .container {
+      display: flex;
       max-width: 1000px;
       margin: 100px auto 2rem;
-      padding: 1rem;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    .bio {
-      margin-bottom: 2rem;
-    }
-
-    .friends {
-      display: flex;
       gap: 1rem;
-      flex-wrap: wrap;
     }
-
-    .friend {
-      width: 100px;
-      text-align: center;
+    .sidebar, .content {
+      background: white;
+      padding: 1rem;
+      border: 1px solid #c1c1c1;
+      border-radius: 4px;
     }
-
-    .friend img {
+    .sidebar {
+      width: 250px;
+    }
+    .sidebar h3 {
+      background: #a0b9d6;
+      color: white;
+      padding: 4px;
+      font-size: 14px;
+      margin-bottom: 8px;
+      border-radius: 3px;
+    }
+    .sidebar ul {
+      list-style: none;
+    }
+    .sidebar ul li {
+      margin-bottom: 6px;
+    }
+    .sidebar ul li button {
       width: 100%;
-      border-radius: 8px;
+      font-size: 11px;
+      padding: 6px;
+      background: #f9f9fc;
+      border: 1px solid #c1c1c1;
+      border-radius: 3px;
+      cursor: pointer;
     }
-
-    .media {
-      margin-top: 2rem;
+    .content h2 {
+      margin-bottom: 0.5rem;
     }
-
+    .content p {
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
     footer {
       text-align: center;
       padding: 1rem;
       background: #1e1e1e;
       color: white;
-    }
-
-    @media (max-width: 768px) {
-      .profile-picture {
-        width: 100px;
-        height: 100px;
-        bottom: -50px;
-      }
-
-      .profile-content {
-        margin-top: 70px;
-      }
-
-      .friend {
-        width: 80px;
-      }
+      margin-top: 2rem;
     }
   </style>
 </head>
+<body>
 
   <header>
+    <div class="profile-banner"></div>
+    <img class="profile-picture" src="RabbitWithBlueHoodie.png" alt="Profile Pic">
     <h1>NomSpot</h1>
   </header>
 
-  <div class="profile-banner">
+  <div class="container">
+    <div class="sidebar">
+      <h3>Communities</h3>
+      <ul>
+        <li><button>Fork Feed</button></li>
+        <li><button>Bite Board</button></li>
+        <li><button>Taste Timeline</button></li>
+        <li><button>Savor Sphere</button></li>
+        <li><button>Taster Verse</button></li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <section class="bio">
+        <h2>@username</h2>
+        <p>This is your bio. Talk about your interests, music, vibes, and anything else.</p>
+      </section>
+      <hr>
+      <h2>"Where Taste Meets Tribe - Discover, Share & Celebrate Every Bite."</h2>
+      <hr>
+      <a href="about.html"><button>Add more friends</button></a>
+      <h3>This platform is not just a food blog... it's an immersive food experience hub...</h3>
+      <hr>
+      <a href="https://www.youtube.com/@Mr.notnicee">YouTube</a>
+    </div>
   </div>
 
-  <div class="profile-content">
-    <section class="bio">
-      <h2>@username</h2>
-      <p>This is your bio. Talk about your interests, music, vibes, and anything else.</p>
-    </section>
-
-    <section class="friends">
-      <h3>Communities</h3>
-      <div class="friend">
-        <img src="https://placehold.co/100x100" alt="Friend 1" />
-        <p><b>User's Food Style</b></p>
-         <a href="about.html">
-  <button>Fork Feed</button>
-</a>
-      </div>
-      <div class="friend">
-        <img src="https://placehold.co/100x100" alt="Friend 2" />
-        <p><b>Favorite Restaurants & Dishes</b></p>
-         <a href="about.html">
-  <button>Bite Board</button>
-</a>
-      </div>
-      <div class="friend">
-        <img src="https://placehold.co/100x100" alt="Friend 1" />
-        <p><b>Food photos & reviews</b></p>
-         <a href="about.html">
-  <button>Taste Timeline</button>
-</a>
-      </div>
-      <div class="friend">
-        <img src="https://placehold.co/100x100" alt="Friend 2" />
-        <p><b>Food Pin</b></p>
-         <a href="about.html">
-  <button>Savor Sphere</button>
-</a>
-      </div>
-        <div class="friend">
-        <img src="https://placehold.co/100x100" alt="Friend 2" />
-        <p><b><ul>
-            <li> Vegan</li>
-            <li>Carnivore</li>
-            <li>Keto</li>
-            <li>Sweet Tooth</li>
-        </ul></b></p>
-           <a href="about.html">
-  <button>Taster Verse</button>
-</a>
-      </div>
-      
-</a>
-      <!-- Add more friends -->
-    </section>
-    
-<hr>
-     <h2>"Where Taste Meets Tribe - Discover, Share & Celebrate Every Bite."</h2>
-  <hr />
-   <img src="RabbitWithBlueHoodie.png" alt="My Logo" width="200" />
-   <br>
-    <a href="about.html">
-  <button>Add more friends</button>
-  <h3>This platform is not just a food blog, not just a review site, & not just a social network -  it's a immersive food experience hub built on community, self-expression, & culinary discovery.</h3>
-  <hr />
-   <a href="https://www.youtube.com/@Mr.notnicee">Youtube</a>
   <footer>
     © 2025 NomSpot. All rights reserved.
   </footer>
- 
-  
-  
-</body>
 
+</body>
 </html>
