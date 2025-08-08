@@ -1,0 +1,26 @@
+<script>
+navigator.geolocation.getCurrentPosition(async (position) => {
+  const memberId = localStorage.getItem('memberId');
+  if (!memberId) return;
+
+  await fetch('http://localhost:5000/api/update-location', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      memberId,
+      lat: position.coords.latitude,
+      lng: position.coords.longitude
+    })
+  });
+});
+
+function sendFriendRequest(toId) {
+  const fromId = localStorage.getItem('memberId');
+  fetch('http://localhost:5000/api/friend-request', {
+    method: 'POST',
+    body: JSON.stringify({ from: fromId, to: toId }),
+    headers: { 'Content-Type': 'application/json' }
+  }).then(res => res.json())
+    .then(data => alert(data.message));
+}
+</script>
