@@ -1,27 +1,56 @@
+<!-- ✅ Friend Request Button + QR Scanner Setup -->
+
+<!-- Add this where you want the scanner to show -->
+<div id="reader" style="width: 300px;"></div>
+
+<!-- Load the QR Code Scanner Library -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <script>
+  // ✅ Function to send a friend request
   function sendFriendRequest(memberId) {
-    fetch('/api/friend-request', {
+    const fromId = localStorage.getItem('memberId'); // current user
+    if (!fromId) {
+      alert("Please log in first.");
+      return;
+    }
+
+    fetch('http://localhost:5000/api/friend-request', {
       method: 'POST',
-      body: JSON.stringify({ to: memberId }),
+      body: JSON.stringify({ from: fromId, to: memberId }),
       headers: { 'Content-Type': 'application/json' }
-    }).then(res => res.json())
-      .then(data => alert("Friend request sent!"));
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert("✅ Friend request sent to: " + memberId);
+      } else {
+        alert("❌ Failed: " + (data.error || "Unknown error"));
+      }
+    });
   }
-</script>
-<div id="reader" width="300px"></div>
-<script src="https://unpkg.com/html5-qrcode"></script>
-<script>
+
+  // ✅ QR Code Scanner
   function onScanSuccess(decodedText) {
-    window.location.href = decodedText; // e.g., profile link
+    console.log("Scanned:", decodedText);
+
+    // Assuming the QR code contains a link like: https://nomspot.com/profile/user123
+    const parts = decodedText.split('/');
+    const memberId = parts[parts.length - 1];
+
+    if (confirm(`Add ${memberId} as a friend?`)) {
+      sendFriendRequest(memberId);
+    }
   }
 
   const html5QrCode = new Html5Qrcode("reader");
+
   html5QrCode.start(
     { facingMode: "environment" },
     { fps: 10, qrbox: 250 },
-    onScanSuccess
+    onScanSuccess,
+    (error) => {
+      // console.log("Scan error:", error);
+    }
   );
 </script>
-
-
