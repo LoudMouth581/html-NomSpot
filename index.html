@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <title>NomSpot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  
-  <!-- Optional: Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&display=swap" rel="stylesheet">
 
   <style>
@@ -107,7 +105,6 @@
       line-height: 1.4;
     }
 
-    /* 🔥 Mythical Flavor Scroll Styling */
     .scroll-section {
       margin: 2rem auto;
       max-width: 900px;
@@ -165,8 +162,26 @@
       width: 100%;
     }
 
-    .image-button button:hover {
-      background-color: #45a049;
+    /* ✨ Sparkle Animation on Hover */
+    .image-button a button:hover {
+      position: relative;
+      animation: sparkleGlow 0.8s ease-out;
+      box-shadow: 0 0 10px 2px rgba(255, 255, 200, 0.6);
+    }
+
+    @keyframes sparkleGlow {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.2);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 10px 4px rgba(255, 255, 180, 0.8);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.2);
+      }
     }
 
     .button-gallery {
@@ -193,7 +208,6 @@
     <img class="profile-picture" src="RabbitWithBlueHoodie.png" alt="Profile Pic">
   </header>
 
-  <!-- 🧙 Mythical Flavor Scroll Section -->
   <section class="scroll-section">
     <h3>🌀 The Mythical Flavor Scroll</h3>
     <p><em>An Ancient Culinary Codex from the First Table of Twelve</em></p>
@@ -250,51 +264,50 @@
   <div class="button-gallery">
     <div class="image-button">
       <a href="forkfeed.html">
-        <img src="evil-fork_38334.png" alt="Fork Feed">
-        <button>Fork Feed</button>
-      </a>
-    </div>
+<img src="evil-fork_38334.png" alt="Fork Feed">
+<button>Fork Feed</button>
+</a>
+</div>
+<div class="image-button">
+  <a href="biteboard.html">
+    <img src="dimsum_food_dim_sum_asian_food_dish_icon_208002.png" alt="Bite Board">
+    <button>Bite Board</button>
+  </a>
+</div>
 
-    <div class="image-button">
-      <a href="biteboard.html">
-        <img src="dimsum_food_dim_sum_asian_food_dish_icon_208002.png" alt="Bite Board">
-        <button>Bite Board</button>
-      </a>
-    </div>
+<div class="image-button">
+  <a href="tastetimeline.html">
+    <img src="task_calendar_timeline_plan_start_date_due_date_icon_142241.png" alt="Taste Timeline">
+    <button>Taste Timeline</button>
+  </a>
+</div>
 
-    <div class="image-button">
-      <a href="tastetimeline.html">
-        <img src="task_calendar_timeline_plan_start_date_due_date_icon_142241.png" alt="Taste Timeline">
-        <button>Taste Timeline</button>
-      </a>
-    </div>
+<div class="image-button">
+  <a href="savorsphere.html">
+    <img src="noodles_asian_food_food_bowl_spaghetti_pasta_icon_208024.png" alt="Savor Sphere">
+    <button>Savor Sphere</button>
+  </a>
+</div>
 
-    <div class="image-button">
-      <a href="savorsphere.html">
-        <img src="noodles_asian_food_food_bowl_spaghetti_pasta_icon_208024.png" alt="Savor Sphere">
-        <button>Savor Sphere</button>
-      </a>
-    </div>
+<div class="image-button">
+  <a href="tasterverse.html">
+    <img src="Sushi-icon-512_icon-icons.com_52574.png" alt="Taster Verse">
+    <button>Taster Verse</button>
+  </a>
+</div>
 
-    <div class="image-button">
-      <a href="tasterverse.html">
-        <img src="Sushi-icon-512_icon-icons.com_52574.png" alt="Taster Verse">
-        <button>Taster Verse</button>
-      </a>
-    </div>
+<div class="image-button">
+  <a href="Add Friend.html">
+    <img src="pitcherfriend_6654.png" alt="Add Friend">
+    <button>Add Friend</button>
+  </a>
+</div>
 
-    <div class="image-button">
-      <a href="Add Friend.html">
-        <img src="pitcherfriend_6654.png" alt="Add Friend">
-        <button>Add Friend</button>
-      </a>
-    </div>
-  </div>
-  <!-- End Image Buttons Section -->
-
-  <footer>
-    © 2025 NomSpot. All rights reserved.
-  </footer>
-
-</body>
-</html>
+<!-- New Event Invite Button -->
+<div class="image-button">
+  <a href="https://YOUR-GITHUB-USERNAME.github.io/YOUR-REPO-NAME/indexInvite.html">
+    <img src="invitation-scroll-icon.png" alt="Event Invite">
+    <button>You're Invited!</button>
+  </a>
+</div>
+</div> <!-- End Image Buttons Section --> <footer> © 2025 NomSpot. All rights reserved. </footer> </body> </html> ```
