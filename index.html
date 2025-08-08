@@ -48,6 +48,7 @@
       max-width: 1000px;
       margin: 100px auto 2rem;
       gap: 1rem;
+      flex-wrap: wrap;
     }
 
     .sidebar, .content {
@@ -78,14 +79,23 @@
       margin-bottom: 6px;
     }
 
-    .sidebar ul li button {
+    .sidebar ul li button, .sidebar ul li a {
       width: 100%;
       font-size: 11px;
       padding: 6px;
       background: #f9f9fc;
       border: 1px solid #c1c1c1;
       border-radius: 3px;
+      text-align: center;
+      display: inline-block;
+      color: black;
+      text-decoration: none;
       cursor: pointer;
+    }
+
+    .content {
+      flex: 1;
+      min-width: 300px;
     }
 
     .content h2 {
@@ -196,14 +206,14 @@
     <div class="sidebar">
       <h3>Links</h3>
       <ul>
-        <li><button><a href="https://www.youtube.com/@Mr.notnicee">YouTube</a></button></li>
-        <li><button>N/A</button></li>
-        <li><button>N/A</button></li>
-        <li><button>N/A</button></li>
-        <li><button>N/A</button></li>
+        <li><a href="https://www.youtube.com/@Mr.notnicee">YouTube</a></li>
+        <li><a href="#">N/A</a></li>
+        <li><a href="#">N/A</a></li>
+        <li><a href="#">N/A</a></li>
+        <li><a href="#">N/A</a></li>
       </ul>
     </div>
-<div class="container">
+
     <div class="sidebar">
       <h3>/Profile Page</h3>
       <ul>
@@ -215,11 +225,11 @@
         <li>Date of Joining:</li>
       </ul>
     </div>
+
     <div class="content">
       <section class="bio">
-        <h2></h2>
+        <h2>User Bio</h2>
         <p>This is your bio. Talk about your interests, music, vibes, and anything else.</p>
-      
       </section>
       <hr>
       <h2>"Where Taste Meets Tribe - Discover, Share & Celebrate Every Bite."</h2>
@@ -236,6 +246,7 @@
     </div>
   </div>
 
+  <!-- Start Image Buttons Section -->
   <div class="button-gallery">
     <div class="image-button">
       <a href="forkfeed.html">
@@ -253,25 +264,37 @@
 
     <div class="image-button">
       <a href="tastetimeline.html">
-        <img src="task_calendar_timeline_plan_start_date_due_date_icon_142241.png" alt="Taste
-         <div class="image-button">
-  <a href="savorsphere.html">
-    <img src="noodles_asian_food_food_bowl_spaghetti_pasta_icon_208024.png" alt="Savor Sphere">
-    <button>Savor Sphere</button>
-  </a>
-</div>
+        <img src="task_calendar_timeline_plan_start_date_due_date_icon_142241.png" alt="Taste Timeline">
+        <button>Taste Timeline</button>
+      </a>
+    </div>
 
-<div class="image-button">
-  <a href="tasterverse.html">
-    <img src="Sushi-icon-512_icon-icons.com_52574.png" alt="Taster Verse">
-    <button>Taster Verse</button>
-  </a>
-</div>
+    <div class="image-button">
+      <a href="savorsphere.html">
+        <img src="noodles_asian_food_food_bowl_spaghetti_pasta_icon_208024.png" alt="Savor Sphere">
+        <button>Savor Sphere</button>
+      </a>
+    </div>
 
-<div class="image-button">
-  <a href="Add Friend.html">
-    <img src="pitcherfriend_6654.png" alt="Add Friend">
-    <button>Add Friend</button>
-  </a>
-</div>
- 
+    <div class="image-button">
+      <a href="tasterverse.html">
+        <img src="Sushi-icon-512_icon-icons.com_52574.png" alt="Taster Verse">
+        <button>Taster Verse</button>
+      </a>
+    </div>
+
+    <div class="image-button">
+      <a href="Add Friend.html">
+        <img src="pitcherfriend_6654.png" alt="Add Friend">
+        <button>Add Friend</button>
+      </a>
+    </div>
+  </div>
+  <!-- End Image Buttons Section -->
+
+  <footer>
+    © 2025 NomSpot. All rights reserved.
+  </footer>
+
+</body>
+</html>
