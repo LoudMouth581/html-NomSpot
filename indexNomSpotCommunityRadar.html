@@ -1,49 +1,4 @@
-//Backend (Node.js + Express + MongoDB)
-//Create a simple REST API:
-//models/User.js
-const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
-  username: String,
-  email: String,
-  password: String, // hashed!
-  memberId: String,
-  location: {
-    lat: Number,
-    lng: Number
-  },
-  friends: [String] // array of memberIds
-});
-
-module.exports = mongoose.model('User', userSchema);
-
-}
-
-//QR Code Generator (on sign-up)
-//Use qrcode in Node.js:
-const QRCode = require('qrcode');
-QRCode.toDataURL(`https://nomspot.com/profile/${user.memberId}`)
-  .then(url => {
-    // Save QR Code URL to user profile or return to frontend
-  });
-
-
-//Geolocation + Nearby Member Detection
-//On the frontend, get the user’s location:
-
-
-navigator.geolocation.getCurrentPosition((position) => {
-  const { latitude, longitude } = position.coords;
-  // Send to server
-  fetch('/api/update-location', {
-    method: 'POST',
-    body: JSON.stringify({ lat: latitude, lng: longitude }),
-    headers: { 'Content-Type': 'application/json' }
-  });
-});
-//Friend Request Button & QR Scanner
- //Add Friend Button:
- <button onclick="sendFriendRequest('user123')">Add Friend</button>
 <script>
   function sendFriendRequest(memberId) {
     fetch('/api/friend-request', {
@@ -70,3 +25,4 @@ navigator.geolocation.getCurrentPosition((position) => {
     onScanSuccess
   );
 </script>
+
