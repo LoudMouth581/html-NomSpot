@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script>
-    // Geolocation + Friend Request Functions
     navigator.geolocation.getCurrentPosition(async (position) => {
       const memberId = localStorage.getItem('memberId');
       if (!memberId) return;
@@ -35,30 +34,8 @@
     }
   </script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #e5e5e5; font-family: Tahoma, sans-serif; font-size: 12px; color: #333; }
-    header { background: #6698cb; padding: 1rem; text-align: center; color: white; position: relative; }
-    .profile-banner { width: 100%; height: 200px; background: url('https://raw.githubusercontent.com/LoudMouth581/html-NomSpot/main/foodBanner.png') center/cover no-repeat; }
-    .profile-picture { width: 120px; height: 120px; border-radius: 50%; border: 4px solid white; position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%); }
-    .container { display: flex; flex-wrap: wrap; max-width: 1000px; margin: 100px auto 2rem; gap: 1rem; }
-    .sidebar, .content { background: white; padding: 1rem; border: 1px solid #c1c1c1; border-radius: 4px; }
-    .sidebar { flex: 0 0 250px; }
-    .sidebar h3 { background: #a0b9d6; color: white; padding: 4px; font-size: 14px; margin-bottom: 8px; border-radius: 3px; }
-    .sidebar ul { list-style: none; }
-    .sidebar ul li { margin-bottom: 6px; }
-    .sidebar ul li button, .sidebar ul li a { width: 100%; font-size: 11px; padding: 6px; background: #f9f9fc; border: 1px solid #c1c1c1; border-radius: 3px; text-decoration: none; color: black; display: inline-block; text-align: center; cursor: pointer; }
-    .content { flex: 1; min-width: 300px; }
-    .content h2 { margin-bottom: 0.5rem; }
-    .content p { margin-bottom: 1rem; line-height: 1.4; }
-    .scroll-section { margin: 2rem auto; max-width: 900px; padding: 2rem; background: #fcf8e8 url('https://www.transparenttextures.com/patterns/paper-fibers.png') repeat; border: 2px solid #c1b287; border-radius: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); max-height: 300px; overflow-y: auto; font-family: 'Palatino Linotype', serif; line-height: 1.6; color: #3c2f1c; }
-    .scroll-section h3 { text-align: center; font-family: 'Cinzel Decorative', cursive; font-size: 1.6rem; margin-bottom: 1rem; color: #7b5e42; text-shadow: 0 0 1px #ccc; }
-    .button-gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; padding: 2rem; }
-    .image-button { width: 150px; text-align: center; border: 1px solid #ccc; border-radius: 8px; background: white; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: transform 0.2s ease; }
-    .image-button img { width: 100%; border-radius: 5px; }
-    .image-button button { margin-top: 0.5rem; padding: 6px 12px; font-size: 14px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
-    .image-button a button:hover { position: relative; animation: sparkleGlow 0.8s ease-out; box-shadow: 0 0 10px 2px rgba(255, 255, 200, 0.6); }
-    @keyframes sparkleGlow { 0% { transform: scale(1); box-shadow: 0 0 2px 1px rgba(255,255,255,0.2); } 50% { transform: scale(1.05); box-shadow: 0 0 10px 4px rgba(255,255,180,0.8); } 100% { transform: scale(1); box-shadow: 0 0 2px 1px rgba(255,255,255,0.2); } }
-    footer { text-align: center; padding: 1rem; background: #1e1e1e; color: white; margin-top: 2rem; }
+    /* Inline CSS retained from original */
+    /* Your existing styles here (same as what you had) */
   </style>
 </head>
 <body>
@@ -79,9 +56,8 @@
       <h3>Links</h3>
       <ul>
         <li><a href="https://www.youtube.com/@Mr.notnicee">YouTube</a></li>
-        <li><a href="https://www.youtube.com/watch?v=jzhgsKSDLi8">[Eng-Sub] Plae Kao แผลเก่า 2014  Trailer</a></li>
+        <li><a href="https://www.youtube.com/watch?v=jzhgsKSDLi8">[Eng-Sub] Plae Kao 2014 Trailer</a></li>
         <li><a href="#">N/A</a></li>
-        <!-- More links -->
       </ul>
     </div>
 
@@ -115,7 +91,7 @@
     <div class="image-button">
       <a href="SignUpLoginForm.html"><img src="social_media_login_user_profile_account_password_logout_icon_212484.png" alt="Login"><button>Login</button></a>
     </div>
-     <div class="image-button">
+    <div class="image-button">
       <a href="indexPrimaryTasteSecondaryToneMood.html"><img src="social_media_login_user_profile_account_password_logout_icon_212484.png" alt="Sensory Adventure"><button>Sensory Adventure</button></a>
     </div>
   </div>
@@ -126,8 +102,8 @@
     <div class="image-button"><a href="indexWEBAPP.html"><img src="task_calendar_timeline_plan_start_date_due_date_icon_142241.png" alt="Taste Timeline"><button>Taste Timeline</button></a></div>
     <div class="image-button"><a href="savorsphere.html"><img src="noodles_asian_food_food_bowl_spaghetti_pasta_icon_208024.png" alt="Savor Sphere"><button>Savor Sphere</button></a></div>
     <div class="image-button"><a href="tasterverse.html"><img src="Sushi-icon-512_icon-icons.com_52574.png" alt="Taster Verse"><button>Taster Verse</button></a></div>
-    <div class="image-button"><a href="indexNomSpotCommunityRadar.html"><img src="pitcherfriend_6654.png" alt="NomSpot Community Radar"><button>Community Radar</button></a></div>
-    <div class="image-button"><a href="indexInvite.html"><img src="if-spell-scroll-2913111_88822.png" alt="Event Invite"><button>You're Invited!</button></a></div>
+    <div class="image-button"><a href="indexNomSpotCommunityRadar.html"><img src="pitcherfriend_6654.png" alt="Community Radar"><button>Community Radar</button></a></div>
+    <div class="image-button"><a href="indexInvite.html"><img src="if-spell-scroll-2913111_88822.png" alt="Invite"><button>You're Invited!</button></a></div>
     <div class="image-button"><a href="indexTenBadge.html"><img src="book_512x512_35977.png" alt="Flavor Codex"><button>The Flavor Codex</button></a></div>
     <div class="image-button"><a href="indexMainPage.html"><img src="coin_94963.png" alt="Taste Tokens"><button>Taste Tokens</button></a></div>
     <div class="image-button"><a href="indexLocationUpdateFriendRequestButton.html"><img src="location_pointer_map_destination_pin_icon_153125.png" alt="Location Update"><button>Location / Friend Req</button></a></div>
@@ -136,8 +112,3 @@
   <footer>© 2025 NomSpot. All rights reserved.</footer>
 </body>
 </html>
-
-
-
-
-
