@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NomSpot Taste Tagger & Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <h1>NomSpot Taste Tagger</h1>
+  </header>
+
+  <main>
+    <section id="tag-section">
+      <h2>Tag Your Food</h2>
+
+      <div class="tag-group">
+        <h3>Primary Taste</h3>
+        <div id="primaryButtons">
+          <button onclick="selectTag('primary', 'Sweet')">Sweet</button>
+          <button onclick="selectTag('primary', 'Sour')">Sour</button>
+          <button onclick="selectTag('primary', 'Salty')">Salty</button>
+          <button onclick="selectTag('primary', 'Bitter')">Bitter</button>
+          <button onclick="selectTag('primary', 'Umami')">Umami</button>
+        </div>
+      </div>
+
+      <div class="tag-group">
+        <h3>Secondary Tone</h3>
+        <div id="secondaryButtons">
+          <button onclick="selectTag('secondary', 'Spicy')">Spicy</button>
+          <button onclick="selectTag('secondary', 'Smoky')">Smoky</button>
+          <button onclick="selectTag('secondary', 'Floral')">Floral</button>
+          <button onclick="selectTag('secondary', 'Earthy')">Earthy</button>
+          <button onclick="selectTag('secondary', 'Tangy')">Tangy</button>
+        </div>
+      </div>
+
+      <div class="tag-group">
+        <h3>Mood</h3>
+        <div id="moodButtons">
+          <button onclick="selectTag('mood', 'Comforting')">Comforting</button>
+          <button onclick="selectTag('mood', 'Exciting')">Exciting</button>
+          <button onclick="selectTag('mood', 'Nostalgic')">Nostalgic</button>
+          <button onclick="selectTag('mood', 'Bold')">Bold</button>
+          <button onclick="selectTag('mood', 'Fresh')">Fresh</button>
+        </div>
+      </div>
+
+      <div class="selected-tags">
+        <h4>Selected Tags:</h4>
+        <p id="selectedDisplay">None yet</p>
+      </div>
+    </section>
+
+    <section id="chat-section">
+      <h2>Chat with the Community</h2>
+      <div id="chat-box"></div>
+      <input type="text" id="chatInput" placeholder="Type a message…" />
+      <button onclick="sendMessage()">Send</button>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 NomSpot
+  </footer>
+
+  <script>
+    // In-memory storage of tags per user session
+    const tags = { primary: null, secondary: null, mood: null };
+
+    function selectTag(type, value) {
+      tags[type] = value;
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      const display = document.getElementById('selectedDisplay');
+      display.textContent = `Primary: ${tags.primary || '–'}, Secondary: ${tags.secondary || '–'}, Mood: ${tags.mood || '–'}`;
+    }
+
+    // Simple chat system (no backend, purely in browser)
+    const chatBox = document.getElementById('chat-box');
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const msg = document.createElement('div');
+      msg.className = 'chat-message';
+      msg.textContent = `You: ${text}`;
+      chatBox.appendChild(msg);
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
