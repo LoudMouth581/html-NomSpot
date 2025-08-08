@@ -144,7 +144,90 @@
   </style>
      <a href="join.html" class="join-btn">Join the Community</a>
   </div>
+<title>Image Buttons</title>
+  <style>
+    .button-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
 
+    .image-button {
+      width: 150px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: white;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .image-button:hover {
+      transform: scale(1.05);
+    }
+
+    .image-button img {
+      width: 100%;
+      border-radius: 5px;
+    }
+
+    .image-button button {
+      margin-top: 0.5rem;
+      padding: 6px 12px;
+      font-size: 14px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .image-button button:hover {
+      background-color: #45a049;
+    }
+  </style>
+   <div class="button-gallery">
+
+    <div class="image-button">
+      <a href="forkfeed.html">
+        <img src="images/forkfeed.png" alt="Fork Feed">
+        <button>Fork Feed</button>
+      </a>
+    </div>
+
+    <div class="image-button">
+      <a href="biteboard.html">
+        <img src="images/biteboard.png" alt="Bite Board">
+        <button>Bite Board</button>
+      </a>
+    </div>
+
+    <div class="image-button">
+      <a href="tastetimeline.html">
+        <img src="images/taste.png" alt="Taste Timeline">
+        <button>Taste Timeline</button>
+      </a>
+    </div>
+
+    <div class="image-button">
+      <a href="savorsphere.html">
+        <img src="images/savor.png" alt="Savor Sphere">
+        <button>Savor Sphere</button>
+      </a>
+    </div>
+
+    <div class="image-button">
+      <a href="tasterverse.html">
+        <img src="images/tasterverse.png" alt="Taster Verse">
+        <button>Taster Verse</button>
+      </a>
+    </div>
+
+  </div>
   <footer>
     © 2025 NomSpot. All rights reserved.
   </footer>
