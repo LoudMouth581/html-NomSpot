@@ -1,3 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NomSpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #e5e5e5;
+      font-family: Tahoma, sans-serif;
+      font-size: 12px;
+      color: #333;
+    }
+
+    header {
+      background: #6698cb;
+      padding: 1rem;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    .profile-banner {
+      width: 100%;
+      height: 200px;
+      background: url('https://raw.githubusercontent.com/LoudMouth581/html-NomSpot/main/foodBanner.png') no-repeat center center;
+      background-size: cover;
+    }
+
+    .profile-picture {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid white;
+      position: absolute;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .container {
+      display: flex;
+      max-width: 1000px;
+      margin: 100px auto 2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .sidebar, .content {
+      background: white;
+      padding: 1rem;
+      border: 1px solid #c1c1c1;
+      border-radius: 4px;
+    }
+
+    .sidebar {
+      width: 250px;
+    }
+
+    .sidebar h3 {
+      background: #a0b9d6;
+      color: white;
+      padding: 4px;
+      font-size: 14px;
+      margin-bottom: 8px;
+      border-radius: 3px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 6px;
+    }
+
+    .sidebar ul li button, .sidebar ul li a {
+      width: 100%;
+      font-size: 11px;
+      padding: 6px;
+      background: #f9f9fc;
+      border: 1px solid #c1c1c1;
+      border-radius: 3px;
+      text-align: center;
+      display: inline-block;
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .content {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .content h2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .content p {
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    .scroll-section {
+      margin: 2rem auto;
+      max-width: 900px;
+      padding: 2rem;
+      background: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+      background-color: #fcf8e8;
+      border: 2px solid #c1b287;
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Palatino Linotype', serif;
+      line-height: 1.6;
+      color: #3c2f1c;
+    }
+
+    .scroll-section h3 {
+      text-align: center;
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      color: #7b5e42;
+      text-shadow: 0 0 1px #ccc;
+    }
+
+    .image-button {
+      width: 150px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: white;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .image-button:hover {
+      transform: scale(1.05);
+    }
+
+    .image-button img {
+      width: 100%;
+      border-radius: 5px;
+    }
+
+    .image-button button {
+      margin-top: 0.5rem;
+      padding: 6px 12px;
+      font-size: 14px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* ✨ Sparkle Animation on Hover */
+    .image-button a button:hover {
+      position: relative;
+      animation: sparkleGlow 0.8s ease-out;
+      box-shadow: 0 0 10px 2px rgba(255, 255, 200, 0.6);
+    }
+
+    @keyframes sparkleGlow {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.2);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 10px 4px rgba(255, 255, 180, 0.8);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    .button-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: white;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="profile-banner"></div>
+    <img class="profile-picture" src="RabbitWithBlueHoodie.png" alt="Profile Pic">
+  </header>
+
+  <section class="scroll-section">
+    <h3>🌀 The Mythical Flavor Scroll</h3>
+    <p><em>An Ancient Culinary Codex from the First Table of Twelve</em></p>
+    <p>In the beginning, the First Table of Twelve gathered beneath the sky-flame to break bread. Each brought a flavor: sweet, sour, salty, bitter, umami, smoke, fire, frost, earth, sea, spirit, and void.</p>
+    <p>The Scroll holds recipes of lost kingdoms — from the Ember-Salted Dragon Ribs of the Fire Tribes to the Whispering Herb Broth of the Mistwalkers.</p>
+    <p>Only those who have tasted 12 truths may inscribe a new line upon the Codex. Will you be next?</p>
+  </section>
+
+  <div class="container">
+    <div class="sidebar">
+      <h3>Links</h3>
+      <ul>
+        <li><a href="https://www.youtube.com/@Mr.notnicee">YouTube</a></li>
+        <li><a href="#">N/A</a></li>
+        <li><a href="#">N/A</a></li>
+        <li><a href="#">N/A</a></li>
+        <li><a href="#">N/A</a></li>
+      </ul>
+    </div>
+     <!-- Original Badges - Taste Tokens Begin -->
+    <div>
+<section class="wanted-scroll">
+  <div class="scroll-paper">
+    <h2>🎯 Original Badges - Taste Tokens</h2>
+    <p class="quote">"To Taste is to unlock. To collect is to awaken."</p>
+
+    <p><strong>Overview:</strong> Users earn <em>Taste Tokens</em> by visiting food spots, completing tasks, or discovering secret dishes.</p>
+    <p>Each token is categorized by:</p>
+
+    <ul>
+      <li><strong>Dish Type</strong></li>
+      <li><strong>Region/Culture</strong></li>
+      <li><strong>Flavor Myth Title</strong></li>
+      <li><strong>Badge Visual Style</strong></li>
+      <li><strong>Unlock Method</strong></li>
+    </ul>
+
+    <h3>🔑 Rarity Levels:</h3>
+    <ul>
+      <li><strong>Common Bite</strong> – Available widely (daily tasks & challenges)</li>
+      <li><strong>Secret Flavor</strong> – Must discover a hidden spot or new dish</li>
+      <li><strong>Forbidden Feast</strong> – Holiday meals, cheat days, or exclusive collabs (sponsors, locals, restaurants, events)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    background-color: #f3ede1;
+  }
+
+  .wanted-scroll {
+    font-family: 'Rock Salt', cursive;
+    padding: 3rem 1rem;
+    display: flex;
+    justify-content: center;
+    animation: fadeInScroll 3s ease-in-out;
+  }
+
+  .scroll-paper {
+    background: #fff8dc;
+    border: 8px solid #8b6f47;
+    border-radius: 15px;
+    padding: 2rem;
+    max-width: 700px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(245, 222, 179, 0.4);
+    color: #3e2e1e;
+    position: relative;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: revealScroll 2.5s ease forwards;
+  }
+
+  .scroll-paper::before,
+  .scroll-paper::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 35px;
+    background: radial-gradient(circle, #d2b48c 40%, transparent 70%);
+    left: 0;
+    border-radius: 50%;
+    z-index: -1;
+  }
+
+  .scroll-paper::before {
+    top: -25px;
+  }
+
+  .scroll-paper::after {
+    bottom: -25px;
+  }
+
+  .scroll-paper h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #5e3d1e;
+    text-shadow: 1px 1px 1px #e4d4b5;
+  }
+
+  .scroll-paper .quote {
+    font-style: italic;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #7a5b3d;
+  }
+
+  .scroll-paper p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .scroll-paper ul {
+    list-style-type: square;
+    padding-left: 1.5rem;
+    text-align: left;
+    margin-bottom: 1.5rem;
+  }
+
+  .scroll-paper li {
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+  }
+
+  .scroll-paper h3 {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    color: #5c3e26;
+    border-top: 1px dashed #bca177;
+    padding-top: 0.6rem;
+  }
+
+  /* 🔥 Animation */
+  @keyframes revealScroll {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInScroll {
+    0% {
+      opacity: 0;
+      filter: blur(5px);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+</style>
+     <!-- Original Badges - Taste Tokens End -->
+<div>
+    <div class="sidebar">
+      <h3>/Profile Page</h3>
+      <ul>
+        <li>@username</li>
+        <li>Chosen Name/Title:</li>
+        <li>Flavor Sign:</li>
+        <li>House Crest:</li>
+        <li>Spirit Animal:</li>
+        <li>Date of Joining:</li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <section class="bio">
+        <h2>User Bio</h2>
+        <p>This is your bio. Talk about your interests, music, vibes, and anything else.</p>
+      </section>
+      <hr>
+      <h2>"Where Taste Meets Tribe - Discover, Share & Celebrate Every Bite."</h2>
+      <hr>
+      <h3>This platform is not just a food blog... it's an immersive food experience hub...</h3>
+      <hr>
+    </div>
+
+    <div class="image-button">
+      <a href="JoinTheCommunity.html">
+        <img src="augmentedreality-17_111387.png" alt="Join The Community">
+        <button>Join The Community</button>
+      </a>
+    </div>
+  </div>
+
+  <!-- Start Image Buttons Section -->
+  <div class="button-gallery">
+    <div class="image-button">
+      <a href="forkfeed.html">
+<img src="evil-fork_38334.png" alt="Fork Feed">
+<button>Fork Feed</button>
+</a>
+</div>
+<div class="image-button">
+  <a href="biteboard.html">
+    <img src="dimsum_food_dim_sum_asian_food_dish_icon_208002.png" alt="Bite Board">
+    <button>Bite Board</button>
+  </a>
+</div>
+
+<div class="image-button">
+  <a href="tastetimeline.html">
+    <img src="task_calendar_timeline_plan_start_date_due_date_icon_142241.png" alt="Taste Timeline">
+    <button>Taste Timeline</button>
+  </a>
+</div>
+
+<div class="image-button">
+  <a href="savorsphere.html">
+    <img src="noodles_asian_food_food_bowl_spaghetti_pasta_icon_208024.png" alt="Savor Sphere">
+    <button>Savor Sphere</button>
+  </a>
+</div>
+
+<div class="image-button">
+  <a href="tasterverse.html">
+    <img src="Sushi-icon-512_icon-icons.com_52574.png" alt="Taster Verse">
+    <button>Taster Verse</button>
+  </a>
+</div>
+
+<div class="image-button">
+  <a href="Add Friend.html">
+    <img src="pitcherfriend_6654.png" alt="Add Friend">
+    <button>Add Friend</button>
+  </a>
+</div>
+
+<!-- New Event Invite Button -->
+<div class="image-button">
+  <a href="indexInvite.html">
+    <img src="if-spell-scroll-2913111_88822.png" alt="Event Invite">
+    <button>You're Invited!</button>
+  </a>
+</div>
+
+    <!-- Badge Book Button -->
+  <div class="image-button">
+  <a href="indexTenBadge.html">
+    <img src="book_512x512_35977.png" alt="Badge Book">
+    <button>The Flavor Codex</button>
+  </a>
+</div>
+  
+</div> <!-- End Image Buttons Section --> <footer> © 2025 NomSpot. All rights reserved. </footer> </body> </html> 
+
 <!-- 🌿 Google Font for scroll theme -->
 <link href="https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap" rel="stylesheet">
 
@@ -198,3 +660,4 @@
     win.close();
   }
 </script>
+
