@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NomSpot Journal</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>📖 NomSpot Journal</h1>
+    <div id="auth-section">
+      <input type="email" id="email" placeholder="Email">
+      <input type="password" id="password" placeholder="Password">
+      <button onclick="login()">Login</button>
+      <button onclick="signup()">Sign Up</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="entry-section" class="hidden">
+      <h2>New Journal Entry</h2>
+      <input type="date" id="entryDate" />
+      <textarea id="entryText" placeholder="What’s on your mind?"></textarea>
+      <label><input type="checkbox" id="isPublic"> Share to Public Feed</label>
+      <button onclick="saveEntry()">Save Entry</button>
+    </section>
+
+    <section id="journal-section" class="hidden">
+      <h2>Your Journal</h2>
+      <ul id="entryList"></ul>
+    </section>
+
+    <section id="public-feed">
+      <h2>🌐 Public Feed</h2>
+      <ul id="publicFeedList"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 NomSpot</p>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
