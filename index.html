@@ -4,15 +4,19 @@
   <meta charset="UTF-8">
   <title>NomSpot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+  <!-- Optional: Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&display=swap" rel="stylesheet">
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #e5e5e5; /* pastel background */
+      background: #e5e5e5;
       font-family: Tahoma, sans-serif;
       font-size: 12px;
       color: #333;
     }
-    /* Header with banner */
+
     header {
       background: #6698cb;
       padding: 1rem;
@@ -20,12 +24,14 @@
       color: white;
       position: relative;
     }
+
     .profile-banner {
       width: 100%;
       height: 200px;
       background: url('https://raw.githubusercontent.com/LoudMouth581/html-NomSpot/main/foodBanner.png') no-repeat center center;
       background-size: cover;
     }
+
     .profile-picture {
       width: 120px;
       height: 120px;
@@ -36,22 +42,25 @@
       left: 50%;
       transform: translateX(-50%);
     }
-    /* Sidebar + Main layout */
+
     .container {
       display: flex;
       max-width: 1000px;
       margin: 100px auto 2rem;
       gap: 1rem;
     }
+
     .sidebar, .content {
       background: white;
       padding: 1rem;
       border: 1px solid #c1c1c1;
       border-radius: 4px;
     }
+
     .sidebar {
       width: 250px;
     }
+
     .sidebar h3 {
       background: #a0b9d6;
       color: white;
@@ -60,12 +69,15 @@
       margin-bottom: 8px;
       border-radius: 3px;
     }
+
     .sidebar ul {
       list-style: none;
     }
+
     .sidebar ul li {
       margin-bottom: 6px;
     }
+
     .sidebar ul li button {
       width: 100%;
       font-size: 11px;
@@ -75,28 +87,20 @@
       border-radius: 3px;
       cursor: pointer;
     }
+
     .content h2 {
       margin-bottom: 0.5rem;
     }
+
     .content p {
       margin-bottom: 1rem;
       line-height: 1.4;
     }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #1e1e1e;
-      color: white;
-      margin-top: 2rem;
-    }
-    
-      .scroll-section {
-        max-height: 200px;
-      }
-  </style>
-   /* 🔥 Mythical Flavor Scroll Styling */
+
+    /* 🔥 Mythical Flavor Scroll Styling */
     .scroll-section {
-      margin-top: 3rem;
+      margin: 2rem auto;
+      max-width: 900px;
       padding: 2rem;
       background: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
       background-color: #fcf8e8;
@@ -112,81 +116,11 @@
 
     .scroll-section h3 {
       text-align: center;
-      font-family: 'Cinzel Decorative', serif;
+      font-family: 'Cinzel Decorative', cursive;
       font-size: 1.6rem;
       margin-bottom: 1rem;
       color: #7b5e42;
       text-shadow: 0 0 1px #ccc;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #1e1e1e;
-      color: white;
-    }
-
-</head>
-<body>
- <!-- 🧙 Mythical Flavor Scroll Section -->
-    <section class="scroll-section">
-      <h3>🌀 The Mythical Flavor Scroll</h3>
-      <p><em>An Ancient Culinary Codex from the First Table of Twelve</em></p>
-      <p>In the beginning, the First Table of Twelve gathered beneath the sky-flame to break bread. Each brought a flavor: sweet, sour, salty, bitter, umami, smoke, fire, frost, earth, sea, spirit, and void.</p>
-      <p>The Scroll holds recipes of lost kingdoms — from the Ember-Salted Dragon Ribs of the Fire Tribes to the Whispering Herb Broth of the Mistwalkers.</p>
-      <p>Only those who have tasted 12 truths may inscribe a new line upon the Codex. Will you be next?</p>
-    </section>
-  <header>
-    <div class="profile-banner"></div>
-    <img class="profile-picture" src="RabbitWithBlueHoodie.png" alt="Profile Pic">
-  </header>
-
-  <div class="container">
-    <div class="sidebar">
-      <h3>Links</h3>
-      <ul>
-        <li><button> <a href="https://www.youtube.com/@Mr.notnicee">YouTube</a></button></li>
-        <li><button>N/A</button></li>
-        <li><button>N/A</button></li>
-        <li><button>N/A</button></li>
-        <li><button>N/A</button></li>
-      </ul>
-    </div>
-
-    <div class="content">
-      <section class="bio">
-        <h2>@username/Profile Page</h2>
-        <p>This is your bio. Talk about your interests, music, vibes, and anything else.</p>
-        <ul><li>User Name:</li>
-          <li>Chosen Name/Title:</li>
-          <li>Flavor Sign:</li>
-          <li>House Crest:</li>
-          <li>Spirit Animal:</li>
-          <li>Date of Awakening:</li>
-        </ul>
-      </section>
-      <hr>
-      <h2>"Where Taste Meets Tribe - Discover, Share & Celebrate Every Bite."</h2>
-      <hr>
-      <h3>This platform is not just a food blog... it's an immersive food experience hub...</h3>
-      <hr>
-     
-    </div>
-    <div class="image-button">
-      <a href="JoinTheCommunity.html">
-        <img src="augmentedreality-17_111387.png" alt="Join The Community">
-        <button>Join The Community</button>
-      </a>
-    </div>
-  </div>
-<title>Image Buttons</title>
-  <style>
-    .button-gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-      padding: 2rem;
     }
 
     .image-button {
@@ -224,9 +158,81 @@
     .image-button button:hover {
       background-color: #45a049;
     }
-  </style>
-   <div class="button-gallery">
 
+    .button-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: white;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="profile-banner"></div>
+    <img class="profile-picture" src="RabbitWithBlueHoodie.png" alt="Profile Pic">
+  </header>
+
+  <!-- 🧙 Mythical Flavor Scroll Section -->
+  <section class="scroll-section">
+    <h3>🌀 The Mythical Flavor Scroll</h3>
+    <p><em>An Ancient Culinary Codex from the First Table of Twelve</em></p>
+    <p>In the beginning, the First Table of Twelve gathered beneath the sky-flame to break bread. Each brought a flavor: sweet, sour, salty, bitter, umami, smoke, fire, frost, earth, sea, spirit, and void.</p>
+    <p>The Scroll holds recipes of lost kingdoms — from the Ember-Salted Dragon Ribs of the Fire Tribes to the Whispering Herb Broth of the Mistwalkers.</p>
+    <p>Only those who have tasted 12 truths may inscribe a new line upon the Codex. Will you be next?</p>
+  </section>
+
+  <div class="container">
+    <div class="sidebar">
+      <h3>Links</h3>
+      <ul>
+        <li><button><a href="https://www.youtube.com/@Mr.notnicee">YouTube</a></button></li>
+        <li><button>N/A</button></li>
+        <li><button>N/A</button></li>
+        <li><button>N/A</button></li>
+        <li><button>N/A</button></li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <section class="bio">
+        <h2>@username/Profile Page</h2>
+        <p>This is your bio. Talk about your interests, music, vibes, and anything else.</p>
+        <ul>
+          <li>User Name:</li>
+          <li>Chosen Name/Title:</li>
+          <li>Flavor Sign:</li>
+          <li>House Crest:</li>
+          <li>Spirit Animal:</li>
+          <li>Date of Awakening:</li>
+        </ul>
+      </section>
+      <hr>
+      <h2>"Where Taste Meets Tribe - Discover, Share & Celebrate Every Bite."</h2>
+      <hr>
+      <h3>This platform is not just a food blog... it's an immersive food experience hub...</h3>
+      <hr>
+    </div>
+
+    <div class="image-button">
+      <a href="JoinTheCommunity.html">
+        <img src="augmentedreality-17_111387.png" alt="Join The Community">
+        <button>Join The Community</button>
+      </a>
+    </div>
+  </div>
+
+  <div class="button-gallery">
     <div class="image-button">
       <a href="forkfeed.html">
         <img src="evil-fork_38334.png" alt="Fork Feed">
@@ -243,34 +249,25 @@
 
     <div class="image-button">
       <a href="tastetimeline.html">
-        <img src="task_calendar_timeline_plan_start_date_due_date_icon_142241.png" alt="Taste Timeline">
-        <button>Taste Timeline</button>
-      </a>
-    </div>
+        <img src="task_calendar_timeline_plan_start_date_due_date_icon_142241.png" alt="Taste
+         <div class="image-button">
+  <a href="savorsphere.html">
+    <img src="noodles_asian_food_food_bowl_spaghetti_pasta_icon_208024.png" alt="Savor Sphere">
+    <button>Savor Sphere</button>
+  </a>
+</div>
 
-    <div class="image-button">
-      <a href="savorsphere.html">
-        <img src="noodles_asian_food_food_bowl_spaghetti_pasta_icon_208024.png" alt="Savor Sphere">
-        <button>Savor Sphere</button>
-      </a>
-    </div>
+<div class="image-button">
+  <a href="tasterverse.html">
+    <img src="Sushi-icon-512_icon-icons.com_52574.png" alt="Taster Verse">
+    <button>Taster Verse</button>
+  </a>
+</div>
 
-    <div class="image-button">
-      <a href="tasterverse.html">
-        <img src="Sushi-icon-512_icon-icons.com_52574.png" alt="Taster Verse">
-        <button>Taster Verse</button>
-      </a>
-    </div>
- <div class="image-button">
-      <a href="Add Friend.html">
-        <img src="pitcherfriend_6654.png" alt="Add Friend">
-        <button>Add Friend</button>
-      </a>
-    </div>
-  </div>
-  <footer>
-    © 2025 NomSpot. All rights reserved.
-  </footer>
-
-</body>
-</html>
+<div class="image-button">
+  <a href="Add Friend.html">
+    <img src="pitcherfriend_6654.png" alt="Add Friend">
+    <button>Add Friend</button>
+  </a>
+</div>
+ 
