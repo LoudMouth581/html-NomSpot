@@ -2,116 +2,405 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NomSpot Social Hub — Next Gen</title>
+  <title>NomSpot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.2/velocity.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&display=swap" rel="stylesheet">
+
   <style>
-    :root {
-      --bg: #000;
-      --neon: #0ff;
-      --dial-bg: #222;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #e5e5e5;
+      font-family: Tahoma, sans-serif;
+      font-size: 12px;
+      color: #333;
     }
-    body { margin:0; display:flex; background:#000; color:#0ff; font-family: 'Orbitron', sans-serif; height:100vh; }
-    #sidebar { width:200px; background:#111; padding:1rem; box-shadow:2px 0 20px var(--neon); }
-    #sidebar button { background:none; border:1px solid var(--neon); color:var(--neon); padding:0.5rem; margin-bottom:0.5rem; cursor:pointer; transition:0.3s; }
-    #sidebar button:hover { color:#f0f; box-shadow:0 0 10px #f0f; }
-    #main { flex:1; padding:1rem; overflow:auto; position:relative; }
-    .tab { display:none; }
-    .active { display:block; }
-    .chat-box { border:1px solid var(--neon); height:200px; margin-bottom:0.5rem; padding:0.5rem; background:#111; overflow:auto; }
-    input, .send-btn { padding:0.5rem; margin-right:0.5rem; }
-    .send-btn { background:var(--neon); color:#000; border:none; cursor:pointer; }
-    .dial-container { margin:1rem 0; text-align:center; }
-    #dial { width:100px; height:100px; background:var(--dial-bg); margin:0 auto; border-radius:50%; position:relative; }
-    #dial:after { content:''; position:absolute; left:50%; top:10%; width:4px; height:40%; background:var(--neon); transform-origin:bottom; transform:rotate(0deg); }
-    .meter { width:100%; height:10px; background:#222; overflow:hidden; margin:0.5rem 0; }
-    .meter-fill { width:0; height:100%; background:var(--neon); }
+
+    header {
+      background: #6698cb;
+      padding: 1rem;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    .profile-banner {
+      width: 100%;
+      height: 200px;
+      background: url('https://raw.githubusercontent.com/LoudMouth581/html-NomSpot/main/foodBanner.png') no-repeat center center;
+      background-size: cover;
+    }
+
+    .profile-picture {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid white;
+      position: absolute;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .container {
+      display: flex;
+      max-width: 1000px;
+      margin: 100px auto 2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .sidebar, .content {
+      background: white;
+      padding: 1rem;
+      border: 1px solid #c1c1c1;
+      border-radius: 4px;
+    }
+
+    .sidebar {
+      width: 250px;
+    }
+
+    .sidebar h3 {
+      background: #a0b9d6;
+      color: white;
+      padding: 4px;
+      font-size: 14px;
+      margin-bottom: 8px;
+      border-radius: 3px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 6px;
+    }
+
+    .sidebar ul li button, .sidebar ul li a {
+      width: 100%;
+      font-size: 11px;
+      padding: 6px;
+      background: #f9f9fc;
+      border: 1px solid #c1c1c1;
+      border-radius: 3px;
+      text-align: center;
+      display: inline-block;
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .content {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .content h2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .content p {
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    .scroll-section {
+      margin: 2rem auto;
+      max-width: 900px;
+      padding: 2rem;
+      background: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+      background-color: #fcf8e8;
+      border: 2px solid #c1b287;
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Palatino Linotype', serif;
+      line-height: 1.6;
+      color: #3c2f1c;
+    }
+
+    .scroll-section h3 {
+      text-align: center;
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      color: #7b5e42;
+      text-shadow: 0 0 1px #ccc;
+    }
+
+    .image-button {
+      width: 150px;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: white;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .image-button:hover {
+      transform: scale(1.05);
+    }
+
+    .image-button img {
+      width: 100%;
+      border-radius: 5px;
+    }
+
+    .image-button button {
+      margin-top: 0.5rem;
+      padding: 6px 12px;
+      font-size: 14px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* ✨ Sparkle Animation on Hover */
+    .image-button a button:hover {
+      position: relative;
+      animation: sparkleGlow 0.8s ease-out;
+      box-shadow: 0 0 10px 2px rgba(255, 255, 200, 0.6);
+    }
+
+    @keyframes sparkleGlow {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.2);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 10px 4px rgba(255, 255, 180, 0.8);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    .button-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #1e1e1e;
+      color: white;
+      margin-top: 2rem;
+    }
   </style>
 </head>
 <body>
-  <div id="sidebar">
-    <button onclick="openTab('public')">Public Chat</button>
-    <button onclick="openTab('private')">Private Chat</button>
-    <button onclick="openTab('dial')">Volume Dial</button>
+
+  <header>
+    <div class="profile-banner"></div>
+    <img class="profile-picture" src="RabbitWithBlueHoodie.png" alt="Profile Pic">
+  </header>
+
+  <section class="scroll-section">
+    <h3>🌀 The Mythical Flavor Scroll</h3>
+    <p><em>An Ancient Culinary Codex from the First Table of Twelve</em></p>
+    <p>In the beginning, the First Table of Twelve gathered beneath the sky-flame to break bread. Each brought a flavor: sweet, sour, salty, bitter, umami, smoke, fire, frost, earth, sea, spirit, and void.</p>
+    <p>The Scroll holds recipes of lost kingdoms — from the Ember-Salted Dragon Ribs of the Fire Tribes to the Whispering Herb Broth of the Mistwalkers.</p>
+    <p>Only those who have tasted 12 truths may inscribe a new line upon the Codex. Will you be next?</p>
+  </section>
+
+  <div class="container">
+    <div class="sidebar">
+      <h3>Links</h3>
+      <ul>
+        <li><a href="https://www.youtube.com/@Mr.notnicee">YouTube</a></li>
+        <li><a href="#">N/A</a></li>
+        <li><a href="#">N/A</a></li>
+        <li><a href="#">N/A</a></li>
+        <li><a href="#">N/A</a></li>
+      </ul>
+    </div>
+
+<div>
+    <div class="sidebar">
+      <h3>/Profile Page</h3>
+      <ul>
+        <li>@username</li>
+        <li>Chosen Name/Title:</li>
+        <li>Flavor Sign:</li>
+        <li>House Crest:</li>
+        <li>Spirit Animal:</li>
+        <li>Date of Joining:</li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <section class="bio">
+        <h2>User Bio</h2>
+        <p>This is your bio. Talk about your interests, music, vibes, and anything else.</p>
+      </section>
+      <hr>
+      <h2>"Where Taste Meets Tribe - Discover, Share & Celebrate Every Bite."</h2>
+      <hr>
+      <h3>This platform is not just a food blog... it's an immersive food experience hub...</h3>
+      <hr>
+    </div>
+
+    <div class="image-button">
+      <a href="JoinTheCommunity.html">
+        <img src="augmentedreality-17_111387.png" alt="Join The Community">
+        <button>Join The Community</button>
+      </a>
+    </div>
   </div>
-  <div id="main">
-    <div id="public" class="tab active">
-      <h2>Public Chat</h2>
-      <div id="chat-box" class="chat-box"></div>
-      <input id="chatInput" placeholder="Say hi..."><button class="send-btn" onclick="sendMessage()">Send →</button>
-      <div class="meter"><div id="sound-meter" class="meter-fill"></div></div>
-    </div>
-    <div id="private" class="tab">
-      <h2>Private Chat</h2>
-      <input id="targetUser" placeholder="@user"><button class="send-btn" onclick="startPrivate()">Start →</button>
-      <div id="private-box" class="chat-box"></div>
-      <input id="privateInput" placeholder="Private..."><button class="send-btn" onclick="sendPrivate()">Send →</button>
-    </div>
-    <div id="dial" class="tab">
-      <h2>Adjust Volume</h2>
-      <div class="dial-container">
-        <div id="dial"></div>
-      </div>
-    </div>
-  </div>
+
+  <!-- Start Image Buttons Section -->
+  <div class="button-gallery">
+    <div class="image-button">
+      <a href="forkfeed.html">
+<img src="evil-fork_38334.png" alt="Fork Feed">
+<button>Fork Feed</button>
+</a>
+</div>
+<div class="image-button">
+  <a href="biteboard.html">
+    <img src="dimsum_food_dim_sum_asian_food_dish_icon_208002.png" alt="Bite Board">
+    <button>Bite Board</button>
+  </a>
+</div>
+
+<div class="image-button">
+  <a href="tastetimeline.html">
+    <img src="task_calendar_timeline_plan_start_date_due_date_icon_142241.png" alt="Taste Timeline">
+    <button>Taste Timeline</button>
+  </a>
+</div>
+
+<div class="image-button">
+  <a href="savorsphere.html">
+    <img src="noodles_asian_food_food_bowl_spaghetti_pasta_icon_208024.png" alt="Savor Sphere">
+    <button>Savor Sphere</button>
+  </a>
+</div>
+
+<div class="image-button">
+  <a href="tasterverse.html">
+    <img src="Sushi-icon-512_icon-icons.com_52574.png" alt="Taster Verse">
+    <button>Taster Verse</button>
+  </a>
+</div>
+
+<div class="image-button">
+  <a href="Add Friend.html">
+    <img src="pitcherfriend_6654.png" alt="Add Friend">
+    <button>Add Friend</button>
+  </a>
+</div>
+
+<!-- New Event Invite Button -->
+<div class="image-button">
+  <a href="indexInvite.html">
+    <img src="if-spell-scroll-2913111_88822.png" alt="Event Invite">
+    <button>You're Invited!</button>
+  </a>
+</div>
+
+    <!-- Badge Book Button -->
+  <div class="image-button">
+  <a href="indexTenBadge.html">
+    <img src="book_512x512_35977.png" alt="Badge Book">
+    <button>The Flavor Codex</button>
+  </a>
+</div>
+  <!-- Original Badges - Taste Tokens Button -->
+<div class="image-button">
+  <a href="indexMainPage.html">
+    <img src="if-spell-scroll-2913111_88822.png" alt="Original Badges - Taste Tokens">
+    <button>Original Badges - Taste Tokens</button>
+  </a>
+</div>
+
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #f5f5f5; }
+    form { max-width: 400px; margin: auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    input { display: block; width: 100%; margin-bottom: 1rem; padding: 0.6rem; }
+    button { padding: 0.6rem 1rem; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .status { margin-top: 1rem; font-weight: bold; }
+  </style>
+<hr>
+<br> 
+<h2>🍴 Welcome to NomSpot</h2>
+  <form id="authForm">
+    <input type="email" id="email" placeholder="Email" required/>
+    <input type="password" id="password" placeholder="Password" required/>
+    <button type="submit">Login / Sign Up</button>
+    <div class="status" id="statusMessage"></div>
+  </form>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script>
-    const msgSound = new Howl({ src: ['https://freesound.org/data/previews/26/26557_512123-lq.mp3'], volume:0.5 });
-    const meter = document.getElementById('sound-meter');
+    // 🔐 Replace this with your Firebase config:
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
 
-    function openTab(id) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
-    function sendMessage() {
-      const txt = document.getElementById('chatInput').value.trim();
-      if (!txt) return;
-      msgSound.play();
-      const d = document.createElement('div');
-      d.textContent = `You: ${txt}`;
-      d.className = 'chat-message';
-      document.getElementById('chat-box').appendChild(d);
-      meter.style.width = '0%';
-      Velocity(meter, { width: ['100%','0%'] }, { duration: 800 });
-      document.getElementById('chatInput').value = '';
-    }
-    const priv = {}; let cur=null;
-    function startPrivate() {
-      cur = document.getElementById('targetUser').value.trim();
-      if (!cur) return alert('Enter username');
-      if (!priv[cur]) priv[cur]=[];
-      renderPriv();
-    }
-    function sendPrivate(){
-      const t = document.getElementById('privateInput').value.trim(); if(!cur||!t)return;
-      msgSound.play();
-      priv[cur].push(`Me→${cur}: ${t}`); document.getElementById('privateInput').value='';
-      renderPriv();
-    }
-    function renderPriv(){
-      const b = document.getElementById('private-box');
-      b.innerHTML='';
-      priv[cur].forEach(m=>{const d=document.createElement('div');d.textContent=m;d.className='chat-message';b.appendChild(d)});
-    }
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    // Dial Logic
-    const dial = document.getElementById('dial');
-    let angle=0, dragging=false;
-    dial.addEventListener('mousedown',()=>dragging=true);
-    window.addEventListener('mouseup',()=>dragging=false);
-    window.addEventListener('mousemove',e=>{
-      if(!dragging)return;
-      const rect=dial.getBoundingClientRect(),cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
-      const radians=Math.atan2(e.clientY-cy,e.clientX-cx);
-      angle = radians* (180/Math.PI) + 90;
-      if(angle<0) angle +=360;
-      dial.style.setProperty('--rot', angle+'deg');
-      dial.querySelector('::after');
-      dial.style.transform = `rotate(${angle}deg)`;
-      Howler.volume(angle/360);
+    const form = document.getElementById('authForm');
+    const statusMsg = document.getElementById('statusMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        let result = await auth.signInWithEmailAndPassword(email, password);
+        statusMsg.innerText = `✅ Logged in as ${result.user.email}`;
+      } catch (error) {
+        try {
+          let result = await auth.createUserWithEmailAndPassword(email, password);
+          statusMsg.innerText = `🎉 Account created for ${result.user.email}`;
+          await db.collection('users').doc(result.user.uid).set({
+            email: result.user.email,
+            joined: new Date()
+          });
+        } catch (err) {
+          statusMsg.innerText = `❌ ${err.message}`;
+        }
+      }
+    });
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        statusMsg.innerText = `🧠 Logged in as: ${user.email}`;
+        db.collection("logs").add({
+          event: "login",
+          user: user.email,
+          timestamp: new Date()
+        });
+      }
     });
   </script>
 </body>
 </html>
+
+</div> <!-- End Image Buttons Section --> <footer> © 2025 NomSpot. All rights reserved. </footer> </body> </html> 
