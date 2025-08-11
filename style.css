@@ -1,0 +1,75 @@
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Harry Potter font style */
+body {
+  font-family: 'MedievalSharp', cursive;
+  background: linear-gradient(to bottom, #1a1a1a, #000);
+  color: #fceabb;
+  text-align: center;
+  padding: 40px;
+}
+
+/* Floating magical title */
+.floating-title {
+  font-size: 2.5rem;
+  animation: float 3s ease-in-out infinite;
+  color: #ffe600;
+  text-shadow: 0 0 10px #ffea00, 0 0 20px #ffb300;
+  margin-bottom: 40px;
+}
+
+/* Pyramid layout */
+.pyramid {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Each layer */
+.layer {
+  width: 80%;
+  max-width: 600px;
+  padding: 20px;
+  border-radius: 10px;
+  transition: all 0.4s ease-in-out;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Magic on hover */
+.layer:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px 5px #ffd700;
+  color: #ffffff;
+  background-color: rgba(255, 215, 0, 0.15);
+}
+
+/* Pyramid layer styles */
+.base {
+  background: linear-gradient(to right, #2e8b57, #3cb371);
+}
+
+.middle {
+  background: linear-gradient(to right, #d2b48c, #deb887);
+}
+
+.top {
+  background: linear-gradient(to right, #b22222, #dc143c);
+}
+
+.aside {
+  background: linear-gradient(to right, #4682b4, #5f9ea0);
+}
+
+/* Floating animation */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
