@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agency</title>
+  <link rel="stylesheet" href="./solution.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="main">
+    <img class="logo" src="./assets/images/logo.png" alt="logo">
+    <h1>We are a <span class="creative">Creative</span> <br />Design Agency</h1>
+    <div class="left card"><img class="tile-image" src="./assets/images/beautiful.jpg" alt="hand and flower in water">
+      <h2 class="card-title">Beauty</h2>
+      <p class="card-text">We strive to create the most beautiful websites for all your needs. Working closely with you
+        to
+        design and
+        develop an amazing website for your business.</p>
+    </div>
+
+    <div class="right card"><img class="tile-image" src="./assets/images/construction.jpg" alt="metal structure">
+      <h2 class="card-title">Construction</h2>
+      <p>Built by our team of professional developers, we ensure the most rigourous and modern websites. Built from
+        scratch using HTML and CSS. Only the best for you.</p>
+    </div>
+
+  </div>
+  <footer>
+    <p>Create. Develop. Design.</p>
+  </footer>
+</body>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>NomSpot Quest Avenue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f4f1;
+      --text: #333;
+      --accent: #ff6f61;
+      --card-bg: #fff;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --quest-color: #ffca28;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: var(--accent);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: 1.8rem;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      gap: 1.5rem;
+    }
+
+    .composer {
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px var(--shadow);
+    }
+
+    .composer textarea {
+      width: 100%;
+      height: 80px;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: none;
+    }
+
+    .composer button {
+      float: right;
+      margin-top: 0.5rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+   }
+
+    .post {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 3px 8px var(--shadow);
+      position: relative;
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #ddd;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      font-size: 0.9rem;
+    }
+
+    .user-info strong {
+      display: block;
+      font-weight: bold;
+    }
+
+    .post-text {
+      margin-bottom: 0.8rem;
+    }
+
+    .post img {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    /* Quest marker style */
+    .quest-marker {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 40px;
+      height: 40px;
+      background: var(--quest-color);
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 2px 5px var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      color: #b71c1c;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #777;
+      margin: 2rem 0;
+    }
+
+    @media (max-width: 600px) {
+      .composer textarea {
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>NomSpot Quest Avenue</header>
+
+  <div class="container">
+    <!-- Compose Post -->
+    <div class="composer">
+      <textarea placeholder="Share your food quest or local find..."></textarea>
+      <button>Post Quest</button>
+    </div>
+
+    <!-- Sample Post 1 -->
+    <div class="post">
+      <div class="quest-marker">1</div>
+      <div class="post-header">
+        <div class="avatar"></div>
+        <div class="user-info">
+          <strong>@SushiQuest</strong>
+          <span>Downtown · 30 min ago</span>
+        </div>
+      </div>
+      <p class="post-text">Found a hidden ramen stall that glows like neon in the night — such a quest!</p>
+      <img src="https://images.unsplash.com/photo-1553621042-f6e147245754" alt="sushi scene">
+    </div>
+
+    <!-- Sample Post 2 -->
+    <div class="post">
+      <div class="quest-marker">2</div>
+      <div class="post-header">
+        <div class="avatar"></div>
+        <div class="user-info">
+          <strong>@DimSumMaster</strong>
+          <span>Local Market · 2 hours ago</span>
+        </div>
+      </div>
+      <p class="post-text">Dim sum cart master just rolled in with the best xiao long bao I've ever tasted.</p>
+    </div>
+
+    <!-- Sample Post 3 -->
+    <div class="post">
+      <div class="quest-marker">3</div>
+      <div class="post-header">
+        <div class="avatar"></div>
+        <div class="user-info">
+          <strong>@SweetStreet</strong>
+          <span>Eastside · Today</span>
+        </div>
+      </div>
+      <p class="post-text">Late-night dessert quest: found a bubble tea pop-up with galaxy pearls. Pure magic!</p>
+      <img src="https://images.unsplash.com/photo-1587750052705-ec04f3c8a20b" alt="dessert treats">
+    </div>
+  </div>
+
+  <footer>© 2025 NomSpot Local Quest Avenue · Taste Your Adventure</footer>
+</body>
+</html>
