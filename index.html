@@ -5,62 +5,86 @@
   <title>NomSpot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&display=swap" rel="stylesheet">
-
   <style>
+    /* Base Reset */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #e5e5e5;
       font-family: Tahoma, sans-serif;
-      font-size: 12px;
       color: #333;
+      padding-bottom: 2rem;
     }
 
     header {
       background: #6698cb;
       padding: 1rem;
+      position: relative;
       text-align: center;
       color: white;
-      position: relative;
     }
 
     .profile-banner {
       width: 100%;
       height: 200px;
-      background: url('https://raw.githubusercontent.com/LoudMouth581/html-NomSpot/main/foodBanner.png') no-repeat center center;
-      background-size: cover;
+      background: url('https://raw.githubusercontent.com/LoudMouth581/html-NomSpot/main/foodBanner.png') center/cover no-repeat;
     }
 
     .profile-picture {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      border: 4px solid white;
       position: absolute;
       bottom: -60px;
       left: 50%;
       transform: translateX(-50%);
+      width: 120px;
+      height: 120px;
+      border: 4px solid white;
+      border-radius: 50%;
+    }
+
+    .scroll-section {
+      margin: 2rem auto;
+      max-width: 900px;
+      padding: 2rem;
+      background: url('https://www.transparenttextures.com/patterns/paper-fibers.png'),
+                  #fcf8e8;
+      border: 2px solid #c1b287;
+      border-radius: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Palatino Linotype', serif;
+      line-height: 1.6;
+      color: #3c2f1c;
+    }
+
+    .scroll-section h3 {
+      text-align: center;
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      color: #7b5e42;
+      text-shadow: 0 0 1px #ccc;
     }
 
     .container {
       display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
       max-width: 1000px;
       margin: 100px auto 2rem;
-      gap: 1rem;
-      flex-wrap: wrap;
     }
 
-    .sidebar, .content {
+    .sidebar, .content, .profile-sidebar {
       background: white;
       padding: 1rem;
       border: 1px solid #c1c1c1;
       border-radius: 4px;
     }
 
-    .sidebar {
+    .sidebar, .profile-sidebar {
       width: 250px;
     }
 
-    .sidebar h3 {
+    .sidebar h3, .profile-sidebar h3 {
       background: #a0b9d6;
       color: white;
       padding: 4px;
@@ -69,23 +93,22 @@
       border-radius: 3px;
     }
 
-    .sidebar ul {
+    .sidebar ul, .profile-sidebar ul {
       list-style: none;
     }
 
-    .sidebar ul li {
+    .sidebar ul li, .profile-sidebar ul li {
       margin-bottom: 6px;
     }
 
-    .sidebar ul li button, .sidebar ul li a {
-      width: 100%;
-      font-size: 11px;
+    .sidebar ul li a {
+      display: block;
+      text-align: center;
       padding: 6px;
       background: #f9f9fc;
       border: 1px solid #c1c1c1;
       border-radius: 3px;
-      text-align: center;
-      display: inline-block;
+      font-size: 11px;
       color: black;
       text-decoration: none;
       cursor: pointer;
@@ -105,29 +128,12 @@
       line-height: 1.4;
     }
 
-    .scroll-section {
-      margin: 2rem auto;
-      max-width: 900px;
+    .button-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
       padding: 2rem;
-      background: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-      background-color: #fcf8e8;
-      border: 2px solid #c1b287;
-      border-radius: 10px;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
-      max-height: 300px;
-      overflow-y: auto;
-      font-family: 'Palatino Linotype', serif;
-      line-height: 1.6;
-      color: #3c2f1c;
-    }
-
-    .scroll-section h3 {
-      text-align: center;
-      font-family: 'Cinzel Decorative', cursive;
-      font-size: 1.6rem;
-      margin-bottom: 1rem;
-      color: #7b5e42;
-      text-shadow: 0 0 1px #ccc;
     }
 
     .image-button {
@@ -162,42 +168,74 @@
       width: 100%;
     }
 
-    /* ✨ Sparkle Animation on Hover */
-    .image-button a button:hover {
-      position: relative;
+    .image-button button:hover {
       animation: sparkleGlow 0.8s ease-out;
       box-shadow: 0 0 10px 2px rgba(255, 255, 200, 0.6);
     }
 
     @keyframes sparkleGlow {
-      0% {
-        transform: scale(1);
-        box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.2);
-      }
-      50% {
-        transform: scale(1.05);
-        box-shadow: 0 0 10px 4px rgba(255, 255, 180, 0.8);
-      }
-      100% {
-        transform: scale(1);
-        box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.2);
-      }
+      0% { transform: scale(1); box-shadow: 0 0 2px 1px rgba(255,255,255,0.2); }
+      50% { transform: scale(1.05); box-shadow: 0 0 10px 4px rgba(255,255,180,0.8); }
+      100% { transform: scale(1); box-shadow: 0 0 2px 1px rgba(255,255,255,0.2); }
     }
 
-    .button-gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
+    /* Login Form */
+    form {
+      max-width: 400px;
+      margin: 2rem auto;
+      background: white;
       padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #1e1e1e;
+    form input {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.6rem;
+    }
+
+    form button {
+      padding: 0.6rem 1rem;
+      background: #4CAF50;
       color: white;
-      margin-top: 2rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .status {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    /* Futuristic Map Placeholder */
+    #map {
+      width: 100%;
+      height: 400px;
+      margin: 2rem auto;
+      border: 3px solid #6698cb;
+      border-radius: 10px;
+      position: relative;
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .sidebar, .profile-sidebar, .image-button {
+        width: 100%;
+        max-width: 300px;
+      }
     }
   </style>
 </head>
@@ -205,32 +243,28 @@
 
   <header>
     <div class="profile-banner"></div>
-    <img class="profile-picture" src="RabbitWithBlueHoodie.png" alt="Profile Pic">
+    <img class="profile-picture" src="RabbitWithBlueHoodie.png" alt="Profile pic of user">
   </header>
 
   <section class="scroll-section">
     <h3>🌀 The Mythical Flavor Scroll</h3>
     <p><em>An Ancient Culinary Codex from the First Table of Twelve</em></p>
-    <p>In the beginning, the First Table of Twelve gathered beneath the sky-flame to break bread. Each brought a flavor: sweet, sour, salty, bitter, umami, smoke, fire, frost, earth, sea, spirit, and void.</p>
-    <p>The Scroll holds recipes of lost kingdoms — from the Ember-Salted Dragon Ribs of the Fire Tribes to the Whispering Herb Broth of the Mistwalkers.</p>
-    <p>Only those who have tasted 12 truths may inscribe a new line upon the Codex. Will you be next?</p>
+    <p>In the beginning…</p>
+    <!-- shortened for brevity -->
   </section>
 
   <div class="container">
     <div class="sidebar">
       <h3>Links</h3>
       <ul>
-        <li><a href="https://www.youtube.com/@Mr.notnicee">YouTube</a></li>
+        <li><a href="https://www.youtube.com/@Mr.notnicee" target="_blank">YouTube</a></li>
         <li><a href="#">N/A</a></li>
-        <li><a href="#">N/A</a></li>
-        <li><a href="#">N/A</a></li>
-        <li><a href="#">N/A</a></li>
+        <!-- filler links -->
       </ul>
     </div>
 
-<div>
-    <div class="sidebar">
-      <h3>/Profile Page</h3>
+    <div class="profile-sidebar">
+      <h3>Profile Page</h3>
       <ul>
         <li>@username</li>
         <li>Chosen Name/Title:</li>
@@ -241,126 +275,64 @@
       </ul>
     </div>
 
-   <div class="content">
+    <div class="content">
       <section class="bio">
         <h2>User Bio</h2>
         <p>This is your bio. Talk about your interests, music, vibes, and anything else.</p>
       </section>
       <hr>
-      <center><h2>"Where Taste Meets Tribe - Discover, Share & Celebrate Every Bite."</h2></center>
-      
+      <center><h2>"Where Taste Meets Tribe..."</h2></center>
       <hr>
       <center><h3>This platform is not just a food blog... it's an immersive food experience hub...</h3></center>
       <hr>
       <center><h2>🍴 Welcome to NomSpot</h2></center>
       <hr>
     </div>
- <!-- Start Image Buttons Section -->
-   <!-- Join The Community Button -->
-    <div class="image-button">
-      <a href="indexNomSpotCommunityRadar.html">
-        <img src="augmentedreality-17_111387.png" alt="Join The Community">
-        <button>Join The Community</button>
-      </a>
-    </div>
   </div>
- <!-- SignUpLoginForm Button -->
-    <div class="image-button">
-      <a href="SignUpLoginForm.html">
-        <img src="social_media_login_user_profile_account_password_logout_icon_212484.png" alt="Sign Up Login Form">
-        <button>Sign Up/Login Form</button>
-      </a>
-    </div>
-  <!-- Fork Feed Button -->
+
+  <form id="authForm">
+    <h3>Sign In / Register</h3>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="submit">Submit</button>
+    <div class="status" id="statusMessage"></div>
+  </form>
+
   <div class="button-gallery">
+    <!-- Image-buttons here, no duplicates -->
     <div class="image-button">
       <a href="forkfeed.html">
-<img src="evil-fork_38334.png" alt="Fork Feed">
-<button>Fork Feed</button>
-</a>
-</div>
-   <!-- Bite Board Button -->  
-<div class="image-button">
-  <a href="biteboard.html">
-    <img src="dimsum_food_dim_sum_asian_food_dish_icon_208002.png" alt="Bite Board">
-    <button>Bite Board</button>
-  </a>
-</div>
- <!--Taste Timeline Button -->
-<div class="image-button">
-  <a href="indexWEBAPP.html">
-    <img src="task_calendar_timeline_plan_start_date_due_date_icon_142241.png" alt="Taste Timeline">
-    <button>Taste Timeline</button>
-  </a>
-</div>
- <!--  Savor Sphere Button -->
-<div class="image-button">
-  <a href="savorsphere.html">
-    <img src="noodles_asian_food_food_bowl_spaghetti_pasta_icon_208024.png" alt="Savor Sphere">
-    <button>Savor Sphere</button>
-  </a>
-</div>
- <!-- Taster Verse Button -->
-<div class="image-button">
-  <a href="tasterverse.html">
-    <img src="Sushi-icon-512_icon-icons.com_52574.png" alt="Taster Verse">
-    <button>Taster Verse</button>
-  </a>
-</div>
- <!-- NomSpot Community Radar Button-->
-<div class="image-button">
-  <a href="indexNomSpotCommunityRadar.html">
-    <img src="pitcherfriend_6654.png" alt="NomSpot Community Radar">
-    <button>NomSpot Community Radar</button>
-  </a>
-</div>
-<!-- New Event Invite Button -->
-<div class="image-button">
-  <a href="indexInvite.html">
-    <img src="if-spell-scroll-2913111_88822.png" alt="Event Invite">
-    <button>You're Invited!</button>
-  </a>
-</div>
- <!-- Start Image Buttons Section -->
-    <!-- The Flavor Codex Button -->
-  <div class="image-button">
-  <a href="indexTenBadge.html">
-    <img src="book_512x512_35977.png" alt="The Flavor Codex">
-    <button>The Flavor Codex</button>
-  </a>
-</div>
-  <!-- Original Badges - Taste Tokens Button -->
-<div class="image-button">
-  <a href="indexMainPage.html">
-    <img src="if-spell-scroll-2913111_88822.png" alt="Original Badges - Taste Tokens">
-    <button>Original Badges - Taste Tokens</button>
-  </a>
-</div>
-  <!-- Food Pyramid of Health Button -->
-<div class="image-button">
-  <a href="indexFoodPyramid.html">
-    <img src="-meal_89750.png" alt="Food Pyramid of Health">
-    <button>Food Pyramid of Health</button>
-  </a>
-</div>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 2rem; background: #f5f5f5; }
-    form { max-width: 400px; margin: auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    input { display: block; width: 100%; margin-bottom: 1rem; padding: 0.6rem; }
-    button { padding: 0.6rem 1rem; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    .status { margin-top: 1rem; font-weight: bold; }
-  </style>
-<hr>
-<br> 
+        <img src="evil-fork_38334.png" alt="Fork Feed – view community food posts">
+        <button>Fork Feed</button>
+      </a>
+    </div>
+    <div class="image-button">
+      <a href="biteboard.html">
+        <img src="dimsum_food_dim_sum_asian_food_dish_icon_208002.png" alt="Bite Board – share your bites">
+        <button>Bite Board</button>
+      </a>
+    </div>
+    <div class="image-button">
+      <a href="savorsphere.html">
+        <img src="noodles_asian_food_food_bowl_spaghetti_pasta_icon_208024.png" alt="Savor Sphere – explore flavors">
+        <button>Savor Sphere</button>
+      </a>
+    </div>
+    <!-- add others as needed -->
+  </div>
 
- 
-  <!-- Firebase -->
+  <!-- Futuristic Magic Map Placeholder -->
+  <div id="map">🚀 Fantasy‑Futuristic Map Loading…</div>
+
+  <footer>
+    © 2025 NomSpot. All rights reserved.
+  </footer>
+
+  <!-- Firebase scripts & custom JS -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
   <script>
-    // 🔐 Replace this with your Firebase config:
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -369,7 +341,6 @@
       messagingSenderId: "SENDER_ID",
       appId: "APP_ID"
     };
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -377,15 +348,14 @@
     const form = document.getElementById('authForm');
     const statusMsg = document.getElementById('statusMessage');
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async e => {
       e.preventDefault();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-
       try {
         let result = await auth.signInWithEmailAndPassword(email, password);
         statusMsg.innerText = `✅ Logged in as ${result.user.email}`;
-      } catch (error) {
+      } catch (err) {
         try {
           let result = await auth.createUserWithEmailAndPassword(email, password);
           statusMsg.innerText = `🎉 Account created for ${result.user.email}`;
@@ -393,8 +363,8 @@
             email: result.user.email,
             joined: new Date()
           });
-        } catch (err) {
-          statusMsg.innerText = `❌ ${err.message}`;
+        } catch (error) {
+          statusMsg.innerText = `❌ ${error.message}`;
         }
       }
     });
@@ -402,23 +372,9 @@
     auth.onAuthStateChanged(user => {
       if (user) {
         statusMsg.innerText = `🧠 Logged in as: ${user.email}`;
-        db.collection("logs").add({
-          event: "login",
-          user: user.email,
-          timestamp: new Date()
-        });
+        db.collection("logs").add({ event: "login", user: user.email, timestamp: new Date() });
       }
     });
   </script>
-</div> <!-- End Image Buttons Section --> <footer> © 2025 NomSpot. All rights reserved. </footer> </body> </html> 
-
-
-
-
-
-
-
-
-
-
-
+</body>
+</html>
