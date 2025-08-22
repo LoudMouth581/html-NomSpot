@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>NomSpot Stream & Vote</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f5f5;
+      --text: #333;
+      --accent: #ff6f61;
+      --card-bg: #fff;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --side-bg: #2a2a2a;
+      --side-text: #ddd;
+      --vote-yes: #28a745;
+      --vote-no: #dc3545;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      display:flex;
+      font-family:'Manrope',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      height:100vh;
+      overflow:hidden;
+    }
+    aside {
+      width:200px;
+      background:var(--side-bg);
+      color:var(--side-text);
+      padding:1rem;
+      display:flex;
+      flex-direction:column;
+    }
+    aside h2 {
+      font-family:'Zen Maru Gothic',sans-serif;
+      margin-bottom:1rem;
+      font-size:1.2rem;
+    }
+    aside ul {
+      list-style:none;
+      flex-grow:1;
+    }
+    aside ul li {
+      margin:0.5rem 0;
+    }
+    aside ul li a {
+      color:var(--side-text);
+      text-decoration:none;
+      font-size:0.95rem;
+      display:block;
+      padding:0.3rem;
+      border-radius:4px;
+      transition:background 0.2s;
+    }
+    aside ul li a:hover {
+      background:rgba(255,111,97,0.2);
+    }
+    main {
+      flex-grow:1;
+      display:flex;
+      flex-direction:column;
+    }
+    header {
+      background:var(--accent);
+      color:white;
+      padding:1rem;
+      text-align:center;
+      font-family:'Zen Maru Gothic',sans-serif;
+      font-size:1.5rem;
+    }
+    .stream-container {
+      flex-grow:1;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      position:relative;
+      padding:1rem;
+    }
+    video {
+      width:100%;
+      max-width:600px;
+      border-radius:8px;
+      box-shadow:0 4px 12px var(--shadow);
+    }
+    .controls {
+      margin-top:0.5rem;
+      text-align:center;
+    }
+    button {
+      padding:0.6rem 1.2rem;
+      margin:0 0.5rem;
+      font-size:1rem;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      font-family:'Manrope',sans-serif;
+    }
+    button.record { background:var(--accent); color:white; }
+    button.stop { background:#6c757d; color:white; }
+    footer {
+      padding:0.5rem;
+      background:#e9e9e9;
+      text-align:center;
+      font-size:0.9rem;
+    }
+    .posts {
+      flex-grow:1;
+      overflow-y:auto;
+      padding:1rem;
+    }
+    .post {
+      background:var(--card-bg);
+      padding:0.75rem;
+      margin-bottom:1rem;
+      border-radius:6px;
+      box-shadow:0 2px 6px var(--shadow);
+    }
+    .post-video {
+      width:100%;
+      border-radius:6px;
+    }
+    .votes {
+      margin-top:0.5rem;
+      text-align:right;
+    }
+    .votes button {
+      padding:0.3rem 0.6rem;
+      margin-left:0.3rem;
+      font-size:0.9rem;
+    }
+    .yes { background:var(--vote-yes); color:white; }
+    .no { background:var(--vote-no); color:white; }
+  </style>
+</head>
+<body>
+
+  <aside>
+    <h2>Categories</h2>
+    <ul>
+      <li><a href="#">Streaming</a></li>
+      <li><a href="#">Food</a></li>
+      <li><a href="#">Adventures</a></li>
+      <li><a href="#">Reviews</a></li>
+      <li><a href="#">Local Events</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <header>NomSpot Live Stream & Vote</header>
+
+    <div class="stream-container">
+      <video id="preview" autoplay muted playsinline></video>
+    </div>
+    <div class="controls">
+      <button class="record">Start Stream</button>
+      <button class="stop" disabled>Stop Stream</button>
+    </div>
+
+    <div class="posts" id="posts"></div>
+    <footer>NomSpot – Community-Powered Streaming</footer>
+  </main>
+
+  <script>
+    const preview = document.getElementById('preview');
+    const recordBtn = document.querySelector('.record');
+    const stopBtn = document.querySelector('.stop');
+    const postsEl = document.getElementById('posts');
+    let mediaRecorder, chunks=[], postCount=0;
+
+    async function startStream() {
+      const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+      preview.srcObject = stream;
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => chunks.push(e.data);
+      mediaRecorder.onstop = buildPost;
+      mediaRecorder.start();
+      recordBtn.disabled = true;
+      stopBtn.disabled = false;
+    }
+
+    function stopStream() {
+      mediaRecorder.stop();
+      preview.srcObject.getTracks().forEach(t => t.stop());
+      recordBtn.disabled = false;
+      stopBtn.disabled = true;
+    }
+
+    function buildPost() {
+      const blob = new Blob(chunks, {type:'video/webm'});
+      chunks = [];
+      const url = URL.createObjectURL(blob);
+      const postEl = document.createElement('div');
+      postEl.className = 'post';
+      postEl.innerHTML = `
+        <video class="post-video" src="${url}" controls></video>
+        <div class="votes">
+          <span>Audience Vote:</span>
+          <button class="yes">👍 0</button>
+          <button class="no">👎 0</button>
+        </div>`;
+      postsEl.prepend(postEl);
+      attachVoting(postEl);
+      postCount++;
+    }
+
+    function attachVoting(postEl) {
+      const yesBtn = postEl.querySelector('.yes');
+      const noBtn = postEl.querySelector('.no');
+      let yes = 0, no = 0;
+      yesBtn.onclick = () => yesBtn.textContent = `👍 ${++yes}`;
+      noBtn.onclick = () => noBtn.textContent = `👎 ${++no}`;
+    }
+
+    recordBtn.addEventListener('click', startStream);
+    stopBtn.addEventListener('click', stopStream);
+  </script>
+
+</body>
+</html>
