@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>USA Natal Chart Dashboard</title>
+<title>Real-Time Solar System Natal Chart</title>
 <style>
+  /* Import futuristic font */
   @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 
   :root {
@@ -15,17 +16,15 @@
     --color-karma: conic-gradient(red, orange, yellow, green, blue, indigo, violet, red);
   }
 
-  /* Theme variables will be set dynamically in JS */
-
   body, html {
     margin: 0; padding: 0; height: 100%;
     font-family: 'Orbitron', sans-serif;
+    background: radial-gradient(circle at center, #0a0f1e, #01000a);
+    color: #fff;
   }
 
   .app {
     min-height: 100vh;
-    background: var(--bg-gradient);
-    color: var(--color-text);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -35,7 +34,6 @@
   .theme-switcher {
     margin: 1rem 0;
   }
-
   .theme-switcher button {
     margin: 0 0.5rem;
     padding: 0.5rem 1rem;
@@ -43,27 +41,23 @@
     border: none;
     border-radius: 4px;
     background: rgba(255 255 255 / 0.2);
-    color: var(--color-text);
+    color: #fff;
     transition: background-color 0.3s ease;
   }
   .theme-switcher button:hover {
     background: rgba(255 255 255 / 0.4);
   }
 
-  .starfield {
+  /* Starfield background effect */
+  body.starfield {
     background-color: transparent;
-    background-image: radial-gradient(white 1px, transparent 1px),
+    background-image:
+      radial-gradient(white 1px, transparent 1px),
       radial-gradient(white 1px, transparent 1px);
     background-size: 50px 50px;
     background-position: 0 0, 25px 25px;
     animation: sparkle 20s infinite linear;
-    width: 100%;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
-
   @keyframes sparkle {
     0%, 100% { opacity: 0.8; }
     50% { opacity: 1; }
@@ -80,8 +74,8 @@
   .chart-container h2 {
     text-align: center;
     margin-top: 2rem;
-    color: var(--color-text);
-    text-shadow: 0 0 5px var(--color-text);
+    color: #fff;
+    text-shadow: 0 0 5px #fff;
   }
 
   .dashboard {
@@ -111,13 +105,12 @@
     align-items: center;
     justify-content: center;
     animation: fillGauge 3s ease-in-out forwards;
+    --percent: 0%;
   }
-
   @keyframes fillGauge {
     0% { transform: scaleX(0); }
     100% { transform: scaleX(1); }
   }
-
   .gauge.zodiac {
     background: conic-gradient(var(--color-zodiac) var(--percent), #333 0);
   }
@@ -138,173 +131,368 @@
     position: absolute;
     bottom: 10px;
     font-size: 1rem;
-    color: var(--color-text);
+    color: #fff;
   }
-
   .gauge-icon {
     font-size: 2.5rem;
   }
-
   .value {
     margin-top: 0.5rem;
     font-size: 1.2rem;
-    color: var(--color-text);
+    color: #fff;
   }
 
   .solar-system {
-    display: flex;
-    justify-content: center;
-    margin: 2rem 0;
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 2rem auto;
   }
 
   .solar-svg {
-    width: 200px;
-    height: 200px;
+    width: 100%;
+    height: 100%;
+  }
+
+  .orbit {
+    fill: none;
+    stroke: #555;
+    stroke-width: 1;
   }
 
   .planet {
-    transform-origin: 100px 100px;
-    animation: orbit 10s linear infinite;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #fff;
+    user-select: none;
+    transition: left 1s ease, top 1s ease;
   }
 
-  .sun { animation-duration: 20s; }
-  .earth { animation-duration: 5s; }
-
-  @keyframes orbit {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  .sun {
+    background: #ffdd33;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    left: 50%;
+    top: 50%;
+    margin-left: -18px;
+    margin-top: -18px;
+    position: absolute;
+    z-index: 10;
+    box-shadow: 0 0 12px #ffdd33aa;
   }
 
-  footer {
-    text-align: center;
-    margin-top: 2rem;
-    color: var(--color-text);
-  }
+  .mercury { background: #888; }
+  .venus   { background: #daa520; }
+  .earth   { background: #0a7cff; }
+  .mars    { background: #d14; }
+  .jupiter { background: #d79e5a; }
+  .saturn  { background: #cdb87a; }
+  .uranus  { background: #5ff; }
+  .neptune { background: #3366cc; }
+  .pluto   { background: #a9967e; }
 </style>
 </head>
 <body>
 <div id="root"></div>
 
-<!-- React & ReactDOM -->
+<!-- React & ReactDOM (v18 production builds) -->
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-<!-- Astronomia CDN -->
+<!-- Astronomia library for celestial calculations -->
 <script src="https://cdn.jsdelivr.net/npm/astronomia@1.11.0/astronomia.min.js"></script>
 
 <script>
-  const { useState, useEffect } = React;
-  const { planetaryPosition } = astron; // `astron` global from Astronomia
+  // Ensure all scripts and DOM are loaded before running React code
+  window.onload = () => {
+    const { useState, useEffect } = React;
+    const astronomia = window.astronomia || {};
 
-  const themes = {
-    dark: {
-      '--bg-gradient': 'radial-gradient(circle at center, #0a0f1e, #01000a)',
-      '--color-text': '#fff',
-    },
-    light: {
-      '--bg-gradient': 'radial-gradient(circle at center, #f0f0f0, #cccccc)',
-      '--color-text': '#222',
-    },
-    cosmic: {
-      '--bg-gradient': 'radial-gradient(circle at center, #2e003e, #000)',
-      '--color-text': '#e0c8ff',
-    },
-  };
+    // Define planets with Unicode symbols and Astronomia VSOP87 keys
+    const planets = [
+      { name: 'sun', label: '☀', vsopName: null },
+      { name: 'mercury', label: '☿', vsopName: 'mercury' },
+      { name: 'venus', label: '♀', vsopName: 'venus' },
+      { name: 'earth', label: '⊕', vsopName: 'earth' },
+      { name: 'mars', label: '♂', vsopName: 'mars' },
+      { name: 'jupiter', label: '♃', vsopName: 'jupiter' },
+      { name: 'saturn', label: '♄', vsopName: 'saturn' },
+      { name: 'uranus', label: '♅', vsopName: 'uranus' },
+      { name: 'neptune', label: '♆', vsopName: 'neptune' },
+      { name: 'pluto', label: '♇', vsopName: 'pluto' },
+    ];
 
-  function Gauge({ type, icon, label, value, percent }) {
-    return React.createElement(
-      'div',
-      { className: 'gauge-card' },
-      React.createElement(
+    // Orbit radii in pixels for each planet orbit circle
+    const orbitRadii = {
+      sun: 0,
+      mercury: 40,
+      venus: 60,
+      earth: 80,
+      mars: 100,
+      jupiter: 130,
+      saturn: 160,
+      uranus: 190,
+      neptune: 220,
+      pluto: 250,
+    };
+
+    // Degrees to radians helper
+    function degToRad(deg) {
+      return deg * Math.PI / 180;
+    }
+
+    // Convert polar to Cartesian coordinates, center (cx, cy), radius, angle in degrees
+    function polarToCartesian(cx, cy, radius, angleDeg) {
+      const angleRad = degToRad(angleDeg);
+      return {
+        x: cx + radius * Math.cos(angleRad),
+        y: cy + radius * Math.sin(angleRad)
+      };
+    }
+
+    // Gauge component (React functional component)
+    function Gauge({ type, icon, label, value, percent }) {
+      // Clamp percent between 0 and 100 to avoid CSS issues
+      const safePercent = Math.min(Math.max(percent, 0), 100);
+
+      return React.createElement(
         'div',
-        {
-          className: `gauge ${type}`,
-          style: { '--percent': `${percent}%` }
-        },
+        { className: 'gauge-card' },
         React.createElement(
           'div',
-          { className: 'gauge-content' },
-          React.createElement('div', { className: 'gauge-icon' }, icon),
-          label
-        )
-      ),
-      React.createElement('div', { className: 'value' }, value)
-    );
-  }
+          {
+            className: `gauge ${type}`,
+            style: { '--percent': `${safePercent}%` }
+          },
+          React.createElement(
+            'div',
+            { className: 'gauge-content' },
+            React.createElement('div', { className: 'gauge-icon' }, icon),
+            label
+          )
+        ),
+        React.createElement('div', { className: 'value' }, value)
+      );
+    }
 
-  function USANatalChart() {
-    const [positions, setPositions] = useState({ sun: '...' });
+    // Main App component
+    function SolarSystemNatalChart() {
+      const [positions, setPositions] = useState({}); // Store planet ecliptic longitudes
 
-    useEffect(() => {
-      document.body.classList.add('starfield');
-      return () => document.body.classList.remove('starfield');
-    }, []);
+      // Add starfield background on mount, clean up on unmount
+      useEffect(() => {
+        document.body.classList.add('starfield');
+        return () => document.body.classList.remove('starfield');
+      }, []);
 
-    useEffect(() => {
-      try {
-        const lon = planetaryPosition.ephemeris('sun', new Date());
-        setPositions({ sun: lon.lon.toFixed(2) });
-      } catch {
-        setPositions({ sun: 'N/A' });
+      useEffect(() => {
+        const { julian, solar, vsop87 } = astronomia;
+
+        // Guard: ensure these libs are available
+        if (!julian || !solar || !vsop87) {
+          console.error('Astronomia modules missing.');
+          return;
+        }
+
+        // Update planet positions every 10 seconds
+        function updatePositions() {
+          const now = new Date();
+
+          // Julian day with fractional time
+          const jd = julian.CalendarGregorianToJD(
+            now.getFullYear(),
+            now.getMonth() + 1,
+            now.getDate() + now.getHours()/24 + now.getMinutes()/1440 + now.getSeconds()/86400
+          );
+
+          const pos = {};
+
+          // Sun's apparent ecliptic longitude in degrees
+          pos.sun = ((solar.apparentLongitude(jd) * 180) / Math.PI) % 360;
+
+          planets.forEach(({ name, vsopName }) => {
+            if (!vsopName || name === 'sun') return;
+
+            const planetData = vsop87[vsopName]?.position?.(jd);
+            if (planetData && typeof planetData.lon === 'number') {
+              let lonDeg = (planetData.lon * 180 / Math.PI) % 360;
+              if (lonDeg < 0) lonDeg += 360;
+              pos[name] = lonDeg;
+            } else {
+              console.warn(`No VSOP87 data for planet ${name}`);
+            }
+          });
+
+          setPositions(pos);
+        }
+
+        updatePositions();
+        const intervalId = setInterval(updatePositions, 10000);
+
+        return () => clearInterval(intervalId);
+      }, [astronomia]);
+
+      // Helper to convert longitude to percent of 360
+      function toPercent(deg) {
+        if (typeof deg !== 'number') return 0;
+        return (deg / 360) * 100;
       }
-    }, []);
 
-    return React.createElement(
-      'div',
-      { className: 'chart-container' },
-      React.createElement('h1', null, '🌌 USA Natal Chart Dashboard'),
-      React.createElement('h2', null, 'Astrological Insights in Real Time'),
-      React.createElement(
+      // Zodiac signs and elements — simple mapping for demo
+      const zodiacSigns = [
+        'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
+        'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
+      ];
+
+      // Get zodiac sign from ecliptic longitude (0° Aries start)
+      function getZodiacSign(deg) {
+        const index = Math.floor(deg / 30) % 12;
+        return zodiacSigns[index];
+      }
+
+      // Get element from zodiac sign
+      const elementsMap = {
+        Aries: 'Fire',
+        Leo: 'Fire',
+        Sagittarius: 'Fire',
+        Taurus: 'Earth',
+        Virgo: 'Earth',
+        Capricorn: 'Earth',
+        Gemini: 'Air',
+        Libra: 'Air',
+        Aquarius: 'Air',
+        Cancer: 'Water',
+        Scorpio: 'Water',
+        Pisces: 'Water'
+      };
+
+      // Example: Calculate age and energy percent (dummy for now)
+      const agePercent = new Date().getHours() / 24 * 100;
+      const energyPercent = new Date().getMinutes() / 60 * 100;
+
+      // Karma gauge fake percent oscillation
+      const karmaPercent = (Math.sin(Date.now() / 10000) + 1) / 2 * 100;
+
+      // Size of the solar system container
+      const size = 400;
+      const cx = size / 2;
+      const cy = size / 2;
+
+      return React.createElement(
         'div',
-        { className: 'dashboard' },
-        React.createElement(Gauge, { type: 'zodiac', icon: '🦀', label: 'Cancer ♋', value: `Sun Position: ${positions.sun}°`, percent: 60 }),
-        React.createElement(Gauge, { type: 'element', icon: '💧', label: 'Water Element', value: 'Element: Water', percent: 70 }),
-        React.createElement(Gauge, { type: 'age', icon: '🕰️', label: '249 Years', value: 'Age: 249', percent: 100 }),
-        React.createElement(Gauge, { type: 'energy', icon: '⚡', label: 'Dynamic Aura', value: 'Energy: Ideals in Motion', percent: 80 }),
-        React.createElement(Gauge, { type: 'karma', icon: '🧘', label: 'Chakra Flow', value: 'Karma: Transforming Power', percent: 90 }),
-      ),
-      React.createElement(
-        'div',
-        { className: 'solar-system' },
+        { className: 'app' },
+        React.createElement('h1', null, 'Real-Time Solar System Natal Chart'),
+
+        // Theme switcher
+        React.createElement('div', { className: 'theme-switcher' },
+          React.createElement('button', {
+            onClick: () => document.body.classList.remove('starfield')
+          }, 'Light Mode'),
+          React.createElement('button', {
+            onClick: () => document.body.classList.add('starfield')
+          }, 'Starfield Mode')
+        ),
+
+        // Gauges dashboard
+        React.createElement('div', { className: 'dashboard' },
+          React.createElement(Gauge, {
+            type: 'zodiac',
+            icon: '♈',
+            label: 'Zodiac',
+            value: positions.sun ? getZodiacSign(positions.sun) : 'Loading...',
+            percent: positions.sun ? toPercent(positions.sun) : 0
+          }),
+          React.createElement(Gauge, {
+            type: 'element',
+            icon: '♒',
+            label: 'Element',
+            value: positions.sun ? elementsMap[getZodiacSign(positions.sun)] : 'Loading...',
+            percent: positions.sun ? toPercent(positions.sun) : 0
+          }),
+          React.createElement(Gauge, {
+            type: 'age',
+            icon: '⏳',
+            label: 'Age',
+            value: `${Math.floor(agePercent)}%`,
+            percent: agePercent
+          }),
+          React.createElement(Gauge, {
+            type: 'energy',
+            icon: '⚡',
+            label: 'Energy',
+            value: `${Math.floor(energyPercent)}%`,
+            percent: energyPercent
+          }),
+          React.createElement(Gauge, {
+            type: 'karma',
+            icon: '☯',
+            label: 'Karma',
+            value: `${karmaPercent.toFixed(1)}%`,
+            percent: karmaPercent
+          })
+        ),
+
+        // Solar system visualization with orbits and planets
         React.createElement(
-          'svg',
-          { viewBox: '0 0 200 200', className: 'solar-svg', 'aria-label': 'Spinning solar system' },
-          React.createElement('circle', { cx: 100, cy: 100, r: 80, fill: 'none', stroke: '#555' }),
-          React.createElement('circle', { className: 'planet sun', cx: 100, cy: 40, r: 8, fill: '#ff0' }),
-          React.createElement('circle', { className: 'planet earth', cx: 100, cy: 160, r: 5, fill: '#0af' })
+          'div',
+          { className: 'solar-system', style: { width: size, height: size } },
+          React.createElement(
+            'svg',
+            { className: 'solar-svg', viewBox: `0 0 ${size} ${size}`, xmlns: 'http://www.w3.org/2000/svg' },
+            // Draw orbits as circles
+            planets.map(({ name }) => {
+              if (name === 'sun') return null;
+              return React.createElement('circle', {
+                key: name + '-orbit',
+                className: 'orbit',
+                cx,
+                cy,
+                r: orbitRadii[name],
+              });
+            })
+          ),
+
+          // Sun at center
+          React.createElement(
+            'div',
+            { className: 'planet sun' },
+            '☀'
+          ),
+
+          // Draw planets positioned on orbit using absolute divs
+          planets.filter(p => p.name !== 'sun').map(({ name, label }) => {
+            const angle = positions[name] || 0;
+            const radius = orbitRadii[name] || 0;
+            const pos = polarToCartesian(cx, cy, radius, angle - 90); // -90 to start at top
+
+            return React.createElement(
+              'div',
+              {
+                key: name,
+                className: `planet ${name}`,
+                style: {
+                  left: pos.x - 12 + 'px', // center 24px div
+                  top: pos.y - 12 + 'px',
+                }
+              },
+              label
+            );
+          })
         )
-      ),
-      React.createElement('footer', null, '⚡ Powered by Astronomia & Pure React — Stars Included')
-    );
-  }
+      );
+    }
 
-  function App() {
-    const [theme, setTheme] = useState('cosmic');
-
-    useEffect(() => {
-      const root = document.documentElement;
-      const themeVars = themes[theme];
-      for (const [key, value] of Object.entries(themeVars)) {
-        root.style.setProperty(key, value);
-      }
-    }, [theme]);
-
-    return React.createElement(
-      'div',
-      { className: 'app' },
-      React.createElement(
-        'div',
-        { className: 'theme-switcher' },
-        'Theme: ',
-        Object.keys(themes).map(t =>
-          React.createElement('button', { key: t, onClick: () => setTheme(t) }, t)
-        )
-      ),
-      React.createElement(USANatalChart)
-    );
-  }
-
-  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+    // Render the app to the root
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(SolarSystemNatalChart));
+  };
 </script>
 </body>
 </html>
