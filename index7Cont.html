@@ -2,21 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TRON World Map - Live Earth & Weather</title>
+  <title>TRON World Map - CSS Continent Sketch</title>
 
+  <!-- Orbitron Font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
+
   <style>
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
       background: radial-gradient(circle at center, #000010 0%, #000000 100%);
       color: #00fff7;
-      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
       padding: 20px 0 40px;
+      overflow-x: hidden;
     }
 
     .alert-banner {
@@ -30,7 +32,6 @@
       width: 960px;
       margin-bottom: 30px;
       border-radius: 8px;
-      user-select: none;
     }
 
     @keyframes alert-pulse {
@@ -38,56 +39,56 @@
       50% { opacity: 0.5; }
     }
 
-    #usgs-alert, #weather-alert {
-      width: 960px;
-      margin: 8px auto 30px;
-      font-size: 1rem;
-      text-align: center;
-      padding: 0.6rem 12px;
-      border-radius: 6px;
-      user-select: none;
-    }
-    #usgs-alert {
-      background: rgba(255,144,0,0.85);
-      color: #000;
-      box-shadow: 0 0 8px rgba(255,144,0,0.6);
-    }
-    #weather-alert {
-      background: rgba(0,144,255,0.85);
-      color: #000;
-      box-shadow: 0 0 8px rgba(0,144,255,0.6);
-    }
-
     .map-container {
       width: 960px;
       height: 720px;
-      background-image: url('https://www.slideteam.net/media/catalog/product/cache/960x720/o/u/outline_boundary_map_of_7_continents_of_world_slide01.jpg');
-      background-size: cover;
-      background-position: center;
-      border: 4px solid #00fff7;
-      box-shadow: 0 0 30px #00fff7, inset 0 0 20px #00fff7;
-      border-radius: 12px;
-      margin-bottom: 40px;
       position: relative;
-      user-select: none;
+      background: radial-gradient(ellipse at center, #001018 0%, #000 100%);
+      border: 4px solid #00fff7;
+      border-radius: 12px;
+      box-shadow: 0 0 30px #00fff7, inset 0 0 20px #00fff7;
+      margin-bottom: 40px;
+      overflow: hidden;
     }
+
+    .continent {
+      position: absolute;
+      background-color: rgba(0, 255, 247, 0.12);
+      border: 2px dashed #00fff7;
+      border-radius: 20%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(0,255,247,0.5); }
+      50% { box-shadow: 0 0 20px rgba(0,255,247,1); }
+    }
+
+    /* Continent shapes */
+    .africa        { top: 340px; left: 440px; width: 120px; height: 180px; }
+    .antarctica    { top: 620px; left: 360px; width: 240px; height: 60px; }
+    .asia          { top: 160px; left: 580px; width: 200px; height: 200px; }
+    .europe        { top: 150px; left: 480px; width: 100px; height: 100px; }
+    .north-america { top: 100px; left: 180px; width: 180px; height: 200px; }
+    .south-america { top: 350px; left: 280px; width: 100px; height: 160px; }
+    .oceania       { top: 460px; left: 720px; width: 100px; height: 100px; }
 
     .map-point {
       position: absolute;
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       border: 2px solid #00fff7;
-      background-color: #001f1f;
-      box-shadow: 0 0 12px #00fff7, inset 0 0 8px #00fff7;
+      background-color: rgba(0, 255, 247, 0.6);
+      box-shadow: 0 0 10px #00fff7;
       cursor: pointer;
-      transition: transform 0.2s ease, background-color 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 14px;
       color: #00fff7;
       font-weight: bold;
-      font-size: 14px;
+      transition: transform 0.2s ease, background-color 0.2s ease;
     }
 
     .map-point:hover,
@@ -95,7 +96,6 @@
       background-color: #00fff7;
       color: #000;
       transform: scale(1.3);
-      outline: none;
       z-index: 10;
     }
 
@@ -119,7 +119,6 @@
       text-decoration: none;
       color: inherit;
       display: block;
-      outline: none;
     }
 
     .card {
@@ -127,8 +126,6 @@
       height: 190px;
       perspective: 1000px;
       cursor: pointer;
-      outline-offset: 3px;
-      user-select: none;
     }
 
     .card-inner {
@@ -164,7 +161,6 @@
       text-align: center;
       padding: 12px;
       font-size: 0.9rem;
-      user-select: none;
     }
 
     .card-back {
@@ -179,9 +175,7 @@
       border-radius: 10px;
       background-color: #111;
       overflow: hidden;
-      position: relative;
       box-shadow: inset 0 0 6px #00fff7;
-      align-self: center;
     }
 
     .karma-fill {
@@ -194,104 +188,107 @@
   </style>
 </head>
 <body>
+  <div class="alert-banner">⚠️ HOLOGRAPHIC WARNING: High tectonic activity detected in the Pacific Plate…</div>
 
-  <div class="alert-banner">
-    ⚠️ HOLOGRAPHIC WARNING: High tectonic activity detected in the Pacific Plate – Monitoring seismic vibrations...
+  <div class="map-container">
+    <!-- CSS-Sketch Continents -->
+    <div class="continent africa"></div>
+    <div class="continent antarctica"></div>
+    <div class="continent asia"></div>
+    <div class="continent europe"></div>
+    <div class="continent north-america"></div>
+    <div class="continent south-america"></div>
+    <div class="continent oceania"></div>
   </div>
 
-  <div id="usgs-alert">Loading seismic data...</div>
-  <div id="weather-alert">Loading weather alerts...</div>
-
-  <div class="map-container"></div>
   <div class="cards-container"></div>
 
   <audio id="hoverSound" src="https://assets.mixkit.co/sfx/preview/mixkit-technology-interface-click-1127.mp3" preload="auto"></audio>
 
   <script>
     const continents = [
-      { name: 'Africa', emoji: '🌍', element: 'Earth', sign: 'Taurus', age: 'Ancient', energy: 'Grounded', karma: 75, href: '#', mapPosition: { top: 370, left: 470 } },
-      { name: 'Antarctica', emoji: '❄️', element: 'Water', sign: 'Capricorn', age: 'Pristine', energy: 'Calm', karma: 50, href: '#', mapPosition: { top: 645, left: 460 } },
-      { name: 'Asia', emoji: '🌏', element: 'Fire', sign: 'Aries', age: 'Ancient', energy: 'Dynamic', karma: 90, href: '#', mapPosition: { top: 230, left: 620 } },
-      { name: 'Europe', emoji: '🌍', element: 'Air', sign: 'Gemini', age: 'Historic', energy: 'Intellectual', karma: 65, href: '#', mapPosition: { top: 200, left: 510 } },
-      { name: 'North America', emoji: '🌎', element: 'Air', sign: 'Libra', age: 'Modern', energy: 'Balanced', karma: 80, href: '#', mapPosition: { top: 150, left: 250 } },
-      { name: 'Oceania', emoji: '🌊', element: 'Water', sign: 'Pisces', age: 'Ancient', energy: 'Spiritual', karma: 55, href: '#', mapPosition: { top: 500, left: 740 } },
-      { name: 'South America', emoji: '🌎', element: 'Fire', sign: 'Sagittarius', age: 'Lush', energy: 'Passionate', karma: 70, href: '#', mapPosition: { top: 420, left: 330 } },
+      { name: 'Africa',        emoji: '🌍', element: 'Earth', sign: 'Taurus',      age: 'Ancient',    energy: 'Grounded',    karma: 75, href: '#', top: 420, left: 480 },
+      { name: 'Antarctica',    emoji: '❄️', element: 'Water', sign: 'Capricorn',   age: 'Pristine',   energy: 'Calm',        karma: 50, href: '#', top: 640, left: 460 },
+      { name: 'Asia',          emoji: '🌏', element: 'Fire',  sign: 'Aries',       age: 'Ancient',    energy: 'Dynamic',     karma: 90, href: '#', top: 230, left: 660 },
+      { name: 'Europe',        emoji: '🌍', element: 'Air',   sign: 'Gemini',      age: 'Historic',   energy: 'Intellectual',karma: 65, href: '#', top: 180, left: 530 },
+      { name: 'North America', emoji: '🌎', element: 'Air',   sign: 'Libra',       age: 'Modern',     energy: 'Balanced',    karma: 80, href: '#', top: 140, left: 250 },
+      { name: 'South America', emoji: '🌎', element: 'Fire',  sign: 'Sagittarius', age: 'Lush',       energy: 'Passionate',  karma: 70, href: '#', top: 400, left: 320 },
+      { name: 'Oceania',       emoji: '🌊', element: 'Water', sign: 'Pisces',      age: 'Ancient',    energy: 'Spiritual',   karma: 55, href: '#', top: 500, left: 760 },
     ];
 
-    const mapContainer = document.querySelector('.map-container');
-    const cardsContainer = document.querySelector('.cards-container');
+    const map = document.querySelector('.map-container');
+    const cards = document.querySelector('.cards-container');
     const hoverSound = document.getElementById('hoverSound');
 
-    function playHoverSound() {
+    function playSound() {
       hoverSound.currentTime = 0;
       hoverSound.play().catch(() => {});
     }
 
-    continents.forEach((continent, index) => {
+    // Add points and cards
+    continents.forEach((c, i) => {
       const point = document.createElement('button');
       point.className = 'map-point';
-      point.style.top = continent.mapPosition.top + 'px';
-      point.style.left = continent.mapPosition.left + 'px';
-      point.title = continent.name;
-      point.dataset.index = index;
-      point.addEventListener('click', () => {
-        activateCard(index);
-        playHoverSound();
-      });
-      point.addEventListener('mouseenter', playHoverSound);
-      point.addEventListener('focus', () => activateCard(index));
-      mapContainer.appendChild(point);
-    });
+      point.style.top = c.top + 'px';
+      point.style.left = c.left + 'px';
+      point.innerText = c.emoji;
+      point.dataset.index = i;
 
-    continents.forEach((continent, index) => {
+      point.addEventListener('click', () => highlight(i));
+      point.addEventListener('mouseenter', playSound);
+
+      map.appendChild(point);
+
+      // Cards
+      const cardLink = document.createElement('a');
+      cardLink.href = c.href;
+      cardLink.className = 'card-link';
+
       const card = document.createElement('div');
       card.className = 'card';
-      card.dataset.index = index;
+      card.dataset.index = i;
 
       const cardInner = document.createElement('div');
       cardInner.className = 'card-inner';
 
-      const cardFront = document.createElement('div');
-      cardFront.className = 'card-front';
-      cardFront.innerHTML = `
-        <h4>${continent.emoji} ${continent.name}</h4>
-        <div>Element: ${continent.element}</div>
-        <div>Sign: ${continent.sign}</div>
-        <div>Age: ${continent.age}</div>
-        <div>Energy: ${continent.energy}</div>
-        <div class="karma-bar"><div class="karma-fill" style="height: ${continent.karma}%"></div></div>
-      `;
+      const front = document.createElement('div');
+      front.className = 'card-front';
+      front.innerHTML = `
+        <h4>${c.emoji} ${c.name}</h4>
+        <div>Element: ${c.element}</div>
+        <div>Sign: ${c.sign}</div>
+        <div>Age: ${c.age}</div>
+        <div>Energy: ${c.energy}</div>
+        <div class="karma-bar">
+          <div class="karma-fill" style="height:${c.karma}%"></div>
+        </div>`;
 
-      const cardBack = document.createElement('div');
-      cardBack.className = 'card-back';
-      cardBack.innerHTML = `<h5>Birth Chart</h5><div>[Astrological details here]</div>`;
+      const back = document.createElement('div');
+      back.className = 'card-back';
+      back.innerHTML = `<h5>Birth Chart</h5><div class="birth-chart">[Astrological Info]</div>`;
 
-      cardInner.appendChild(cardFront);
-      cardInner.appendChild(cardBack);
-      card.appendChild(cardInner);
-      cardsContainer.appendChild(card);
+      cardInner.append(front, back);
+      card.append(cardInner);
+      cardLink.append(card);
+      cards.append(cardLink);
 
       card.addEventListener('click', () => {
         card.classList.toggle('active');
-        playHoverSound();
-      });
-      card.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          card.classList.toggle('active');
-          playHoverSound();
-        }
+        playSound();
       });
     });
 
-    function activateCard(index) {
+    function highlight(i) {
       document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
-      document.querySelectorAll('.map-point').forEach(point => point.classList.remove('active'));
-      const card = document.querySelector(`.card[data-index='${index}']`);
-      const point = document.querySelector(`.map-point[data-index='${index}']`);
-      if (card) card.classList.add('active');
-      if (point) point.classList.add('active');
-      card?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.querySelectorAll('.map-point').forEach(p => p.classList.remove('active'));
+
+      const selectedCard = document.querySelector(`.card[data-index="${i}"]`);
+      const selectedPoint = document.querySelector(`.map-point[data-index="${i}"]`);
+
+      selectedCard.classList.add('active');
+      selectedPoint.classList.add('active');
+      selectedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      playSound();
     }
   </script>
 </body>
