@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Continents Trading Card Map</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #111;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+    }
+
+    .map-container {
+      position: relative;
+      width: 960px;
+      height: 720px;
+      margin: 40px auto;
+      background-image: url('https://www.slideteam.net/media/catalog/product/cache/960x720/o/u/outline_boundary_map_of_7_continents_of_world_slide01.jpg');
+      background-size: cover;
+      border: 5px solid #333;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    }
+
+    .card {
+      position: absolute;
+      width: 120px;
+      height: 160px;
+      background-color: rgba(0, 0, 0, 0.8);
+      border: 2px solid #e91e63;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px #e91e63;
+      z-index: 10;
+    }
+
+    /* Approximate positions - adjust as needed */
+    .africa {
+      top: 340px;
+      left: 450px;
+    }
+
+    .asia {
+      top: 200px;
+      left: 640px;
+    }
+
+    .europe {
+      top: 180px;
+      left: 500px;
+    }
+
+    .north-america {
+      top: 160px;
+      left: 200px;
+    }
+
+    .south-america {
+      top: 400px;
+      left: 260px;
+    }
+
+    .australia {
+      top: 460px;
+      left: 780px;
+    }
+
+    .antarctica {
+      bottom: 20px;
+      left: 360px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="map-container">
+    <div class="card africa">🌍 Africa</div>
+    <div class="card asia">🌏 Asia</div>
+    <div class="card europe">🌍 Europe</div>
+    <div class="card north-america">🌎 North America</div>
+    <div class="card south-america">🌎 South America</div>
+    <div class="card australia">🌏 Australia</div>
+    <div class="card antarctica">❄️ Antarctica</div>
+  </div>
+
+</body>
+</html>
