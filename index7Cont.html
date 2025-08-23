@@ -1,98 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Continents Trading Card Map</title>
+  <meta charset="UTF-8" />
+  <title>TRON World Map - Holo Cards</title>
+
+  <!-- Orbitron Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
+
   <style>
     body {
       margin: 0;
-      background-color: #111;
-      font-family: 'Segoe UI', sans-serif;
-      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at center, #000010 0%, #000000 100%);
+      color: #00fff7;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 0;
     }
 
+    /* ALERT BANNER */
+    .alert-banner {
+      background: linear-gradient(90deg, #ff004c, #ff0088, #ff004c);
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      font-weight: bold;
+      text-shadow: 0 0 10px #000;
+      animation: alert-pulse 1.5s infinite;
+      width: 960px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+    }
+
+    @keyframes alert-pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    /* MAP BACKGROUND */
     .map-container {
-      position: relative;
       width: 960px;
       height: 720px;
-      margin: 40px auto;
       background-image: url('https://www.slideteam.net/media/catalog/product/cache/960x720/o/u/outline_boundary_map_of_7_continents_of_world_slide01.jpg');
       background-size: cover;
-      border: 5px solid #333;
-      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      background-position: center;
+      border: 4px solid #00fff7;
+      box-shadow: 0 0 30px #00fff7, inset 0 0 20px #00fff7;
+      border-radius: 12px;
+      margin-bottom: 40px;
     }
 
+    /* CARDS CONTAINER */
+    .cards-container {
+      width: 960px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      justify-items: center;
+    }
+
+    /* CARD BASE STYLES */
     .card {
+      width: 150px;
+      height: 190px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s ease;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+
+    .card:hover .card-inner,
+    .card:focus .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
       position: absolute;
-      width: 120px;
-      height: 160px;
-      background-color: rgba(0, 0, 0, 0.8);
-      border: 2px solid #e91e63;
-      border-radius: 8px;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border: 2px solid;
+      border-image: linear-gradient(45deg, #00fff7, #ff00ff, #00ffae, #00fff7) 1;
+      border-radius: 12px;
+      background: rgba(0, 0, 20, 0.9);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      box-shadow: 0 0 20px #00fff7;
+      color: #00fff7;
       text-align: center;
-      padding: 10px;
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      padding: 12px;
+      font-size: 0.9rem;
+      transition: background 0.3s;
     }
 
-    .card:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 15px #e91e63;
-      z-index: 10;
+    .card-front {
+      z-index: 2;
     }
 
-    /* Approximate positions - adjust as needed */
-    .africa {
-      top: 340px;
-      left: 450px;
+    .card-back {
+      transform: rotateY(180deg);
     }
 
-    .asia {
-      top: 200px;
-      left: 640px;
+    .card-front h4 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      text-shadow: 0 0 5px #00fff7;
     }
 
-    .europe {
-      top: 180px;
-      left: 500px;
+    .card-back h5 {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      text-shadow: 0 0 4px #ff00ff;
     }
 
-    .north-america {
-      top: 160px;
-      left: 200px;
+    .birth-chart {
+      font-size: 0.75rem;
+      line-height: 1.4;
     }
 
-    .south-america {
-      top: 400px;
-      left: 260px;
+    /* KARMA BAR */
+    .karma-bar {
+      margin-top: 10px;
+      width: 20px;
+      height: 100px;
+      border: 1px solid #fff;
+      border-radius: 10px;
+      background-color: #111;
+      overflow: hidden;
+      position: relative;
+      box-shadow: inset 0 0 6px #00fff7;
     }
 
-    .australia {
-      top: 460px;
-      left: 780px;
+    .karma-fill {
+      background: linear-gradient(to top, #00ff00, #ffff00, #ff0000);
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      transition: height 0.4s;
     }
 
-    .antarctica {
-      bottom: 20px;
-      left: 360px;
+    a.card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      outline: none;
     }
   </style>
 </head>
 <body>
-
-  <div class="map-container">
-    <div class="card africa">🌍 Africa</div>
-    <div class="card asia">🌏 Asia</div>
-    <div class="card europe">🌍 Europe</div>
-    <div class="card north-america">🌎 North America</div>
-    <div class="card south-america">🌎 South America</div>
-    <div class="card australia">🌏 Australia</div>
-    <div class="card antarctica">❄️ Antarctica</div>
+  <!-- ALERT -->
+  <div class="alert-banner">
+    ⚠️ HOLOGRAPHIC WARNING: High tectonic activity detected in the Pacific Plate – Monitoring seismic vibrations...
   </div>
 
+  <!-- MAP -->
+  <div class="map-container"></div>
+
+  <!-- CARDS -->
+  <div class="cards-container">
+    <a href="africa-info.html" class="card-link" onclick="playSound()" onmouseenter="playSound()" tabindex="0">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h4>🌍 Africa</h4>
+            <div class="karma-bar"><div class="karma-fill" style="height: 75%;"></div></div>
+          </div>
+          <div class="card-back">
+            <h5>Birth Chart</h5>
+            <div class="birth-chart">
+              Element: Earth<br />
+              Sign: Taurus<br />
+              Age: Ancient<br />
+              Energy: Grounded
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <a href="asia-info.html" class="card-link" onclick="playSound()" onmouseenter="playSound()" tabindex="0">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h4>🌏 Asia</h4>
+            <div class="karma-bar"><div class="karma-fill" style="height: 90%;"></div></div>
+          </div>
+          <div class="card-back">
+            <h5>Birth Chart</h5>
+            <div class="birth-chart">
+              Element: Fire<br />
+              Sign: Aries<br />
+              Age: Majestic<br />
+              Energy: Expansive
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <a href="europe-info.html" class="card-link" onclick="playSound()" onmouseenter="playSound()" tabindex="0">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h4>🌍 Europe</h4>
+            <div class="karma-bar"><div class="karma-fill" style="height: 65%;"></div></div>
+          </div>
+          <div class="card-back">
+            <h5>Birth Chart</h5>
+            <div class="birth-chart">
+              Element: Air<br />
+              Sign: Libra<br />
+              Age: Classical<br />
+              Energy: Intellectual
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <a href="north-america-info.html" class="card-link" onclick="playSound()" onmouseenter="playSound()" tabindex="0">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h4>🌎 North America</h4>
+            <div class="karma-bar"><div class="karma-fill" style="height: 55%;"></div></div>
+          </div>
+          <div class="card-back">
+            <h5>Birth Chart</h5>
+            <div class="birth-chart">
+              Element: Earth<br />
+              Sign: Capricorn<br />
+              Age: New World<br />
+              Energy: Ambitious
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <a href="south-america-info.html" class="card-link" onclick="playSound()" onmouseenter="playSound()" tabindex="0">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h4>🌎 South America</h4>
+            <div class="karma-bar"><div class="karma-fill" style="height: 68%;"></div></div>
+          </div>
+          <div class="card-back">
+            <h5>Birth Chart</h5>
+            <div class="birth-chart">
+              Element: Water<br />
+              Sign: Scorpio<br />
+              Age: Vital<br />
+              Energy: Emotional
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <a href="australia-info.html" class="card-link" onclick="playSound()" onmouseenter="playSound()" tabindex="0">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h4>🌏 Australia</h4>
+            <div class="karma-bar"><div class="karma-fill" style="height: 45%;"></div></div>
+          </div>
+          <div class="card-back">
+            <h5>Birth Chart</h5>
+            <div class="birth-chart">
+              Element: Fire<br />
+              Sign: Sagittarius<br />
+              Age: Young<br />
+              Energy: Free-Spirited
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    <a href="antarctica-info.html" class="card-link" onclick="playSound()" onmouseenter="playSound()" tabindex="0">
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h4>❄️ Antarctica</h4>
+            <div class="karma-bar"><div class="karma-fill" style="height: 20%;"></div></div>
+          </div>
+          <div class="card-back">
+            <h5>Birth Chart</h5>
+            <div class="birth-chart">
+              Element: Ice<br />
+              Sign: Pisces<br />
+              Age: Timeless<br />
+              Energy: Frozen Silence
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- JavaScript for Sound FX -->
+  <script>
+    function playSound() {
+      const audio = document.getElementById('hoverSound');
+      audio.currentTime = 0;
+      audio.play();
+    }
+  </script>
+
+  <!-- AUDIO FX -->
+  <audio id="hoverSound" src="https://assets.mixkit.co/sfx/preview/mixkit-technology-interface-click-1127.mp3" preload="auto"></audio>
 </body>
 </html>
+
