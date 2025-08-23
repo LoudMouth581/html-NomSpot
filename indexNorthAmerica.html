@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>USA Natal Chart Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
+  :root {
+    --color-zodiac: #ff007f;
+    --color-element: #00bfff;
+    --color-age: #ffd700;
+    --color-energy: radial-gradient(circle, #00ffff, #7fff00);
+    --color-karma: conic-gradient(red, orange, yellow, green, blue, indigo, violet, red);
+  }
+
+  /* Theme variables will be set dynamically in JS */
+
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  .app {
+    min-height: 100vh;
+    background: var(--bg-gradient);
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 2rem;
+  }
+
+  .theme-switcher {
+    margin: 1rem 0;
+  }
+
+  .theme-switcher button {
+    margin: 0 0.5rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background: rgba(255 255 255 / 0.2);
+    color: var(--color-text);
+    transition: background-color 0.3s ease;
+  }
+  .theme-switcher button:hover {
+    background: rgba(255 255 255 / 0.4);
+  }
+
+  .starfield {
+    background-color: transparent;
+    background-image: radial-gradient(white 1px, transparent 1px),
+      radial-gradient(white 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-position: 0 0, 25px 25px;
+    animation: sparkle 20s infinite linear;
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  @keyframes sparkle {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+
+  .chart-container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+
+  .chart-container h1,
+  .chart-container h2 {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--color-text);
+    text-shadow: 0 0 5px var(--color-text);
+  }
+
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+  }
+
+  .gauge-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  .gauge-card:hover {
+    transform: scale(1.05);
+  }
+
+  .gauge {
+    height: 140px;
+    border-radius: 50% 50% 0 0;
+    position: relative;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fillGauge 3s ease-in-out forwards;
+  }
+
+  @keyframes fillGauge {
+    0% { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
+  }
+
+  .gauge.zodiac {
+    background: conic-gradient(var(--color-zodiac) var(--percent), #333 0);
+  }
+  .gauge.element {
+    background: conic-gradient(var(--color-element) var(--percent), #333 0);
+  }
+  .gauge.age {
+    background: conic-gradient(var(--color-age) var(--percent), #333 0);
+  }
+  .gauge.energy {
+    background: var(--color-energy);
+  }
+  .gauge.karma {
+    background: var(--color-karma);
+  }
+
+  .gauge-content {
+    position: absolute;
+    bottom: 10px;
+    font-size: 1rem;
+    color: var(--color-text);
+  }
+
+  .gauge-icon {
+    font-size: 2.5rem;
+  }
+
+  .value {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    color: var(--color-text);
+  }
+
+  .solar-system {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+  }
+
+  .solar-svg {
+    width: 200px;
+    height: 200px;
+  }
+
+  .planet {
+    transform-origin: 100px 100px;
+    animation: orbit 10s linear infinite;
+  }
+
+  .sun { animation-duration: 20s; }
+  .earth { animation-duration: 5s; }
+
+  @keyframes orbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--color-text);
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- React & ReactDOM -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+<!-- Astronomia CDN -->
+<script src="https://cdn.jsdelivr.net/npm/astronomia@1.11.0/astronomia.min.js"></script>
+
+<script>
+  const { useState, useEffect } = React;
+  const { planetaryPosition } = astron; // `astron` global from Astronomia
+
+  const themes = {
+    dark: {
+      '--bg-gradient': 'radial-gradient(circle at center, #0a0f1e, #01000a)',
+      '--color-text': '#fff',
+    },
+    light: {
+      '--bg-gradient': 'radial-gradient(circle at center, #f0f0f0, #cccccc)',
+      '--color-text': '#222',
+    },
+    cosmic: {
+      '--bg-gradient': 'radial-gradient(circle at center, #2e003e, #000)',
+      '--color-text': '#e0c8ff',
+    },
+  };
+
+  function Gauge({ type, icon, label, value, percent }) {
+    return React.createElement(
+      'div',
+      { className: 'gauge-card' },
+      React.createElement(
+        'div',
+        {
+          className: `gauge ${type}`,
+          style: { '--percent': `${percent}%` }
+        },
+        React.createElement(
+          'div',
+          { className: 'gauge-content' },
+          React.createElement('div', { className: 'gauge-icon' }, icon),
+          label
+        )
+      ),
+      React.createElement('div', { className: 'value' }, value)
+    );
+  }
+
+  function USANatalChart() {
+    const [positions, setPositions] = useState({ sun: '...' });
+
+    useEffect(() => {
+      document.body.classList.add('starfield');
+      return () => document.body.classList.remove('starfield');
+    }, []);
+
+    useEffect(() => {
+      try {
+        const lon = planetaryPosition.ephemeris('sun', new Date());
+        setPositions({ sun: lon.lon.toFixed(2) });
+      } catch {
+        setPositions({ sun: 'N/A' });
+      }
+    }, []);
+
+    return React.createElement(
+      'div',
+      { className: 'chart-container' },
+      React.createElement('h1', null, '🌌 USA Natal Chart Dashboard'),
+      React.createElement('h2', null, 'Astrological Insights in Real Time'),
+      React.createElement(
+        'div',
+        { className: 'dashboard' },
+        React.createElement(Gauge, { type: 'zodiac', icon: '🦀', label: 'Cancer ♋', value: `Sun Position: ${positions.sun}°`, percent: 60 }),
+        React.createElement(Gauge, { type: 'element', icon: '💧', label: 'Water Element', value: 'Element: Water', percent: 70 }),
+        React.createElement(Gauge, { type: 'age', icon: '🕰️', label: '249 Years', value: 'Age: 249', percent: 100 }),
+        React.createElement(Gauge, { type: 'energy', icon: '⚡', label: 'Dynamic Aura', value: 'Energy: Ideals in Motion', percent: 80 }),
+        React.createElement(Gauge, { type: 'karma', icon: '🧘', label: 'Chakra Flow', value: 'Karma: Transforming Power', percent: 90 }),
+      ),
+      React.createElement(
+        'div',
+        { className: 'solar-system' },
+        React.createElement(
+          'svg',
+          { viewBox: '0 0 200 200', className: 'solar-svg', 'aria-label': 'Spinning solar system' },
+          React.createElement('circle', { cx: 100, cy: 100, r: 80, fill: 'none', stroke: '#555' }),
+          React.createElement('circle', { className: 'planet sun', cx: 100, cy: 40, r: 8, fill: '#ff0' }),
+          React.createElement('circle', { className: 'planet earth', cx: 100, cy: 160, r: 5, fill: '#0af' })
+        )
+      ),
+      React.createElement('footer', null, '⚡ Powered by Astronomia & Pure React — Stars Included')
+    );
+  }
+
+  function App() {
+    const [theme, setTheme] = useState('cosmic');
+
+    useEffect(() => {
+      const root = document.documentElement;
+      const themeVars = themes[theme];
+      for (const [key, value] of Object.entries(themeVars)) {
+        root.style.setProperty(key, value);
+      }
+    }, [theme]);
+
+    return React.createElement(
+      'div',
+      { className: 'app' },
+      React.createElement(
+        'div',
+        { className: 'theme-switcher' },
+        'Theme: ',
+        Object.keys(themes).map(t =>
+          React.createElement('button', { key: t, onClick: () => setTheme(t) }, t)
+        )
+      ),
+      React.createElement(USANatalChart)
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>
