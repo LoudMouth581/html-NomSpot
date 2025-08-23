@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>World Map - CSS Continent Sketch</title>
+  <title>TRON World Map - CSS Continent Sketch</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
@@ -30,6 +30,16 @@
       width: 960px;
       margin-bottom: 30px;
       border-radius: 8px;
+      transition: opacity 0.5s ease;
+    }
+
+    .alert-banner.hidden {
+      opacity: 0;
+      pointer-events: none;
+      height: 0;
+      padding: 0;
+      margin-bottom: 0;
+      animation: none;
     }
 
     @keyframes alert-pulse {
@@ -232,6 +242,7 @@
     const map = document.querySelector('.map-container');
     const cards = document.querySelector('.cards-container');
     const hoverSound = document.getElementById('hoverSound');
+    const alertBanner = document.querySelector('.alert-banner');
 
     function playSound() {
       hoverSound.currentTime = 0;
@@ -319,6 +330,147 @@
         }
       });
     }, 100);
+
+    // *** USGS Earthquake Data Fetch and Update Alert Banner ***
+
+    // Pacific Plate bounding box roughly from your extent: 
+    // extent=21.28937,-129.99023&extent=52.26816,-60.0293
+    // which means lat from 21.28 to 52.26 and lon from -129.99 to -60.03 (roughly W Coast USA and Pacific area)
+
+    // We'll fetch earthquakes from last 24 hours, min magnitude 4.5
+    const USGS_API_URL = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=';
+
+    function fetchEarthquakeData() {
+      const now = new Date();
+      const yesterday = new Date(now.getTime() - 24*60*60*1000);
+      const starttime = yesterday.toISOString();
+
+      // Query params:
+      // minlatitude=21.28, maxlatitude=52.26, minlongitude=-129.99, maxlongitude=-60.03
+      // minmagnitude=4.5
+      // Order by time descending, limit 10
+
+      const url = `${USGS_API_URL}${starttime}&minlatitude=21.28&maxlatitude=52.26&minlongitude=-129.99&maxlongitude=-60.03&minmagnitude=4.5&orderby=time&limit=10`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          if (data.features && data.features.length > 0) {
+            // We have recent quakes, build a summary string
+            const quakes = data.features;
+
+            // Build message: e.g. "3 quakes >4.5 in last 24h. Largest M6.1 at California, CA, 2h ago."
+            const count = quakes.length;
+
+            // Find largest quake
+            let largest = quakes[0];
+            quakes.forEach(q => {
+              if (q.properties.mag > largest.properties.mag) largest = q;
+            });
+
+            // Format location from place property, truncated if too long
+            let place = largest.properties.place || 'Unknown location';
+            if (place.length > 40) place = place.slice(0, 37) + '...';
+
+            // Calculate time ago
+            const quakeTime = new Date(largest.properties.time);
+            const diffMs = now - quakeTime;
+            const diffHours = Math.floor(diffMs / (1000*60*60));
+            let timeAgo = diffHours > 0 ? `${diffHours} hour${diffHours > 1 ? 's' : ''} ago` : 'just now';
+
+            alertBanner.textContent = `⚠️ HOLOGRAPHIC WARNING: ${count} earthquake${count > 1 ? 's' : ''} >4.5 detected in the Pacific Plate in the last 24h. Largest M${largest.properties.mag.toFixed(1)} at ${place}, ${timeAgo}.`;
+            alertBanner.classList.remove('hidden');
+          } else {
+            // No significant quakes
+            alertBanner.textContent = '✅ No significant tectonic activity detected in the Pacific Plate in the last 24 hours.';
+            alertBanner.classList.remove('hidden');
+            alertBanner.style.background = 'linear-gradient(90deg, #008800, #00cc00, #008800)';
+            alertBanner.style.textShadow = '0 0 8px #004400';
+            alertBanner.style.animation = 'none';
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching earthquake data:', err);
+          alertBanner.textContent = '⚠️ HOLOGRAPHIC WARNING: Unable to retrieve tectonic activity data.';
+          alertBanner.classList.remove('hidden');
+          alertBanner.style.background = 'linear-gradient(90deg, #ff004c, #ff0088, #ff004c)';
+          alertBanner.style.textShadow = '0 0 10px #000';
+          alertBanner.style.animation = 'alert-pulse 1.5s infinite';
+        });
+    }
+
+    fetchEarthquakeData();
+
+    // Optional: refresh alert every 10 minutes
+    setInterval(fetchEarthquakeData, 10 * 60 * 1000);
   </script>
+
+  <script>
+  const alertBanner = document.querySelector('.alert-banner');
+
+  // USGS Earthquake API for Pacific Plate region
+  // Bounds roughly cover Pacific Plate: [minLat, minLon, maxLat, maxLon]
+  const usgsUrl = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=' + 
+                  new Date(new Date().getTime() - 6 * 60 * 60 * 1000).toISOString() + // last 6 hours
+                  '&minmagnitude=5.0&minlatitude=21.28937&maxlatitude=52.26816&minlongitude=-129.99023&maxlongitude=-60.0293';
+
+  // NOAA Tsunami Warning API (latest alerts)
+  const tsunamiUrl = 'https://api.tsunami.gov/alerts/v1/list'; // This endpoint might need CORS proxy or alternative if blocked
+
+  async function checkAlerts() {
+    let earthquakeAlert = false;
+    let tsunamiAlert = false;
+    let messages = [];
+
+    try {
+      // Fetch Earthquake data
+      const eqResponse = await fetch(usgsUrl);
+      const eqData = await eqResponse.json();
+
+      if (eqData.features && eqData.features.length > 0) {
+        earthquakeAlert = true;
+        const mag = eqData.features[0].properties.mag;
+        const place = eqData.features[0].properties.place;
+        messages.push(`⚠️ HOLOGRAPHIC WARNING: High tectonic activity detected! Recent earthquake (M${mag}) near ${place}.`);
+      }
+    } catch (e) {
+      console.warn('Failed to fetch earthquake data:', e);
+    }
+
+    try {
+      // Fetch Tsunami alerts
+      // NOTE: NOAA tsunami API may have CORS restrictions. You may need a proxy or backend for real production.
+      const tsResponse = await fetch(tsunamiUrl);
+      const tsData = await tsResponse.json();
+
+      if (tsData.alerts && tsData.alerts.length > 0) {
+        // Filter tsunami alerts related to Pacific region or global alerts
+        const activeTsunamis = tsData.alerts.filter(alert => 
+          alert.status === 'Actual' && 
+          (alert.eventType === 'Tsunami' || alert.eventType === 'Tsunami Warning')
+        );
+
+        if (activeTsunamis.length > 0) {
+          tsunamiAlert = true;
+          messages.push(`🌊 TSUNAMI ALERT: ${activeTsunamis[0].eventDescription || 'Tsunami warning in effect!'}`);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to fetch tsunami data:', e);
+    }
+
+    // Update alert banner or hide if no alert
+    if (earthquakeAlert || tsunamiAlert) {
+      alertBanner.innerHTML = messages.join('<br>');
+      alertBanner.style.display = 'block';
+    } else {
+      alertBanner.style.display = 'none';  // hide if no alerts
+    }
+  }
+
+  // Run check immediately, then every 5 minutes
+  checkAlerts();
+  setInterval(checkAlerts, 5 * 60 * 1000);
+</script>
 </body>
 </html>
