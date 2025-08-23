@@ -3,8 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>TRON World Map - CSS Continent Sketch</title>
-
-  <!-- Orbitron Font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
@@ -64,7 +62,6 @@
       50% { box-shadow: 0 0 20px rgba(0,255,247,1); }
     }
 
-    /* Continent shapes */
     .africa        { top: 340px; left: 440px; width: 120px; height: 180px; }
     .antarctica    { top: 620px; left: 360px; width: 240px; height: 60px; }
     .asia          { top: 160px; left: 580px; width: 200px; height: 200px; }
@@ -167,31 +164,47 @@
       transform: rotateY(180deg);
     }
 
+    /* 🔄 Horizontal karma bar styles */
     .karma-bar {
       margin-top: 10px;
-      width: 20px;
-      height: 100px;
+      width: 100%;
+      height: 18px;
       border: 1px solid #fff;
-      border-radius: 10px;
+      border-radius: 8px;
       background-color: #111;
       overflow: hidden;
+      position: relative;
       box-shadow: inset 0 0 6px #00fff7;
+      font-size: 12px;
+      color: #000;
+      text-shadow: none;
     }
 
     .karma-fill {
-      background: linear-gradient(to top, #00ff00, #ffff00, #ff0000);
-      width: 100%;
-      position: absolute;
-      bottom: 0;
-      transition: height 0.4s;
+      background: linear-gradient(to right, #00ff00, #ffff00, #ff0000);
+      height: 100%;
+      width: 0;
+      transition: width 1s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #000;
+      user-select: none;
+    }
+
+    /* Optional: change text color for better contrast on wider bars */
+    .karma-fill.wide {
+      color: #fff;
+      text-shadow: 0 0 4px #000;
     }
   </style>
 </head>
 <body>
+
   <div class="alert-banner">⚠️ HOLOGRAPHIC WARNING: High tectonic activity detected in the Pacific Plate…</div>
 
   <div class="map-container">
-    <!-- CSS-Sketch Continents -->
     <div class="continent africa"></div>
     <div class="continent antarctica"></div>
     <div class="continent asia"></div>
@@ -225,8 +238,8 @@
       hoverSound.play().catch(() => {});
     }
 
-    // Add points and cards
     continents.forEach((c, i) => {
+      // Create map point
       const point = document.createElement('button');
       point.className = 'map-point';
       point.style.top = c.top + 'px';
@@ -236,10 +249,9 @@
 
       point.addEventListener('click', () => highlight(i));
       point.addEventListener('mouseenter', playSound);
-
       map.appendChild(point);
 
-      // Cards
+      // Create card link and card elements
       const cardLink = document.createElement('a');
       cardLink.href = c.href;
       cardLink.className = 'card-link';
@@ -251,6 +263,7 @@
       const cardInner = document.createElement('div');
       cardInner.className = 'card-inner';
 
+      // Front side of the card with karma bar (karma-fill starts width=0)
       const front = document.createElement('div');
       front.className = 'card-front';
       front.innerHTML = `
@@ -259,8 +272,8 @@
         <div>Sign: ${c.sign}</div>
         <div>Age: ${c.age}</div>
         <div>Energy: ${c.energy}</div>
-        <div class="karma-bar">
-          <div class="karma-fill" style="height:${c.karma}%"></div>
+        <div class="karma-bar" title="Karma Level: ${c.karma}%">
+          <div class="karma-fill">0%</div>
         </div>`;
 
       const back = document.createElement('div');
@@ -290,6 +303,22 @@
       selectedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
       playSound();
     }
+
+    // Animate karma bars from 0 to actual karma %
+    setTimeout(() => {
+      document.querySelectorAll('.karma-fill').forEach((fill, index) => {
+        const value = continents[index].karma;
+        fill.style.width = value + '%';
+        fill.textContent = value + '%';
+
+        // Add class for wide fills for text color contrast
+        if (value > 50) {
+          fill.classList.add('wide');
+        } else {
+          fill.classList.remove('wide');
+        }
+      });
+    }, 100);
   </script>
 </body>
 </html>
