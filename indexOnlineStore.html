@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Jet-Tron Marketplace</title>
+<title>Lucky Marketplace</title>
 <style>
   /* Reset & base */
   * {
@@ -199,6 +199,7 @@
   <a href="#" data-view="vendorLogin">Vendor Login</a>
   <a href="#" data-view="vendorDashboard">Dashboard</a>
   <a href="#" data-view="liveVideo">Live Video</a>
+  <a href="#" data-view="HowToUse">How to use</a>
 </nav>
 
 <main>
@@ -242,7 +243,18 @@
     <video id="liveStream" autoplay muted playsinline></video>
     <p id="videoError" style="color:#ff5555;"></p>
   </section>
-
+ <!-- How to use -->
+  <section id="HowToUse" class="view active">
+    <p> How to use</p>
+    <ol><li>Use Vendor Login to log in with any vendor name (just a name, no password).</li>
+      <li>Add products with countdown timers.</li>
+      <li>View products and countdowns live on the home page.</li>
+      <li>Chat live in the chatbox (local, no real networking, stored in localStorage).</li>
+      <li>Go to Live Video tab to preview your webcam + mic stream locally.</li>
+    </ol>
+    
+    
+    <div class="products" id="products"></div>
 </main>
 
 <script>
