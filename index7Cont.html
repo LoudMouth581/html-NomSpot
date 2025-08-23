@@ -4,11 +4,8 @@
   <meta charset="UTF-8" />
   <title>TRON World Map - Live Earth & Weather</title>
 
-  <!-- Orbitron Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
-
   <style>
-    /* Base */
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
@@ -22,7 +19,6 @@
       padding: 20px 0 40px;
     }
 
-    /* Alert Banner */
     .alert-banner {
       background: linear-gradient(90deg, #ff004c, #ff0088, #ff004c);
       color: #fff;
@@ -42,7 +38,6 @@
       50% { opacity: 0.5; }
     }
 
-    /* Alerts below banner */
     #usgs-alert, #weather-alert {
       width: 960px;
       margin: 8px auto 30px;
@@ -63,7 +58,6 @@
       box-shadow: 0 0 8px rgba(0,144,255,0.6);
     }
 
-    /* Map Container */
     .map-container {
       width: 960px;
       height: 720px;
@@ -78,34 +72,33 @@
       user-select: none;
     }
 
-    /* Interactive highlight circles on map */
     .map-point {
       position: absolute;
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       border: 2px solid #00fff7;
-      background-color: rgba(0, 255, 247, 0.6);
-      box-shadow: 0 0 10px #00fff7;
+      background-color: #001f1f;
+      box-shadow: 0 0 12px #00fff7, inset 0 0 8px #00fff7;
       cursor: pointer;
       transition: transform 0.2s ease, background-color 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
       color: #00fff7;
       font-weight: bold;
-      user-select: none;
-      outline-offset: 3px;
+      font-size: 14px;
     }
+
     .map-point:hover,
     .map-point:focus {
       background-color: #00fff7;
       color: #000;
       transform: scale(1.3);
-      z-index: 10;
       outline: none;
+      z-index: 10;
     }
+
     .map-point.active {
       background-color: #ff00ff;
       color: #fff;
@@ -114,7 +107,6 @@
       z-index: 20;
     }
 
-    /* Cards Container */
     .cards-container {
       width: 960px;
       display: grid;
@@ -123,7 +115,6 @@
       justify-items: center;
     }
 
-    /* Card Styles */
     .card-link {
       text-decoration: none;
       color: inherit;
@@ -173,33 +164,11 @@
       text-align: center;
       padding: 12px;
       font-size: 0.9rem;
-      transition: background 0.3s;
       user-select: none;
-    }
-
-    .card-front {
-      z-index: 2;
     }
 
     .card-back {
       transform: rotateY(180deg);
-    }
-
-    .card-front h4 {
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-      text-shadow: 0 0 5px #00fff7;
-    }
-
-    .card-back h5 {
-      font-size: 0.9rem;
-      margin-bottom: 6px;
-      text-shadow: 0 0 4px #ff00ff;
-    }
-
-    .birth-chart {
-      font-size: 0.75rem;
-      line-height: 1.4;
     }
 
     .karma-bar {
@@ -225,153 +194,58 @@
   </style>
 </head>
 <body>
-  <!-- ALERT -->
-  <div class="alert-banner" role="alert" aria-live="assertive" aria-atomic="true">
+
+  <div class="alert-banner">
     ⚠️ HOLOGRAPHIC WARNING: High tectonic activity detected in the Pacific Plate – Monitoring seismic vibrations...
   </div>
 
-  <!-- Dynamic alerts -->
-  <div id="usgs-alert" role="region" aria-live="polite" aria-atomic="true">Loading seismic data...</div>
-  <div id="weather-alert" role="region" aria-live="polite" aria-atomic="true">Loading weather alerts...</div>
+  <div id="usgs-alert">Loading seismic data...</div>
+  <div id="weather-alert">Loading weather alerts...</div>
 
-  <!-- MAP -->
-  <div class="map-container" aria-label="World map with interactive continents" role="region" tabindex="0"></div>
+  <div class="map-container"></div>
+  <div class="cards-container"></div>
 
-  <!-- CARDS -->
-  <div class="cards-container" aria-live="polite" aria-atomic="true"></div>
-
-  <!-- AUDIO FX -->
-  <audio id="hoverSound" src="https://assets.mixkit.co/sfx/preview/mixkit-technology-interface-click-1127.mp3" preload="auto" aria-hidden="true"></audio>
+  <audio id="hoverSound" src="https://assets.mixkit.co/sfx/preview/mixkit-technology-interface-click-1127.mp3" preload="auto"></audio>
 
   <script>
-    // Data for continents with their info and map coordinates
     const continents = [
-      {
-        name: 'Africa',
-        emoji: '🌍',
-        element: 'Earth',
-        sign: 'Taurus',
-        age: 'Ancient',
-        energy: 'Grounded',
-        karma: 75,
-        href: 'africa-info.html',
-        mapPosition: { top: 340, left: 450 }
-      },
-      {
-        name: 'Antarctica',
-        emoji: '❄️',
-        element: 'Water',
-        sign: 'Capricorn',
-        age: 'Pristine',
-        energy: 'Calm',
-        karma: 50,
-        href: 'antarctica-info.html',
-        mapPosition: { top: 660, left: 480 }
-      },
-      {
-        name: 'Asia',
-        emoji: '🌏',
-        element: 'Fire',
-        sign: 'Aries',
-        age: 'Ancient',
-        energy: 'Dynamic',
-        karma: 90,
-        href: 'asia-info.html',
-        mapPosition: { top: 220, left: 640 }
-      },
-      {
-        name: 'Europe',
-        emoji: '🌍',
-        element: 'Air',
-        sign: 'Gemini',
-        age: 'Historic',
-        energy: 'Intellectual',
-        karma: 65,
-        href: 'europe-info.html',
-        mapPosition: { top: 210, left: 530 }
-      },
-      {
-        name: 'North America',
-        emoji: '🌎',
-        element: 'Air',
-        sign: 'Libra',
-        age: 'Modern',
-        energy: 'Balanced',
-        karma: 80,
-        href: 'northamerica-info.html',
-        mapPosition: { top: 190, left: 280 }
-      },
-      {
-        name: 'Oceania',
-        emoji: '🌊',
-        element: 'Water',
-        sign: 'Pisces',
-        age: 'Ancient',
-        energy: 'Spiritual',
-        karma: 55,
-        href: 'oceania-info.html',
-        mapPosition: { top: 470, left: 760 }
-      },
-      {
-        name: 'South America',
-        emoji: '🌎',
-        element: 'Fire',
-        sign: 'Sagittarius',
-        age: 'Lush',
-        energy: 'Passionate',
-        karma: 70,
-        href: 'southamerica-info.html',
-        mapPosition: { top: 420, left: 350 }
-      },
+      { name: 'Africa', emoji: '🌍', element: 'Earth', sign: 'Taurus', age: 'Ancient', energy: 'Grounded', karma: 75, href: '#', mapPosition: { top: 370, left: 470 } },
+      { name: 'Antarctica', emoji: '❄️', element: 'Water', sign: 'Capricorn', age: 'Pristine', energy: 'Calm', karma: 50, href: '#', mapPosition: { top: 645, left: 460 } },
+      { name: 'Asia', emoji: '🌏', element: 'Fire', sign: 'Aries', age: 'Ancient', energy: 'Dynamic', karma: 90, href: '#', mapPosition: { top: 230, left: 620 } },
+      { name: 'Europe', emoji: '🌍', element: 'Air', sign: 'Gemini', age: 'Historic', energy: 'Intellectual', karma: 65, href: '#', mapPosition: { top: 200, left: 510 } },
+      { name: 'North America', emoji: '🌎', element: 'Air', sign: 'Libra', age: 'Modern', energy: 'Balanced', karma: 80, href: '#', mapPosition: { top: 150, left: 250 } },
+      { name: 'Oceania', emoji: '🌊', element: 'Water', sign: 'Pisces', age: 'Ancient', energy: 'Spiritual', karma: 55, href: '#', mapPosition: { top: 500, left: 740 } },
+      { name: 'South America', emoji: '🌎', element: 'Fire', sign: 'Sagittarius', age: 'Lush', energy: 'Passionate', karma: 70, href: '#', mapPosition: { top: 420, left: 330 } },
     ];
 
     const mapContainer = document.querySelector('.map-container');
     const cardsContainer = document.querySelector('.cards-container');
     const hoverSound = document.getElementById('hoverSound');
 
-    // Utility: Play sound safely
     function playHoverSound() {
-      if (hoverSound) {
-        hoverSound.currentTime = 0;
-        hoverSound.play().catch(() => {});
-      }
+      hoverSound.currentTime = 0;
+      hoverSound.play().catch(() => {});
     }
 
-    // Create map points dynamically and add interactivity
     continents.forEach((continent, index) => {
       const point = document.createElement('button');
       point.className = 'map-point';
       point.style.top = continent.mapPosition.top + 'px';
       point.style.left = continent.mapPosition.left + 'px';
-      point.textContent = continent.emoji;
-      point.setAttribute('aria-label', `Select ${continent.name} on map`);
-      point.setAttribute('tabindex', '0');
+      point.title = continent.name;
       point.dataset.index = index;
-
-      // When map point clicked/focused, highlight corresponding card
       point.addEventListener('click', () => {
         activateCard(index);
         playHoverSound();
       });
       point.addEventListener('mouseenter', playHoverSound);
-      point.addEventListener('focus', () => {
-        activateCard(index);
-      });
-
+      point.addEventListener('focus', () => activateCard(index));
       mapContainer.appendChild(point);
     });
 
-    // Create cards dynamically
     continents.forEach((continent, index) => {
-      const cardLink = document.createElement('a');
-      cardLink.href = continent.href;
-      cardLink.className = 'card-link';
-      cardLink.setAttribute('aria-label', `Information about ${continent.name}`);
-      cardLink.setAttribute('tabindex', '0');
-
       const card = document.createElement('div');
       card.className = 'card';
-      card.tabIndex = 0;
       card.dataset.index = index;
 
       const cardInner = document.createElement('div');
@@ -385,30 +259,22 @@
         <div>Sign: ${continent.sign}</div>
         <div>Age: ${continent.age}</div>
         <div>Energy: ${continent.energy}</div>
-        <div class="karma-bar" aria-label="Karma level">
-          <div class="karma-fill" style="height: ${continent.karma}%;"></div>
-        </div>
+        <div class="karma-bar"><div class="karma-fill" style="height: ${continent.karma}%"></div></div>
       `;
 
       const cardBack = document.createElement('div');
       cardBack.className = 'card-back';
-      cardBack.innerHTML = `
-        <h5>Birth Chart</h5>
-        <div class="birth-chart">[Astrological details or other info here]</div>
-      `;
+      cardBack.innerHTML = `<h5>Birth Chart</h5><div>[Astrological details here]</div>`;
 
       cardInner.appendChild(cardFront);
       cardInner.appendChild(cardBack);
       card.appendChild(cardInner);
-      cardLink.appendChild(card);
-      cardsContainer.appendChild(cardLink);
+      cardsContainer.appendChild(card);
 
-      // Card flipping on click or keyboard enter/space
       card.addEventListener('click', () => {
         card.classList.toggle('active');
         playHoverSound();
       });
-
       card.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -418,23 +284,15 @@
       });
     });
 
-    // Sync activation: highlight card and map point
     function activateCard(index) {
-      // Remove active from all cards and map points
       document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
       document.querySelectorAll('.map-point').forEach(point => point.classList.remove('active'));
-
-      // Add active to selected
-      const selectedCard = document.querySelector(`.card[data-index='${index}']`);
-      const selectedPoint = document.querySelector(`.map-point[data-index='${index}']`);
-
-      if (selectedCard) selectedCard.classList.add('active');
-      if (selectedPoint) selectedPoint.classList.add('active');
-
-      // Scroll card into view smoothly
-      selectedCard?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const card = document.querySelector(`.card[data-index='${index}']`);
+      const point = document.querySelector(`.map-point[data-index='${index}']`);
+      if (card) card.classList.add('active');
+      if (point) point.classList.add('active');
+      card?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   </script>
 </body>
 </html>
-
