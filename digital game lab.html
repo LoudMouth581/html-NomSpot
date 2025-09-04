@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Timeline: Events (Responsive Grid)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
+  :root {
+    --bush: #1E90FF;           /* Blue */
+    --musk: #ADFF2F;           /* GreenYellow */
+    --thiel: #FF69B4;          /* Hot Pink */
+    --trump-past: #FF8C00;     /* Dark Orange */
+    --trump-present: #00CED1;  /* Dark Cyan */
+    --xi: #FF6347;             /* Tomato */
+    --putin: #FFD700;          /* Gold */
+    --kim: #9370DB;            /* Purple */
+    --saudi: #F4A460;          /* Sandy Brown */
+    --epstein: #8B0000;        /* Dark Red */
+    --default-bg: #07080d;
+    --card-bg: #1a1a2e;
+    --line-color: #444;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Orbitron', sans-serif;
+    background-color: var(--default-bg);
+    color: #eee;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    text-align: center;
+    padding: 1rem;
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff;
+  }
+
+  /* Timeline container uses CSS grid */
+  .timeline-container {
+    max-width: 1200px;
+    margin: 0 auto 4rem;
+    padding: 1rem;
+    border-top: 3px solid var(--line-color);
+    border-bottom: 3px solid var(--line-color);
+    background-color: #0a0a1f;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-auto-rows: min-content;
+    gap: 1rem 1.5rem;
+  }
+
+  /* Year markers spanning full width */
+  .year-markers {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0.5rem 1rem;
+    color: #666;
+    font-size: 14px;
+    user-select: none;
+  }
+  .year-markers span {
+    flex: 0 0 auto;
+  }
+
+  /* Event cards */
+  .event-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+    padding: 15px 20px;
+    font-size: 14px;
+    color: #eee;
+    border: 3px solid;
+    cursor: default;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .event-card:hover {
+    transform: scale(1.05);
+    z-index: 10;
+    box-shadow: 0 0 15px cyan;
+  }
+  .event-card::after {
+    content: "";
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--card-bg) transparent transparent transparent;
+  }
+
+  .event-date {
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
+
+  /* Color coding */
+  .bush { border-color: var(--bush); background-color: rgba(30,144,255,0.15); color: var(--bush); }
+  .musk { border-color: var(--musk); background-color: rgba(173,255,47,0.15); color: var(--musk); }
+  .thiel { border-color: var(--thiel); background-color: rgba(255,105,180,0.15); color: var(--thiel); }
+  .trump-past { border-color: var(--trump-past); background-color: rgba(255,140,0,0.15); color: var(--trump-past); }
+  .trump-present { border-color: var(--trump-present); background-color: rgba(0,206,209,0.15); color: var(--trump-present); }
+  .xi { border-color: var(--xi); background-color: rgba(255,99,71,0.15); color: var(--xi); }
+  .putin { border-color: var(--putin); background-color: rgba(255,215,0,0.15); color: var(--putin); }
+  .kim { border-color: var(--kim); background-color: rgba(147,112,219,0.15); color: var(--kim); }
+  .saudi { border-color: var(--saudi); background-color: rgba(244,164,96,0.15); color: var(--saudi); }
+  .epstein { border-color: var(--epstein); background-color: rgba(139,0,0,0.15); color: var(--epstein); }
+
+  /* Scrollbar for timeline container if needed */
+  .timeline-container::-webkit-scrollbar {
+    height: 10px;
+  }
+  .timeline-container::-webkit-scrollbar-track {
+    background: #111;
+  }
+  .timeline-container::-webkit-scrollbar-thumb {
+    background: #00ffff;
+    border-radius: 5px;
+  }
+
+  /* Responsive font adjustments */
+  @media (max-width: 600px) {
+    .event-card {
+      font-size: 12px;
+      min-height: 110px;
+      padding: 10px 15px;
+    }
+    .event-date {
+      font-size: 13px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>True Crime Digital Lab: Investigative Timeline</h1>
+
+<div class="timeline-container" aria-label="Timeline of crimes and corruptions">
+
+  <!-- Year markers on top -->
+  <div class="year-markers" aria-hidden="true">
+    <span>2001</span>
+    <span>2005</span>
+    <span>2010</span>
+    <span>2015</span>
+    <span>2020</span>
+    <span>2025</span>
+  </div>
+
+  <!-- Events -->
+
+  <!-- George W. Bush -->
+  <div class="event-card bush" title="George W. Bush: 9/11 & Financial Deregulation">
+    <div class="event-date">Sep 11, 2001</div>
+    <div><strong>George W. Bush</strong></div>
+    <div>9/11 attacks, intelligence failures & controversial war decisions</div>
+  </div>
+  <div class="event-card bush" title="George W. Bush: Financial Crisis">
+    <div class="event-date">2007</div>
+    <div><strong>George W. Bush</strong></div>
+    <div>Financial deregulation contributing to 2008 crisis</div>
+  </div>
+
+  <!-- Elon Musk -->
+  <div class="event-card musk" title="Elon Musk: Tesla Take Private Tweet & SEC lawsuit">
+    <div class="event-date">Aug 7, 2018</div>
+    <div><strong>Elon Musk</strong></div>
+    <div>Tweet about taking Tesla private, SEC lawsuit follows</div>
+  </div>
+  <div class="event-card musk" title="Elon Musk: Twitter Stake Disclosure">
+    <div class="event-date">Apr 4, 2022</div>
+    <div><strong>Elon Musk</strong></div>
+    <div>Delayed Twitter stake disclosure, SEC lawsuit</div>
+  </div>
+  <div class="event-card musk" title="Elon Musk: Political Donations & Ad Controversy">
+    <div class="event-date">2023</div>
+    <div><strong>Elon Musk</strong></div>
+    <div>Political campaigning, ad company profanity scandal</div>
+  </div>
+  <div class="event-card musk" title="Elon Musk: Bitcoin & Crypto Influence">
+    <div class="event-date">2021</div>
+    <div><strong>Elon Musk</strong></div>
+    <div>Promotion of Bitcoin causing crypto market volatility</div>
+  </div>
+
+  <!-- Peter Thiel -->
+  <div class="event-card thiel" title="Peter Thiel: Trump Donation">
+    <div class="event-date">2016</div>
+    <div><strong>Peter Thiel</strong></div>
+    <div>Donated $1.25M to Donald Trump's campaign</div>
+  </div>
+  <div class="event-card thiel" title="Peter Thiel: Political Funding">
+    <div class="event-date">2023</div>
+    <div><strong>Peter Thiel</strong></div>
+    <div>Criticizes GOP focus; pauses political donations</div>
+  </div>
+  <div class="event-card thiel" title="Peter Thiel: Crypto Influence">
+    <div class="event-date">2016</div>
+    <div><strong>Peter Thiel</strong></div>
+    <div>Funding political groups influencing crypto legislation</div>
+  </div>
+
+  <!-- Donald Trump Past -->
+  <div class="event-card trump-past" title="Trump: 2016 Election & Controversies">
+    <div class="event-date">2016</div>
+    <div><strong>Donald Trump (Past)</strong></div>
+    <div>Wins presidency; faces controversies & impeachment</div>
+  </div>
+  <div class="event-card trump-past" title="Trump: First Impeachment">
+    <div class="event-date">2019</div>
+    <div><strong>Donald Trump (Past)</strong></div>
+    <div>First impeachment over Ukraine phone call</div>
+  </div>
+  <div class="event-card trump-past" title="Trump: COVID Handling Criticism">
+    <div class="event-date">2020</div>
+    <div><strong>Donald Trump (Past)</strong></div>
+    <div>Controversial handling of COVID-19 pandemic</div>
+  </div>
+
+  <!-- Donald Trump Present -->
+  <div class="event-card trump-present" title="Trump: 2024-2025 Investigations">
+    <div class="event-date">2024-2025</div>
+    <div><strong>Donald Trump (Present)</strong></div>
+    <div>Ongoing investigations into financial misconduct & election interference</div>
+  </div>
+  <div class="event-card trump-present" title="Trump: 2025 Alleged Crime">
+    <div class="event-date">2025</div>
+    <div><strong>Donald Trump (Present)</strong></div>
+    <div>New allegations related to financial and political crimes</div>
+  </div>
+
+  <!-- Vladimir Putin -->
+  <div class="event-card putin" title="Putin: Market & Political Manipulation">
+    <div class="event-date">2004</div>
+    <div><strong>Vladimir Putin</strong></div>
+    <div>Oligarch market manipulation & opposition suppression</div>
+  </div>
+  <div class="event-card putin" title="Putin: US Election Interference">
+    <div class="event-date">2016</div>
+    <div><strong>Vladimir Putin</strong></div>
+    <div>Interference in US elections & geopolitical expansion</div>
+  </div>
+  <div class="event-card putin" title="Putin: Market Manipulation Amid Sanctions">
+    <div class="event-date">2022</div>
+    <div><strong>Vladimir Putin</strong></div>
+    <div>Market manipulations amid Ukraine war sanctions</div>
+  </div>
+
+  <!-- Xi Jinping -->
+  <div class="event-card xi" title="Xi Jinping: Power Consolidation">
+    <div class="event-date">2012</div>
+    <div><strong>Xi Jinping</strong></div>
+    <div>Anti-corruption campaigns & power consolidation</div>
+  </div>
+  <div class="event-card xi" title="Xi Jinping: Market & Tech Crackdowns">
+    <div class="event-date">2020</div>
+    <div><strong>Xi Jinping</strong></div>
+    <div>Market & crypto crackdowns including crypto bans</div>
+  </div>
+
+  <!-- Kim Jong Un -->
+  <div class="event-card kim" title="Kim Jong Un: Assumes Power">
+    <div class="event-date">2011</div>
+    <div><strong>Kim Jong Un</strong></div>
+    <div>Assumes power, tight economic & military control</div>
+  </div>
+  <div class="event-card kim" title="Kim Jong Un: Crypto Activities & Sanctions">
+    <div class="event-date">2021</div>
+    <div><strong>Kim Jong Un</strong></div>
+    <div>Increased sanctions and secretive crypto activities</div>
+  </div>
+
+  <!-- Saudi Prince -->
+  <div class="event-card saudi" title="Saudi Prince: Khashoggi Murder">
+    <div class="event-date">2018</div>
+    <div><strong>Saudi Crown Prince</strong></div>
+    <div>International outcry after Jamal Khashoggi murder</div>
+  </div>
+
+  <!-- Epstein Scandal -->
+  <div class="event-card epstein" title="Jeffrey Epstein: Arrest and Charges">
+    <div class="event-date">2019</div>
+    <div><strong>Jeffrey Epstein</strong></div>
+    <div>Arrest & charges over sex trafficking ring</div>
+  </div>
+
+  <!-- Stock Market Manipulation (Gold) -->
+  <div class="event-card putin" title="Stock Market Manipulation Example">
+    <div class="event-date">2022</div>
+    <div><strong>Market Manipulation (Gold)</strong></div>
+    <div>Putin's influence amid global sanctions</div>
+  </div>
+
+  <!-- YouTubers & Crypto -->
+  <div class="event-card musk" title="Logan Paul: CryptoZoo">
+    <div class="event-date">2021</div>
+    <div><strong>Logan Paul</strong></div>
+    <div>Launch of CryptoZoo, ended with financial loss allegations</div>
+  </div>
+  <div class="event-card musk" title="Logan Paul & SafeMoon Promotion">
+    <div class="event-date">2022</div>
+    <div><strong>Logan Paul & SafeMoon</strong></div>
+    <div>Promotion of controversial SafeMoon crypto</div>
+  </div>
+  <div class="event-card musk" title="Logan Paul, MrBeast & KSI: Lunchly">
+    <div class="event-date">2024</div>
+    <div><strong>Logan Paul, MrBeast & KSI</strong></div>
+    <div>Launch of Lunchly; criticism over processed food marketing</div>
+  </div>
+
+</div>
+
+</body>
+</html>
