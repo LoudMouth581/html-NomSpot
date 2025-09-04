@@ -321,6 +321,29 @@
   </div>
 
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.timeline-container');
+    const yearMarkers = container.querySelector('.year-markers');
+    const events = Array.from(container.querySelectorAll('.event-card'));
+
+    function extractYear(dateStr) {
+      const years = dateStr.match(/\b(19|20)\d{2}\b/g);
+      if (!years) return 0;
+      return Math.min(...years.map(y => parseInt(y, 10)));
+    }
+
+    events.sort((a, b) => {
+      const yearA = extractYear(a.querySelector('.event-date').textContent);
+      const yearB = extractYear(b.querySelector('.event-date').textContent);
+      return yearA - yearB;
+    });
+
+    events.forEach(ev => container.removeChild(ev));
+    events.forEach(ev => container.appendChild(ev));
+  });
+</script>
 
 </body>
 </html>
+
