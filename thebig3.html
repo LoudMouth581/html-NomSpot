@@ -125,11 +125,11 @@
 </head>
 <body>
 
-<h1>World Leaders Birthcharts & Real-Time Nostrodomus Tracker</h1>
+<h1>World Leaders Birthcharts & 7 Continents Real-Time Tracker</h1>
 
-<!-- Nostrodomus Meter Card -->
+<!-- Meter Card -->
 <div class="card" id="user-location-card" tabindex="0" aria-live="polite" aria-atomic="true">
-  <div>Loading your location and Nostrodomus code...</div>
+  <div>Loading your location and code...</div>
 </div>
 
 <!-- Leaders Section -->
@@ -168,8 +168,8 @@
   function renderMeter(code) {
     const meterWidth = code * 10;
     return `
-      <div class="nostrodomus-meter" aria-label="Nostrodomus karmic code meter">
-        <div class="nostrodomus-label">Nostrodomus Code: ${code}</div>
+      <div class="nostrodomus-meter" aria-label="karmic code meter">
+        <div class="nostrodomus-label">Code: ${code}</div>
         <div class="nostrodomus-bar">
           <div class="nostrodomus-fill" style="width:${meterWidth}%"></div>
         </div>
@@ -185,7 +185,7 @@
       <div><strong>Longitude:</strong> ${longitude.toFixed(4)}</div>
       <div><strong>Latitude:</strong> ${latitude.toFixed(4)}</div>
       ${renderMeter(code)}
-      <div class="location-info">Nostrodomus code combines your location's numerology and current moon phase.</div>
+      <div class="location-info"></div>
     `;
   }
 
@@ -315,3 +315,4 @@
 
 </body>
 </html>
+
