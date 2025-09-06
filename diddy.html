@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Did Diddy Do It? — The Full Investigation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+  body {
+    margin: 0; padding: 0;
+    background: #121212 url('https://i.imgur.com/1lfRmEi.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Courier Prime', monospace;
+    color: #a1e6cf;
+    user-select: none;
+    overflow-x: hidden;
+  }
+  #overlay {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.85);
+    z-index: -1;
+  }
+
+  .office-container {
+    max-width: 900px;
+    margin: 25px auto 50px;
+    background: #111f1fdd;
+    border-radius: 14px;
+    padding: 30px 35px 45px;
+    box-shadow: 0 0 18px #00ff99cc, inset 0 0 20px #005533cc;
+  }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    text-align: center;
+    color: #00ff99;
+    text-shadow: 0 0 10px #00ff99;
+    user-select: text;
+    margin-bottom: 0.3em;
+  }
+  h2 {
+    color: #33ffcc;
+    font-weight: 700;
+    margin-bottom: 0.35em;
+    text-shadow: 0 0 6px #009955aa;
+  }
+
+  .clue {
+    background: #222b2b;
+    border: 3px solid #00bb77;
+    border-radius: 12px;
+    padding: 22px 30px;
+    margin: 25px 0;
+    box-shadow:
+      0 0 15px #00ff99cc,
+      inset 0 0 16px #005533cc;
+    position: relative;
+  }
+  .clue::before {
+    content: '📌';
+    position: absolute;
+    top: -20px; left: 20px;
+    font-size: 2.2rem;
+    color: #00cc88;
+    user-select: none;
+  }
+
+  .clue p {
+    font-size: 1.15rem;
+    line-height: 1.5;
+  }
+  .clue small {
+    display: block;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #66ccaa99;
+    margin-top: 12px;
+  }
+
+  input[type="text"] {
+    width: 70%;
+    padding: 10px 14px;
+    font-size: 1.15rem;
+    border-radius: 7px;
+    border: 2px solid #009955;
+    background: #0b1a1a;
+    color: #00ff99;
+    font-family: 'Courier Prime', monospace;
+    box-shadow: inset 0 0 10px #006633aa;
+    margin-right: 12px;
+    user-select: text;
+  }
+  button {
+    background-color: #00cc77;
+    border: none;
+    color: #001100;
+    font-weight: 700;
+    font-family: 'Courier Prime', monospace;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background 0.25s ease;
+  }
+  button:hover:not(:disabled) {
+    background-color: #00ff99;
+    color: #003300;
+  }
+  button:disabled {
+    background-color: #006633;
+    cursor: default;
+  }
+
+  .feedback {
+    margin-top: 14px;
+    font-weight: 700;
+    min-height: 1.4em;
+    user-select: none;
+  }
+  .correct {
+    color: #00ff99;
+    text-shadow: 0 0 5px #00ff99;
+  }
+  .wrong {
+    color: #ff5555;
+  }
+
+  .timeline {
+    margin-top: 10px;
+    border-left: 3px solid #00cc88;
+    padding-left: 18px;
+    font-style: italic;
+    color: #77ccaabb;
+  }
+
+  .cipher-img {
+    width: 100%;
+    max-width: 450px;
+    border: 3px solid #00cc88;
+    border-radius: 12px;
+    box-shadow: 0 0 15px #00ff99aa;
+    margin: 20px auto;
+    cursor: pointer;
+    display: block;
+  }
+  .cipher-img:hover {
+    box-shadow: 0 0 25px #33ffbbdd;
+  }
+
+  .hidden-text {
+    color: transparent;
+    user-select: none;
+    position: relative;
+  }
+  .hidden-text::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%;
+    height: 100%;
+    color: transparent;
+    text-shadow:
+      0 0 2px #00ff9966,
+      0 0 4px #00ff9977,
+      0 0 8px #00ff99bb;
+    user-select: text;
+    pointer-events: none;
+  }
+  .hidden-text:hover::after {
+    color: #00ff99;
+    pointer-events: auto;
+  }
+
+  #finalReveal {
+    margin-top: 35px;
+    background: #003300cc;
+    border-radius: 16px;
+    padding: 30px 25px;
+    font-size: 1.5rem;
+    color: #00ff99;
+    text-align: center;
+    box-shadow: 0 0 28px #00ff99cc;
+    user-select: text;
+  }
+
+  #impostor-question {
+    margin-top: 28px;
+    padding: 25px 20px;
+    background: #113322cc;
+    border-radius: 12px;
+    box-shadow: inset 0 0 16px #005533cc;
+  }
+  #impostor-question p {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+  #impostor-question button {
+    margin: 8px 10px;
+    width: 150px;
+  }
+
+  .audio-control {
+    margin-top: 30px;
+    text-align: center;
+  }
+  .audio-control button {
+    background: #004422;
+    color: #00ff99;
+    border: 2px solid #00ff99;
+    font-family: 'Courier Prime', monospace;
+    padding: 12px 26px;
+    cursor: pointer;
+    font-weight: 700;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+  .audio-control button:hover {
+    background: #00ff99;
+    color: #002200;
+  }
+
+  .timer {
+    font-weight: 700;
+    color: #00ff99;
+    font-size: 1.15rem;
+    margin-bottom: 14px;
+    user-select: none;
+  }
+
+  .hint-text {
+    background: #004422cc;
+    border-radius: 10px;
+    padding: 12px 15px;
+    margin-top: 12px;
+    font-style: italic;
+    color: #99ffbb;
+    user-select: text;
+  }
+
+  @media (max-width: 650px) {
+    .office-container {
+      padding: 20px 25px 35px;
+      margin: 10px 15px;
+    }
+    input[type="text"] {
+      width: 100%;
+      margin-bottom: 14px;
+    }
+    button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    #impostor-question button {
+      width: 100%;
+      margin: 10px 0;
+    }
+    .cipher-img {
+      max-width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+  <div id="overlay"></div>
+
+  <div class="office-container" role="main" aria-label="Diddy Investigation Office">
+
+    <h1>Did Diddy Do It? — The Full Investigation</h1>
+
+    <div class="audio-control" aria-label="Audio controls">
+      <button id="audioToggleBtn" aria-pressed="false">🔈 Mute Ambient Sound</button>
+      <audio id="ambientAudio" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/03/20/audio_316f1981f9.mp3?filename=dark-ambience-11711.mp3"></audio>
+    </div>
+
+    <!-- Timer Display -->
+    <div class="timer" id="timerDisplay" aria-live="polite" aria-atomic="true">Time Left: 01:00</div>
+
+    <!-- Clue 1 -->
+    <section class="clue" id="clue1" tabindex="0" aria-describedby="desc1">
+      <h2>Clue 1: Early Life Hidden Pain</h2>
+      <p id="desc1">
+        Sean Combs faced a dark moment in childhood — a trauma that changed his life forever.
+        A mysterious note was found, written in a simple Caesar cipher (shift by 3).
+        <br />
+        <strong>Decode this to uncover the secret word:</strong>
+      </p>
+      <p><code style="user-select:text;">Krph Zdv Zlwk Vrphwklqj Xqwudiuhqw...</code></p>
+      <label for="input1">Decoded word (one word):</label><br />
+      <input type="text" id="input1" aria-label="Decoded secret word" autocomplete="off" />
+      <button aria-label="Submit answer for Clue 1" onclick="checkClue1()">Submit</button>
+      <button aria-label="Show hint for Clue 1" onclick="showHint(1)">Hint</button>
+      <div class="feedback" id="feedback1" aria-live="polite"></div>
+      <div class="hint-text" id="hint1" style="display:none;">
+        Think about what "unquiet" means — unrest, turmoil, something disturbing.
+      </div>
+      <div class="timeline">Year: Early 1970s - Childhood trauma hint</div>
+    </section>
+
+    <!-- Clue 2 -->
+    <section class="clue" id="clue2" tabindex="0" aria-describedby="desc2" style="display:none;">
+      <h2>Clue 2: Breaking Into Business</h2>
+      <p id="desc2">
+        After years of struggle, Sean Combs broke into music production in 1993. His first label changed hip-hop forever.
+        <strong>What was the name of his first record label?</strong>
+      </p>
+      <input type="text" id="input2" aria-label="First record label name" autocomplete="off" />
+      <button aria-label="Submit answer for Clue 2" onclick="checkClue2()">Submit</button>
+      <button aria-label="Show hint for Clue 2" onclick="showHint(2)">Hint</button>
+      <div class="feedback" id="feedback2" aria-live="polite"></div>
+      <div class="hint-text" id="hint2" style="display:none;">
+        The label was synonymous with bad boys and street anthems.
+      </div>
+      <div class="timeline">Year: 1993 - Label foundation</div>
+    </section>
+
+    <!-- Clue 3 -->
+    <section class="clue" id="clue3" tabindex="0" aria-describedby="desc3" style="display:none;">
+      <h2>Clue 3: The Name Game</h2>
+      <p id="desc3">
+        Sean Combs has used many stage names over the years. Unscramble this to reveal one of his iconic monikers:
+      </p>
+      <p><code style="user-select:text;">YDIDD</code></p>
+      <input type="text" id="input3" aria-label="Unscramble the name" autocomplete="off" />
+      <button aria-label="Submit answer for Clue 3" onclick="checkClue3()">Submit</button>
+      <button aria-label="Show hint for Clue 3" onclick="showHint(3)">Hint</button>
+      <div class="feedback" id="feedback3" aria-live="polite"></div>
+      <div class="hint-text" id="hint3" style="display:none;">
+        It’s the name fans shout at concerts; it starts with "D".
+      </div>
+      <div class="timeline">Year: Mid 1990s - Name changes</div>
+    </section>
+
+    <!-- Clue 4 -->
+    <section class="clue" id="clue4" tabindex="0" aria-describedby="desc4" style="display:none;">
+      <h2>Clue 4: Hidden Lies in Plain Sight</h2>
+      <p id="desc4">
+        The investigation found an image with a hidden cipher. Click the image carefully.
+      </p>
+      <img src="https://i.imgur.com/v5mPEHr.png" alt="Cipher image hint" class="cipher-img" tabindex="0" onclick="revealCipher()" onkeypress="if(event.key==='Enter') revealCipher()" aria-describedby="cipherHint" />
+      <div id="cipherHint" style="font-size:0.9rem; margin-top: 10px; color: #55cc88; font-style: italic; user-select:none;">Click or press enter on image to reveal hidden word</div>
+      <input type="text" id="input4" aria-label="Hidden word in cipher image" autocomplete="off" />
+      <button aria-label="Submit answer for Clue 4" onclick="checkClue4()">Submit</button>
+      <button aria-label="Show hint for Clue 4" onclick="showHint(4)">Hint</button>
+      <div class="feedback" id="feedback4" aria-live="polite"></div>
+      <div class="hint-text" id="hint4" style="display:none;">
+        The hidden word is related to deception and untruths.
+      </div>
+      <div class="timeline">Year: 2010s - Secret uncovered</div>
+    </section>
+
+    <!-- Clue 5 -->
+    <section class="clue" id="clue5" tabindex="0" aria-describedby="desc5" style="display:none;">
+      <h2>Clue 5: The Whispered Secret</h2>
+      <p id="desc5" class="hidden-text" data-text="cassie knew too much">
+        There's a faint whisper on the walls: <em>Listen closely.</em>
+      </p>
+      <input type="text" id="input5" aria-label="Hidden whispered phrase" autocomplete="off" />
+      <button aria-label="Submit answer for Clue 5" onclick="checkClue5()">Submit</button>
+      <button aria-label="Show hint for Clue 5" onclick="showHint(5)">Hint</button>
+      <div class="feedback" id="feedback5" aria-live="polite"></div>
+      <div class="hint-text" id="hint5" style="display:none;">
+        The phrase talks about someone who "knew too much".
+      </div>
+      <div class="timeline">Year: 2011 - Key witness</div>
+    </section>
+
+    <!-- Final question -->
+    <section id="impostor-question" style="display:none;">
+      <p>Who do you accuse of committing the crime?</p>
+      <button onclick="finalAccuse('diddy')" aria-label="Accuse Diddy">Diddy</button>
+      <button onclick="finalAccuse('cassie')" aria-label="Accuse Cassie">Cassie</button>
+      <button onclick="finalAccuse('other')" aria-label="Accuse Someone Else">Other</button>
+      <div id="finalFeedback" class="feedback" aria-live="polite"></div>
+    </section>
+
+    <!-- Final reveal -->
+    <section id="finalReveal" style="display:none;" tabindex="0" aria-live="polite" aria-label="Final investigation reveal">
+      <h2>The Verdict</h2>
+      <p>After examining all evidence, the truth is clear:</p>
+      <p style="font-size:2rem; font-weight:700; color:#00ff99;">Diddy Did It.</p>
+      <p>
+        Sean Combs, despite his success and multiple personas, had a hidden dark past and a tangled web of lies.
+        This investigation finally uncovered what many suspected all along.
+      </p>
+      <p>Thank you for helping solve this mystery.</p>
+    </section>
+  </div>
+
+  <script>
+    // Global state for timer
+    let timer;
+    let timeLeft = 60; // seconds per clue
+    let currentClue = 1;
+    const totalClues = 5;
+
+    // Audio setup
+    const audio = document.getElementById('ambientAudio');
+    const audioBtn = document.getElementById('audioToggleBtn');
+    let isAudioPlaying = false;
+
+    function toggleAudio() {
+      if(audio.paused) {
+        audio.play();
+        audioBtn.textContent = '🔊 Mute Ambient Sound';
+        audioBtn.setAttribute('aria-pressed', 'true');
+        isAudioPlaying = true;
+      } else {
+        audio.pause();
+        audioBtn.textContent = '🔈 Mute Ambient Sound';
+        audioBtn.setAttribute('aria-pressed', 'false');
+        isAudioPlaying = false;
+      }
+    }
+    audioBtn.addEventListener('click', toggleAudio);
+
+    // Start audio automatically muted
+    audio.volume = 0.35;
+    // Don't autoplay for accessibility reasons, user toggles.
+
+    // Timer functions
+    function startTimer() {
+      timeLeft = 60;
+      updateTimerDisplay();
+      timer = setInterval(() => {
+        timeLeft--;
+        if(timeLeft <= 0) {
+          clearInterval(timer);
+          lockCurrentClue();
+          moveToNextClue();
+        } else {
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const min = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const sec = (timeLeft % 60).toString().padStart(2, '0');
+      document.getElementById('timerDisplay').textContent = `Time Left: ${min}:${sec}`;
+    }
+
+    function lockCurrentClue() {
+      const input = document.getElementById(`input${currentClue}`);
+      const submitBtn = document.querySelector(`#clue${currentClue} button`);
+      if(input) input.disabled = true;
+      if(submitBtn) submitBtn.disabled = true;
+      const fb = document.getElementById(`feedback${currentClue}`);
+      if(fb) {
+        fb.textContent = "Time's up! Moving on...";
+        fb.classList.remove('correct');
+        fb.classList.add('wrong');
+      }
+    }
+
+    function moveToNextClue() {
+      if(currentClue < totalClues) {
+        document.getElementById(`clue${currentClue}`).style.display = 'none';
+        currentClue++;
+        document.getElementById(`clue${currentClue}`).style.display = 'block';
+        clearAllFeedback();
+        clearHint(currentClue);
+        startTimer();
+      } else {
+        // All clues done
+        document.getElementById(`clue${currentClue}`).style.display = 'none';
+        document.getElementById('timerDisplay').style.display = 'none';
+        document.getElementById('impostor-question').style.display = 'block';
+      }
+    }
+
+    // Clear feedback and hints on new clue
+    function clearAllFeedback() {
+      for(let i=1; i<=totalClues; i++) {
+        const fb = document.getElementById(`feedback${i}`);
+        if(fb) {
+          fb.textContent = '';
+          fb.classList.remove('correct','wrong');
+        }
+      }
+    }
+    function clearHint(num) {
+      const hint = document.getElementById(`hint${num}`);
+      if(hint) hint.style.display = 'none';
+    }
+
+    // Check answers functions
+    function checkClue1() {
+      const val = document.getElementById('input1').value.trim().toLowerCase();
+      if(val === 'unquiet') {
+        showCorrect(1);
+      } else {
+        showWrong(1);
+      }
+    }
+    function checkClue2() {
+      const val = document.getElementById('input2').value.trim().toLowerCase();
+      if(val === 'bad boy records' || val === 'bad boy') {
+        showCorrect(2);
+      } else {
+        showWrong(2);
+      }
+    }
+    function checkClue3() {
+      const val = document.getElementById('input3').value.trim().toLowerCase();
+      if(val === 'diddy') {
+        showCorrect(3);
+      } else {
+        showWrong(3);
+      }
+    }
+    function checkClue4() {
+      const val = document.getElementById('input4').value.trim().toLowerCase();
+      if(val === 'lies') {
+        showCorrect(4);
+      } else {
+        showWrong(4);
+      }
+    }
+    function checkClue5() {
+      const val = document.getElementById('input5').value.trim().toLowerCase();
+      if(val === 'cassie knew too much') {
+        showCorrect(5);
+      } else {
+        showWrong(5);
+      }
+    }
+
+    // Show correct feedback and move on after delay
+    function showCorrect(num) {
+      clearInterval(timer);
+      const fb = document.getElementById('feedback' + num);
+      fb.textContent = 'Correct!';
+      fb.classList.remove('wrong');
+      fb.classList.add('correct');
+      document.getElementById(`input${num}`).disabled = true;
+      const buttons = document.querySelectorAll(`#clue${num} button`);
+      buttons.forEach(btn => btn.disabled = true);
+
+      setTimeout(() => {
+        if(num < totalClues) {
+          document.getElementById(`clue${num}`).style.display = 'none';
+          currentClue++;
+          document.getElementById(`clue${currentClue}`).style.display = 'block';
+          clearAllFeedback();
+          clearHint(currentClue);
+          startTimer();
+          document.getElementById(`input${currentClue}`).focus();
+        } else {
+          // Final question
+          document.getElementById('timerDisplay').style.display = 'none';
+          document.getElementById('impostor-question').style.display = 'block';
+          document.getElementById('finalFeedback').textContent = '';
+        }
+      }, 1400);
+    }
+
+    function showWrong(num) {
+      const fb = document.getElementById('feedback' + num);
+      fb.textContent = 'Incorrect, try again.';
+      fb.classList.remove('correct');
+      fb.classList.add('wrong');
+    }
+
+    // Show hint for clue
+    function showHint(num) {
+      const hint = document.getElementById(`hint${num}`);
+      if(hint) {
+        if(hint.style.display === 'none') {
+          hint.style.display = 'block';
+        } else {
+          hint.style.display = 'none';
+        }
+      }
+    }
+
+    // Cipher image reveal - toggles color invert filter for fun effect
+    let cipherRevealed = false;
+    function revealCipher() {
+      const img = document.querySelector('#clue4 img');
+      cipherRevealed = !cipherRevealed;
+      if(cipherRevealed) {
+        img.style.filter = 'invert(1) drop-shadow(0 0 5px #00ff99)';
+      } else {
+        img.style.filter = 'none';
+      }
+    }
+
+    // Final accusation handler
+    function finalAccuse(accused) {
+      const fb = document.getElementById('finalFeedback');
+      if(accused === 'diddy') {
+        fb.textContent = 'Correct! Diddy was responsible.';
+        fb.classList.remove('wrong');
+        fb.classList.add('correct');
+        setTimeout(() => {
+          document.getElementById('impostor-question').style.display = 'none';
+          document.getElementById('finalReveal').style.display = 'block';
+          window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+        }, 1800);
+      } else {
+        fb.textContent = 'Wrong accusation. Try again.';
+        fb.classList.remove('correct');
+        fb.classList.add('wrong');
+      }
+    }
+
+    // Start first timer on load
+    window.onload = () => {
+      document.getElementById('input1').focus();
+      startTimer();
+    };
+  </script>
+</body>
+</html>
