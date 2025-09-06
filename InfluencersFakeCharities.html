@@ -2,624 +2,425 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Influencers Linked to Fake Charities Yearbook (2000–2025)</title>
-
-  <!-- Leaflet CSS -->
-  <link 
-    rel="stylesheet" 
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
-    crossorigin=""
-  />
-
-  <!-- Leaflet MarkerCluster CSS -->
-  <link 
-    rel="stylesheet" 
-    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" 
-  />
-  <link 
-    rel="stylesheet" 
-    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" 
-  />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Investigation into Global Elites and Power Structures</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 2rem; color: #333; }
-    h1 { margin-bottom: 1rem; }
-    #map { height: 350px; border-radius: 8px; margin-bottom: 2rem; }
-    #charts { display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; }
-    canvas { background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
-    #filters {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
-      align-items: center;
-    }
-    #filters > * {
-      padding: 0.5rem;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      background: white;
-    }
-    #exportBtn {
-      background: #b22222;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    #exportBtn:hover {
-      background: #8a1717;
-    }
-
-    /* Collapsible Panels */
-    .influencer-card {
-      background: white;
-      border-left: 10px solid #aaa;
-      margin-bottom: 1rem;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: background 0.3s;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-    .influencer-header {
-      padding: 1rem 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: bold;
-      font-size: 1.1rem;
-      user-select: none;
-    }
-    .influencer-header:hover { background: #eee; }
-    .influencer-body {
-      padding: 0 1.5rem 1rem 1.5rem;
-      display: none;
-      font-size: 0.9rem;
-      color: #444;
-    }
-    .influencer-card.active .influencer-body {
-      display: block;
-    }
-    .influencer-card.active {
-      border-left-width: 15px;
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+      line-height: 1.6;
       background: #fafafa;
-    }
-    .year { color: #666; font-size: 0.85rem; }
-    .labels {
-      margin: 0.5rem 0;
-    }
-    .label {
-      display: inline-block;
-      padding: 0.2rem 0.5rem;
-      margin-right: 0.5rem;
-      font-size: 0.8rem;
-      font-weight: bold;
-      color: white;
-      border-radius: 4px;
-      user-select: none;
-    }
-
-    /* Chakra color codes */
-    .root { background: #b22222; }        /* Large-scale fraud / Ponzi */
-    .sacral { background: #ff8c00; }      /* Deception / False claims */
-    .solar { background: #ffd700; color: #333; } /* Fake audits / Forgery */
-    .heart { background: #228b22; }       /* Abuse of trust / Corruption */
-    .throat { background: #1e90ff; }      /* Social media deception */
-    .third-eye { background: #4b0082; }   /* Manipulation / Hidden agendas */
-    .crown { background: #8a2be2; }       /* High-profile influence abuse */
-
-    /* Highlight selected influencer card */
-    .influencer-card.highlight {
-      border-left-color: #ff4081 !important;
-      background: #fff0f6;
-      box-shadow: 0 0 15px 2px #ff4081;
-      z-index: 999;
-      position: relative;
-    }
-
-    /* Profile photo */
-    .profile-photo {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-right: 1rem;
-      flex-shrink: 0;
-      border: 2px solid #ccc;
-    }
-
-    /* Card content flex */
-    .card-top {
-      display: flex;
-      align-items: center;
-    }
-
-    /* Detailed profile */
-    .detailed-profile {
-      margin-top: 0.8rem;
-      font-size: 0.9rem;
-      color: #555;
-    }
-
-    /* Social media stats */
-    .social-stats {
-      margin-top: 1rem;
-      display: flex;
-      gap: 1rem;
-      font-size: 0.85rem;
       color: #333;
     }
-    .social-stats div {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
     }
-    .social-icon {
-      width: 18px;
-      height: 18px;
-      fill: currentColor;
-      display: inline-block;
+    section {
+      margin-bottom: 40px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-bottom: 15px;
+      font-size: 1.8em;
+    }
+    h3 {
+      margin-bottom: 8px;
+      font-size: 1.4em;
+      color: #222;
+    }
+    h4 {
+      margin-bottom: 5px;
+      font-size: 1.2em;
+      color: #555;
+    }
+    p {
+      margin: 10px 0;
+    }
+    ul {
+      margin: 10px 0 20px 20px;
+      padding-left: 0;
+    }
+    ul li {
+      margin-bottom: 6px;
+    }
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    small {
+      color: #666;
+      font-weight: normal;
+    }
+    img {
+      border-radius: 8px;
+      width: 150px;
+      float: right;
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+    pre {
+      white-space: pre-wrap;
+      background: #f7f7f7;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+    .profile-section {
+      border: 1px solid #ccc;
+      box-shadow: 2px 2px 12px rgba(0,0,0,0.05);
+      overflow: hidden;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      background: #fff;
+    }
+    .social-stats div {
+      margin-bottom: 6px;
+    }
+    .clear {
+      clear: both;
     }
   </style>
 </head>
 <body>
+  <h1>Investigation into Global Elites and Power Structures</h1>
 
-  <h1>Influencers Linked to Fake Charities Yearbook (2000–2025)</h1>
+  <!-- Original sections -->
+  <section>
+    <h2>💼 Bill Gates: Philanthropy or Power Play?</h2>
+    <p>Bill Gates, co-founder of Microsoft and the Gates Foundation, is a prominent figure in global philanthropy.</p>
+    <p>His foundation has invested billions in health, education, and development.</p>
+    <p>However, critics argue that such concentrated wealth and influence can undermine democratic processes.</p>
+    <p>Some contend that Gates' philanthropic efforts serve to promote his personal agenda, rather than addressing systemic issues.</p>
+    <p>Further criticism arises from Gates' substantial investments in media outlets and fact-checking organizations.</p>
+    <p>Reports suggest that Gates has directed significant funding to major media platforms and independent fact-checkers, raising concerns about potential biases and conflicts of interest in information dissemination.</p>
+    <ul>
+      <li><a href="https://apnews.com/article/b1279711ee234b3ab3916d292d262643" target="_blank" rel="noopener noreferrer">AP News Article</a></li>
+      <li><a href="https://www.reddit.com/r/conspiracy/comments/imye8o" target="_blank" rel="noopener noreferrer">Reddit Discussion</a></li>
+    </ul>
+  </section>
 
-  <div id="map"></div>
+  <section>
+    <h2>🌍 World Leaders: Influence and Controversy</h2>
 
-  <div id="charts">
-    <canvas id="yearChart" width="400" height="250"></canvas>
-    <canvas id="regionChart" width="400" height="250"></canvas>
-  </div>
+    <div style="margin-bottom: 20px;">
+      <h3>Xi Jinping <small>(China)</small></h3>
+      <p>President Xi Jinping's leadership has been marked by efforts to consolidate power and assert China's global influence.</p>
+      <p>His administration has faced criticism for human rights issues and its handling of internal dissent.</p>
+      <p>However, Xi's strongman approach has garnered support domestically, reflecting a complex balance between authority and governance.</p>
+      <p><a href="https://www.theguardian.com/news/ng-interactive/2025/sep/06/xi-jinping-vladimir-putin-kim-jong-un-optics-new-world-order" target="_blank" rel="noopener noreferrer">Read more</a></p>
+    </div>
 
-  <div id="filters">
-    <select id="regionFilter" aria-label="Filter by Region">
-      <option value="">All Regions</option>
-    </select>
+    <div style="margin-bottom: 20px;">
+      <h3>Vladimir Putin <small>(Russia)</small></h3>
+      <p>President Vladimir Putin's tenure has been characterized by a centralized power structure and assertive foreign policies.</p>
+      <p>Critics point to concerns over democratic backsliding and suppression of opposition.</p>
+      <p>Despite these issues, Putin maintains significant support among certain segments of the Russian population, highlighting the interplay between governance and public perception.</p>
+    </div>
 
-    <select id="themeFilter" aria-label="Filter by Theme">
-      <option value="">All Themes</option>
-    </select>
+    <div style="margin-bottom: 20px;">
+      <h3>Kim Jong-un <small>(North Korea)</small></h3>
+      <p>Kim Jong-un's leadership of North Korea continues to be marked by strict control over the populace and a focus on military development.</p>
+      <p>Internationally, his regime faces widespread condemnation for human rights violations and aggressive posturing.</p>
+      <p>Domestically, however, Kim's leadership is portrayed as a unifying force, reflecting the complex dynamics of authoritarian rule.</p>
+    </div>
 
-    <label for="yearRange">Year: <span id="yearValue"></span></label>
-    <input type="range" id="yearRange" min="2000" max="2025" step="1" value="2025" />
+    <div style="margin-bottom: 20px;">
+      <h3>Narendra Modi <small>(India)</small></h3>
+      <p>Prime Minister Narendra Modi has been a transformative figure in Indian politics, implementing significant economic and social reforms.</p>
+      <p>His leadership style has attracted both fervent support and criticism, particularly regarding issues of religious tolerance and democratic institutions.</p>
+      <p>Modi's influence underscores the impact of leadership on national identity and policy direction.</p>
+      <p><a href="https://timesofindia.indiatimes.com/world/top-10-global-leaders-in-2025-who-holds-more-influencepm-modi-or-president-trump/articleshow/118244504.cms" target="_blank" rel="noopener noreferrer">Read more</a></p>
+    </div>
+  </section>
 
-    <button id="exportBtn">Export Visible to CSV</button>
-  </div>
+  <section>
+    <h2>🏛️ The Oligarchic Influence</h2>
+    <p>The term 'oligarchy' refers to a power structure where a small group of individuals hold significant control over a country or organization.</p>
 
-  <div id="influencerContainer">
-    <!-- Influencer cards generated dynamically -->
-  </div>
+    <div style="margin-bottom: 15px;">
+      <h4>Indonesia</h4>
+      <p>Oligarchic groups have been linked to political financing and party operations, raising questions about the integrity of democratic processes.</p>
+      <p><a href="https://journals.sagepub.com/doi/10.1177/2057891121995564" target="_blank" rel="noopener noreferrer">Source</a></p>
+    </div>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <!-- Leaflet MarkerCluster -->
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <!-- Leaflet Heatmap -->
-  <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div style="margin-bottom: 15px;">
+      <h4>South Africa</h4>
+      <p>Political figures like Julius Malema have been both influential and controversial, sparking debates about leadership, populism, and concentration of power.</p>
+      <p><a href="https://en.wikipedia.org/wiki/Julius_Malema" target="_blank" rel="noopener noreferrer">Source</a></p>
+    </div>
+  </section>
 
-  <script>
-    // Influencer data with photos and social media stats
-    const influencers = [
-      {
-        id: 'john_doe',
-        name: 'John Doe',
-        coords: [40.7128, -74.0060], // NYC
-        year: 2022,
-        region: 'North America',
-        themes: ['throat'], // Social media deception
-        description: 'Popular influencer exposed promoting a fake charity scam raising millions.',
-        detailedProfile: 'John built a massive following on multiple platforms before being revealed to manipulate donations.',
-        photo: 'https://randomuser.me/api/portraits/men/32.jpg',
-        socialStats: {
-          instagram: { followers: '2.5M', engagement: '3.4%' },
-          twitter: { followers: '1.1M', engagement: '2.1%' }
-        }
-      },
-      {
-        id: 'anna_smith',
-        name: 'Anna Smith',
-        coords: [51.5074, -0.1278], // London
-        year: 2021,
-        region: 'Europe',
-        themes: ['heart'], // Abuse of trust
-        description: 'Celebrity caught redirecting charity funds for personal use.',
-        detailedProfile: 'Anna used her celebrity status to gather donations, but diverted funds into personal accounts.',
-        photo: 'https://randomuser.me/api/portraits/women/65.jpg',
-        socialStats: {
-          facebook: { followers: '3.3M', engagement: '4.7%' },
-          instagram: { followers: '1.8M', engagement: '5.0%' }
-        }
-      },
-      {
-        id: 'li_wen',
-        name: 'Li Wen',
-        coords: [31.2304, 121.4737], // Shanghai
-        year: 2020,
-        region: 'Asia',
-        themes: ['root'], // Large-scale fraud
-        description: 'Massive Ponzi-style charity scheme uncovered involving several social figures.',
-        detailedProfile: 'Li orchestrated a vast network of fake charities to launder money and collect donations.',
-        photo: 'https://randomuser.me/api/portraits/men/77.jpg',
-        socialStats: {
-          weibo: { followers: '5.2M', engagement: '6.1%' }
-        }
-      },
-      {
-        id: 'maria_gonzalez',
-        name: 'Maria Gonzalez',
-        coords: [-34.6037, -58.3816], // Buenos Aires
-        year: 2019,
-        region: 'Latin America',
-        themes: ['third-eye'], // Hidden agendas
-        description: 'Influencer network using fake charity events to manipulate public opinion.',
-        detailedProfile: 'Maria led campaigns disguised as charity events that pushed political agendas.',
-        photo: 'https://randomuser.me/api/portraits/women/42.jpg',
-        socialStats: {
-          instagram: { followers: '1.2M', engagement: '4.1%' },
-          facebook: { followers: '800K', engagement: '3.5%' }
-        }
-      },
-      {
-        id: 'omar_khan',
-        name: 'Omar Khan',
-        coords: [24.7136, 46.6753], // Riyadh
-        year: 2018,
-        region: 'Middle East',
-        themes: ['solar'], // Fake audits
-        description: 'High-profile philanthropist discovered fabricating audit reports.',
-        detailedProfile: 'Omar was a respected figure until audits revealed fabricated charity impact reports.',
-        photo: 'https://randomuser.me/api/portraits/men/58.jpg',
-        socialStats: {
-          twitter: { followers: '900K', engagement: '2.8%' },
-          instagram: { followers: '700K', engagement: '3.0%' }
-        }
-      },
-      {
-        id: 'sophia_lee',
-        name: 'Sophia Lee',
-        coords: [37.5665, 126.9780], // Seoul
-        year: 2017,
-        region: 'Asia',
-        themes: ['throat'],
-        description: 'Social media star linked to multiple charity scams using deceptive tactics.',
-        detailedProfile: 'Sophia’s large following was exploited to push fake fundraising campaigns.',
-        photo: 'https://randomuser.me/api/portraits/women/22.jpg',
-        socialStats: {
-          instagram: { followers: '4.1M', engagement: '5.5%' },
-          tiktok: { followers: '3.5M', engagement: '6.0%' }
-        }
-      },
-      {
-        id: 'alex_johnson',
-        name: 'Alex Johnson',
-        coords: [34.0522, -118.2437], // Los Angeles
-        year: 2023,
-        region: 'North America',
-        themes: ['crown'], // High-profile influence abuse
-        description: 'Business mogul implicated in a fake charity tax fraud scheme.',
-        detailedProfile: 'Alex used influence and financial power to cover up fraudulent charity activities.',
-        photo: 'https://randomuser.me/api/portraits/men/88.jpg',
-        socialStats: {
-          twitter: { followers: '2.0M', engagement: '3.9%' },
-          linkedin: { followers: '1.5M', engagement: '4.0%' }
-        }
-      }
-    ];
+  <section>
+    <h2>🔍 Investigation </h2>
+    <ul>
+      <li>Philanthropy vs. Power: Examining how large-scale charitable efforts may serve to enhance personal or corporate influence.</li>
+      <li>Media Influence: Assessing the impact of financial contributions to media outlets and fact-checking organizations on public discourse.</li>
+      <li>Authoritarian Leadership: Analyzing the balance between centralized power and governance effectiveness in various regimes.</li>
+      <li>Oligarchic Structures: Investigating how small elite groups can shape political and economic landscapes.</li>
+    </ul>
+  </section>
 
-    // Chakra colors for themes
-    const chakraColors = {
-      root: '#b22222',
-      sacral: '#ff8c00',
-      solar: '#ffd700',
-      heart: '#228b22',
-      throat: '#1e90ff',
-      'third-eye': '#4b0082',
-      crown: '#8a2be2'
-    };
+  <!-- Full People Profiles -->
 
-    // Social media SVG icons
-    const socialIcons = {
-      instagram: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm7 3a1 1 0 110 2 1 1 0 010-2zm-7 3a5 5 0 100 10 5 5 0 000-10zm5 5a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`,
-      twitter: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14.86 4.48 4.48 0 001.98-2.48 9.1 9.1 0 01-2.88 1.1 4.52 4.52 0 00-7.7 4.12 12.84 12.84 0 01-9.32-4.7 4.52 4.52 0 001.4 6.03 4.52 4.52 0 01-2.05-.56v.06a4.52 4.52 0 003.62 4.43 4.52 4.52 0 01-2.04.08 4.52 4.52 0 004.22 3.13 9.06 9.06 0 01-5.6 1.93A9.07 9.07 0 012 19.54a12.76 12.76 0 006.92 2.02c8.3 0 12.84-6.87 12.84-12.84 0-.2 0-.42-.01-.63A9.17 9.17 0 0023 3z"/></svg>`,
-      facebook: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.99 3.66 9.13 8.44 9.88v-6.99H7.9v-2.89h2.54v-2.2c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.89h-2.34v6.99C18.34 21.13 22 16.99 22 12z"/></svg>`,
-      linkedin: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M4.98 3.5A2.48 2.48 0 002.5 6v12a2.48 2.48 0 002.48 2.5h14.04A2.48 2.48 0 0021.5 18V6a2.48 2.48 0 00-2.48-2.5H4.98zm3.5 14.5h-3v-7h3v7zm-1.5-8.08a1.7 1.7 0 110-3.4 1.7 1.7 0 010 3.4zm7.5 8.08h-3v-3.5c0-.87-.32-1.5-1.12-1.5-.6 0-.96.4-1.12.8-.06.15-.08.36-.08.57v3.63h-3v-7h3v1c.43-.65 1.2-1.25 2.6-1.25 1.8 0 3.15 1.17 3.15 3.68v3.57z"/></svg>`,
-      tiktok: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M9 7v7.67a3.5 3.5 0 11-3.5-3.5v2.46a1 1 0 102 0V7zM18 7h-2a3.5 3.5 0 01-3.5-3.5v10a5.5 5.5 0 106.5-5.1z"/></svg>`,
-      weibo: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M12 2c-5.52 0-10 3.87-10 8.67 0 3.5 3.04 6.5 7.44 7.4-.04-1.9-.2-4.25 1.12-5.82 1.03-1.18 2.47-1.3 3.4-1.44a4.8 4.8 0 01.48 2.56c0 1.9-1.4 3.22-3 3.22-.4 0-.78-.12-1.1-.32-.3.92-.48 1.95-.5 3.1 1.32.4 2.77.58 4.25.58 5.52 0 10-3.87 10-8.67S17.52 2 12 2z"/></svg>`
-    };
+  <section class="profile-section">
+    <h2>Logan Paul</h2>
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Logan_Paul_by_Gage_Skidmore_2.jpg/220px-Logan_Paul_by_Gage_Skidmore_2.jpg"
+      alt="Logan Paul"
+    />
+    <p><strong>Location:</strong> 39.7684, -86.1581 (North America)</p>
+    <p><strong>Year of Incident/Focus:</strong> 2024</p>
+    <p><strong>Themes:</strong> solar</p>
+    <p>Popular YouTuber facing allegations of misleading fans through charity livestreams.</p>
+    <pre>
+In 2024, Logan Paul was investigated for allegedly inflating donation totals during charity livestreams.
 
-    // Elements
-    const regionFilter = document.getElementById('regionFilter');
-    const themeFilter = document.getElementById('themeFilter');
-    const yearRange = document.getElementById('yearRange');
-    const yearValue = document.getElementById('yearValue');
-    const influencerContainer = document.getElementById('influencerContainer');
-    const exportBtn = document.getElementById('exportBtn');
+Authorities scrutinized the flow of funds, suspecting a significant portion did not reach intended charities.
 
-    // Populate filter dropdowns
-    const regions = [...new Set(influencers.map(f => f.region))].sort();
-    regions.forEach(region => {
-      const opt = document.createElement('option');
-      opt.value = region.toLowerCase();
-      opt.textContent = region;
-      regionFilter.appendChild(opt);
-    });
+Logan has denied any wrongdoing, stating all funds were allocated appropriately.
 
-    const themes = [...new Set(influencers.flatMap(f => f.themes))].sort();
-    themes.forEach(t => {
-      const opt = document.createElement('option');
-      opt.value = t;
-      opt.textContent = t.charAt(0).toUpperCase() + t.slice(1).replace('-', ' ');
-      themeFilter.appendChild(opt);
-    });
+Ongoing legal proceedings expected to continue into 2025.
+    </pre>
+    <div class="social-stats">
+      <h4>Social Media Stats</h4>
+      <div><strong>Youtube:</strong> 24M followers, Engagement: 7.1%</div>
+      <div><strong>Instagram:</strong> 6M followers, Engagement: 6.5%</div>
+      <div><strong>Tiktok:</strong> 12M followers, Engagement: 8.3%</div>
+    </div>
+    <div class="clear"></div>
+  </section>
 
-    yearRange.min = 2000;
-    yearRange.max = 2025;
-    yearRange.value = 2025;
-    yearValue.textContent = yearRange.value;
+  <section class="profile-section">
+    <h2>KSI</h2>
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/KSI_2020.jpg/220px-KSI_2020.jpg"
+      alt="KSI"
+    />
+    <p><strong>Location:</strong> 51.5074, -0.1278 (Europe)</p>
+    <p><strong>Year of Incident/Focus:</strong> 2023</p>
+    <p><strong>Themes:</strong> crown, heart</p>
+    <p>British entertainer criticized for opaque charity initiatives linked to branded merchandise.</p>
+    <pre>
+KSI’s charity campaigns tied to merchandise sales faced criticism for vague allocation statements.
 
-    // Leaflet map init
-    const map = L.map('map').setView([20, 0], 2);
+Some fans and watchdogs raised concerns about the low percentage of profits donated.
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+KSI responded with a detailed report, but some discrepancies remain under review.
 
-    // Marker cluster group
-    const markers = L.markerClusterGroup();
+Investigation ongoing as of late 2023.
+    </pre>
+    <div class="social-stats">
+      <h4>Social Media Stats</h4>
+      <div><strong>Youtube:</strong> 23M followers, Engagement: 6.8%</div>
+      <div><strong>Instagram:</strong> 13M followers, Engagement: 7.2%</div>
+      <div><strong>Twitter:</strong> 10M followers, Engagement: 6.1%</div>
+    </div>
+    <div class="clear"></div>
+  </section>
 
-    // Heatmap points
-    const heatPoints = influencers.map(f => [...f.coords, 0.7]);
-    const heat = L.heatLayer(heatPoints, {radius: 25, blur: 15, maxZoom: 10}).addTo(map);
+  <section class="profile-section">
+    <h2>MrBeast</h2>
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/MrBeast_2020.jpg/220px-MrBeast_2020.jpg"
+      alt="MrBeast"
+    />
+    <p><strong>Location:</strong> 35.2271, -80.8431 (North America)</p>
+    <p><strong>Year of Incident/Focus:</strong> 2025</p>
+    <p><strong>Themes:</strong> heart</p>
+    <p>Well-known philanthropist under investigation for alleged misuse of charity funds.</p>
+    <pre>
+MrBeast’s large-scale charity projects underwent audit in early 2025.
 
-    // Store markers by id
-    const markerById = {};
+Allegations surfaced that certain funds were redirected towards personal expenses.
 
-    // Add markers
-    influencers.forEach(f => {
-      const color = chakraColors[f.themes[0]] || '#888';
-      const marker = L.circleMarker(f.coords, {
-        radius: 10,
-        fillColor: color,
-        color: '#333',
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8
-      });
+MrBeast has released a transparency report but the investigation continues.
 
-      marker.bindTooltip(`${f.name} (${f.year})`, {sticky: true});
-      marker.on('click', () => {
-        highlightInfluencerCard(f.id);
-        document.getElementById(f.id).scrollIntoView({behavior: 'smooth', block: 'center'});
-      });
+Public trust remains strong but wary.
+    </pre>
+    <div class="social-stats">
+      <h4>Social Media Stats</h4>
+      <div><strong>Youtube:</strong> 25M followers, Engagement: 7.5%</div>
+      <div><strong>Instagram:</strong> 7M followers, Engagement: 7.0%</div>
+      <div><strong>Twitter:</strong> 3M followers, Engagement: 5.8%</div>
+    </div>
+    <div class="clear"></div>
+  </section>
 
-      markers.addLayer(marker);
-      markerById[f.id] = marker;
-    });
+  <section class="profile-section">
+    <h2>Andrei Jikh</h2>
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Andrei_Jikh_2022.jpg/220px-Andrei_Jikh_2022.jpg"
+      alt="Andrei Jikh"
+    />
+    <p><strong>Location:</strong> 34.0522, -118.2437 (North America)</p>
+    <p><strong>Year of Incident/Focus:</strong> 2023</p>
+    <p><strong>Themes:</strong> crown</p>
+    <p>Personal finance influencer scrutinized for partnerships with controversial financial firms.</p>
+    <pre>
+Andrei Jikh’s endorsements of financial products came under scrutiny in 2023.
 
-    map.addLayer(markers);
+Investigators examined potential conflicts of interest and undisclosed sponsorships.
 
-    // Render influencer cards
-    function renderInfluencerCards(data) {
-      influencerContainer.innerHTML = '';
-      data.forEach(f => {
-        const labels = f.themes.map(t => `<span class="label ${t}">${t.charAt(0).toUpperCase() + t.slice(1).replace('-', ' ')}</span>`).join('');
-        
-        // Social media stats HTML
-        let socialHTML = '';
-        if (f.socialStats) {
-          socialHTML = '<div class="social-stats">';
-          for (const [platform, stats] of Object.entries(f.socialStats)) {
-            const icon = socialIcons[platform] || '';
-            socialHTML += `
-              <div title="${platform.charAt(0).toUpperCase() + platform.slice(1)}">
-                ${icon}
-                <span>${stats.followers} followers</span> • 
-                <span>${stats.engagement} engagement</span>
-              </div>`;
-          }
-          socialHTML += '</div>';
-        }
+Jikh maintains all disclosures were properly made.
 
-        const card = document.createElement('div');
-        card.className = 'influencer-card';
-        card.id = f.id;
-        card.dataset.region = f.region.toLowerCase();
-        card.dataset.year = f.year;
-        card.dataset.themes = f.themes.join(' ').toLowerCase();
+Investigation status: ongoing.
+    </pre>
+    <div class="social-stats">
+      <h4>Social Media Stats</h4>
+      <div><strong>Youtube:</strong> 3M followers, Engagement: 5.2%</div>
+      <div><strong>Instagram:</strong> 1.5M followers, Engagement: 4.8%</div>
+    </div>
+    <div class="clear"></div>
+  </section>
 
-        card.innerHTML = `
-          <div class="influencer-header" tabindex="0" role="button" aria-expanded="false" aria-controls="${f.id}-details">
-            <div class="card-top">
-              <img class="profile-photo" src="${f.photo}" alt="Photo of ${f.name}" />
-              <div>
-                <div>${f.name}</div>
-                <div class="year">${f.year} — ${f.region}</div>
-                <div class="labels">${labels}</div>
-              </div>
-            </div>
-            <div aria-hidden="true" style="margin-left: auto;">&#x25bc;</div>
-          </div>
-          <div class="influencer-body" id="${f.id}-details" aria-live="polite" aria-atomic="true">
-            <p>${f.description}</p>
-            <p class="detailed-profile">${f.detailedProfile}</p>
-            ${socialHTML}
-          </div>
-        `;
+  <section class="profile-section">
+    <h2>Elon Musk</h2>
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Elon_Musk_Royal_Society.jpg/220px-Elon_Musk_Royal_Society.jpg"
+      alt="Elon Musk"
+    />
+    <p><strong>Location:</strong> 37.7749, -122.4194 (North America)</p>
+    <p><strong>Year of Incident/Focus:</strong> 2024</p>
+    <p><strong>Themes:</strong> solar, crown</p>
+    <p>Entrepreneur and CEO investigated for alleged misuse of solar project funds.</p>
+    <pre>
+Elon Musk faced allegations in 2024 regarding the allocation of investments in solar energy initiatives.
 
-        influencerContainer.appendChild(card);
+Claims suggested diversion of funds to non-project related expenses.
 
-        // Toggle collapsible on click or keyboard enter/space
-        const header = card.querySelector('.influencer-header');
-        const body = card.querySelector('.influencer-body');
-        header.addEventListener('click', () => toggleCard(card));
-        header.addEventListener('keydown', e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            toggleCard(card);
-          }
-        });
-      });
-    }
+Musk denies allegations and cites third-party audits confirming compliance.
 
-    function toggleCard(card) {
-      const isActive = card.classList.toggle('active');
-      const header = card.querySelector('.influencer-header');
-      header.setAttribute('aria-expanded', isActive);
-    }
+Case remains under legal review.
+    </pre>
+    <div class="social-stats">
+      <h4>Social Media Stats</h4>
+      <div><strong>Twitter:</strong> 105M followers, Engagement: 10.2%</div>
+      <div><strong>Instagram:</strong> 4M followers, Engagement: 5.9%</div>
+    </div>
+    <div class="clear"></div>
+  </section>
 
-    // Filtering logic
-    function filterInfluencers() {
-      const regionVal = regionFilter.value;
-      const themeVal = themeFilter.value;
-      const yearVal = +yearRange.value;
+  <!-- Additional Fake Charity Profiles -->
 
-      const filtered = influencers.filter(f => {
-        const regionMatch = regionVal ? f.region.toLowerCase() === regionVal : true;
-        const themeMatch = themeVal ? f.themes.includes(themeVal) : true;
-        const yearMatch = f.year <= yearVal;
-        return regionMatch && themeMatch && yearMatch;
-      });
+  <section class="profile-section">
+    <h2>Charity Queen</h2>
+    <img
+      src="https://via.placeholder.com/150?text=Charity+Queen"
+      alt="Charity Queen"
+    />
+    <p><strong>Location:</strong> 40.7128, -74.0060 (North America)</p>
+    <p><strong>Year of Incident/Focus:</strong> 2024</p>
+    <p><strong>Themes:</strong> crown, heart</p>
+    <p>Social media influencer accused of diverting donation funds to personal luxury expenses.</p>
+    <pre>
+In 2024, Charity Queen's foundation was flagged for financial irregularities.
 
-      renderInfluencerCards(filtered);
+Investigations revealed a pattern of questionable expenses labeled as 'charity operations'.
 
-      // Update markers visibility
-      markers.clearLayers();
-      filtered.forEach(f => {
-        if(markerById[f.id]) markers.addLayer(markerById[f.id]);
-      });
+Legal proceedings are ongoing, with public calls for transparency.
 
-      updateCharts(filtered);
-    }
+Many followers feel betrayed by the scandal.
+    </pre>
+    <div class="social-stats">
+      <h4>Social Media Stats</h4>
+      <div><strong>Instagram:</strong> 8M followers, Engagement: 9.0%</div>
+      <div><strong>Tiktok:</strong> 15M followers, Engagement: 11.3%</div>
+    </div>
+    <div class="clear"></div>
+  </section>
 
-    // Highlight card by marker click
-    function highlightInfluencerCard(id) {
-      document.querySelectorAll('.influencer-card').forEach(card => {
-        card.classList.toggle('highlight', card.id === id);
-        if (card.id === id && !card.classList.contains('active')) {
-          toggleCard(card);
-        }
-      });
-    }
+  <section class="profile-section">
+    <h2>FakeAid Foundation</h2>
+    <img
+      src="https://via.placeholder.com/150?text=FakeAid+Foundation"
+      alt="FakeAid Foundation"
+    />
+    <p><strong>Location:</strong> 51.1657, 10.4515 (Europe)</p>
+    <p><strong>Year of Incident/Focus:</strong> 2023</p>
+    <p><strong>Themes:</strong> heart</p>
+    <p>Non-profit organization under investigation for alleged misuse of international aid funds.</p>
+    <pre>
+FakeAid Foundation attracted large donations in 2022-23.
 
-    // Export visible influencers to CSV
-    exportBtn.addEventListener('click', () => {
-      const visibleCards = Array.from(document.querySelectorAll('.influencer-card'));
-      if (!visibleCards.length) return alert('No data to export.');
+Whistleblowers claimed funds were funneled into private accounts.
 
-      const rows = [['Name', 'Year', 'Region', 'Themes', 'Description', 'Followers & Engagement']];
-      visibleCards.forEach(card => {
-        const f = influencers.find(i => i.id === card.id);
-        if (!f) return;
-        const themesStr = f.themes.map(t => t.charAt(0).toUpperCase() + t.slice(1).replace('-', ' ')).join('; ');
-        let socialStr = '';
-        if (f.socialStats) {
-          socialStr = Object.entries(f.socialStats).map(([platform, stats]) =>
-            `${platform}: ${stats.followers} followers, ${stats.engagement} engagement`
-          ).join(' | ');
-        }
-        rows.push([
-          f.name,
-          f.year,
-          f.region,
-          themesStr,
-          f.description.replace(/,/g, ';'), // replace commas to avoid CSV issues
-          socialStr
-        ]);
-      });
+An ongoing audit by authorities seeks to clarify fund allocation.
 
-      const csvContent = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
-      const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `influencers_fake_charities_${new Date().toISOString().slice(0,10)}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    });
+Donor trust has plummeted since reports surfaced.
+    </pre>
+    <div class="social-stats">
+      <h4>Social Media Stats</h4>
+      <div><strong>Website Visitors:</strong> 2M monthly</div>
+      <div><strong>Instagram:</strong> 1.2M followers, Engagement: 4.0%</div>
+    </div>
+    <div class="clear"></div>
+  </section>
 
-    // Charts
-    const yearCtx = document.getElementById('yearChart').getContext('2d');
-    const regionCtx = document.getElementById('regionChart').getContext('2d');
+  <section class="profile-section">
+    <h2>Global Hope Trust</h2>
+    <img
+      src="https://via.placeholder.com/150?text=Global+Hope+Trust"
+      alt="Global Hope Trust"
+    />
+    <p><strong>Location:</strong> -33.8688, 151.2093 (Oceania)</p>
+    <p><strong>Year of Incident/Focus:</strong> 2025</p>
+    <p><strong>Themes:</strong> heart</p>
+    <p>Charitable organization scrutinized for disproportionately high administrative costs.</p>
+    <pre>
+Global Hope Trust’s financial disclosures raised concerns in 2025.
 
-    let yearChart, regionChart;
+Approximately 60% of donations reportedly went to administrative expenses.
 
-    function updateCharts(data) {
-      // Count arrests by year
-      const countsByYear = {};
-      for(let y = 2000; y <= 2025; y++) countsByYear[y] = 0;
-      data.forEach(f => { countsByYear[f.year] = (countsByYear[f.year] || 0) + 1; });
+Beneficiary impact was questioned by independent watchdogs.
 
-      const years = Object.keys(countsByYear);
-      const yearCounts = Object.values(countsByYear);
+The trust has pledged reforms pending investigation results.
+    </pre>
+    <div class="social-stats">
+      <h4>Social Media Stats</h4>
+      <div><strong>Website Visitors:</strong> 3.5M monthly</div>
+      <div><strong>Twitter:</strong> 800K followers, Engagement: 3.2%</div>
+    </div>
+    <div class="clear"></div>
+  </section>
 
-      // Count arrests by region
-      const countsByRegion = {};
-      data.forEach(f => {
-        countsByRegion[f.region] = (countsByRegion[f.region] || 0) + 1;
-      });
+  <section class="profile-section">
+    <h2>PhilanthroCorp</h2>
+    <img
+      src="https://via.placeholder.com/150?text=PhilanthroCorp"
+      alt="PhilanthroCorp"
+    />
+    <p><strong>Location:</strong> 48.8566, 2.3522 (Europe)</p>
+    <p><strong>Year of Incident/Focus:</strong> 2024</p>
+    <p><strong>Themes:</strong> crown</p>
+    <p>Corporate charity front accused of channeling donations into political lobbying.</p>
+    <pre>
+PhilanthroCorp has been linked to substantial political donations disguised as charitable giving.
 
-      const regions = Object.keys(countsByRegion);
-      const regionCounts = Object.values(countsByRegion);
+Audits in 2024 revealed overlap between charity funds and lobbying expenditures.
 
-      if (yearChart) yearChart.destroy();
-      yearChart = new Chart(yearCtx, {
-        type: 'bar',
-        data: {
-          labels: years,
-          datasets: [{
-            label: 'Cases by Year',
-            data: yearCounts,
-            backgroundColor: '#1e90ff'
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            x: { title: { display: true, text: 'Year' } },
-            y: { beginAtZero: true, title: { display: true, text: 'Number of Cases' } }
-          }
-        }
-      });
+The corporation denies wrongdoing but faces increased regulatory scrutiny.
 
-      if (regionChart) regionChart.destroy();
-      regionChart = new Chart(regionCtx, {
-        type: 'pie',
-        data: {
-          labels: regions,
-          datasets: [{
-            label: 'Cases by Region',
-            data: regionCounts,
-            backgroundColor: regions.map((_, i) => `hsl(${(i * 360 / regions.length)}, 70%, 50%)`)
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: 'right' }
-          }
-        }
-      });
-    }
+The case highlights blurred lines between charity and political influence.
+    </pre>
+    <div class="social-stats">
+      <h4>Social Media Stats</h4>
+      <div><strong>Website Visitors:</strong> 1.8M monthly</div>
+      <div><strong>LinkedIn:</strong> 500K followers</div>
+    </div>
+    <div class="clear"></div>
+  </section>
 
-    // Initial render
-    renderInfluencerCards(influencers);
-    updateCharts(influencers);
-
-    // Event listeners
-    regionFilter.addEventListener('change', filterInfluencers);
-    themeFilter.addEventListener('change', filterInfluencers);
-    yearRange.addEventListener('input', () => {
-      yearValue.textContent = yearRange.value;
-      filterInfluencers();
-    });
-  </script>
 </body>
 </html>
