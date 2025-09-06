@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Empire of Echoes: The Rise & Fall of DJ Phantom</title>
+<title>Empire of Echoes: The Scandal Scroll Hunt</title>
 <style>
   body {
     margin: 0; padding: 0; background: #111820;
     color: #a0e8d3;
     font-family: 'Courier New', Courier, monospace;
+    overflow-x: hidden;
   }
   .container {
     max-width: 900px;
@@ -17,423 +18,284 @@
     border-radius: 12px;
     padding: 25px;
     box-shadow: 0 0 20px #0f5;
+    user-select: none;
   }
-  h1, h2 {
+  h1 {
     text-align: center;
     color: #00ff9c;
     text-shadow: 0 0 10px #0f9;
   }
-  p, label {
-    font-size: 1.1rem;
-    margin-top: 10px;
-  }
-  .clue {
-    background: #202f3a;
-    border: 2px solid #00bb77;
-    border-radius: 10px;
-    padding: 15px 20px;
-    margin: 20px 0;
+  #scene {
     position: relative;
+    height: 500px;
+    background: linear-gradient(135deg, #151c25 0%, #0d131a 100%);
+    border: 3px solid #00bb77;
+    border-radius: 12px;
+    margin: 20px 0;
+    overflow: hidden;
   }
-  .clue::before {
-    content: "🎧";
+  .scroll {
     position: absolute;
-    left: -30px;
-    top: 10px;
-    font-size: 2rem;
-  }
-  input[type="text"] {
-    font-family: monospace;
-    font-size: 1rem;
-    padding: 8px;
-    width: 60%;
-    margin-top: 8px;
-    border-radius: 5px;
-    border: none;
-  }
-  button {
-    font-size: 1rem;
-    padding: 8px 14px;
-    margin-left: 10px;
-    border-radius: 5px;
-    border: none;
+    width: 60px;
+    height: 40px;
+    background: linear-gradient(45deg, #5bd0a4, #1a7d4c);
+    border-radius: 6px;
+    border: 2px solid #00ff9c;
     cursor: pointer;
-    background: #00bb77;
-    color: #001a0d;
+    box-shadow: 0 0 8px #00ff9c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #072911;
     font-weight: bold;
-    transition: background 0.3s ease;
+    font-size: 14px;
+    user-select: none;
+    transition: transform 0.3s ease;
   }
-  button:hover {
-    background: #009955;
-    color: #d4ffe1;
+  .scroll:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 15px #0f9;
   }
-  .feedback {
-    margin-top: 10px;
-    min-height: 1.2em;
-    font-weight: bold;
+  #inventory {
+    background: #0f2714;
+    border: 2px solid #00bb77;
+    border-radius: 12px;
+    padding: 15px;
+    min-height: 120px;
   }
-  .correct {
+  #inventory h2 {
+    margin-top: 0;
     color: #00ff9c;
-  }
-  .wrong {
-    color: #ff5566;
-  }
-  .hint {
-    font-style: italic;
-    color: #99ffbb;
-    margin-top: 5px;
-    display: none;
-  }
-  .timer, .scoreboard {
     text-align: center;
-    margin: 15px 0;
-    font-weight: bold;
-    color: #00ff9c;
-    font-size: 1.2rem;
   }
-  .secret-icons img {
-    width: 35px;
-    margin: 0 8px;
-    opacity: 0.3;
-    vertical-align: middle;
+  .scroll-entry {
+    background: #072911;
+    border-radius: 8px;
+    margin: 8px 0;
+    padding: 10px;
+    box-shadow: 0 0 5px #0f9;
+    cursor: default;
   }
-  .secret-icons img.collected {
-    opacity: 1;
-    filter: drop-shadow(0 0 5px #00ff9c);
-  }
-  .share-buttons {
+  #final-accusation {
+    display: none;
     text-align: center;
     margin-top: 25px;
   }
-  .share-buttons button {
-    background: #1da1f2;
-    color: white;
-    margin: 0 10px;
+  #final-accusation button {
+    background: #00bb77;
+    border: none;
+    border-radius: 8px;
+    color: #001a0d;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 10px 18px;
+    margin: 10px 15px;
+    cursor: pointer;
+    transition: background 0.3s ease;
   }
-  .share-buttons button.facebook {
-    background: #4267B2;
+  #final-accusation button:hover {
+    background: #009955;
+    color: #d4ffe1;
   }
-  .disclaimer {
-    background: #223322;
-    border: 2px solid #44aa44;
+  #final-feedback {
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #00ff9c;
+  }
+  #ending {
+    display: none;
+    text-align: center;
+    margin-top: 30px;
+  }
+  #ending p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+  /* Disclaimer styling */
+  #disclaimer {
+    background: #220000cc;
+    border: 2px solid #ff5555;
     border-radius: 10px;
-    padding: 12px 18px;
-    margin-bottom: 30px;
+    color: #ffaaaa;
+    padding: 15px;
+    margin-bottom: 15px;
     font-size: 0.9rem;
-    color: #a3d9a5;
-  }
-  @media(max-width:700px) {
-    input[type="text"] {
-      width: 100%;
-      margin-bottom: 10px;
-    }
-    button {
-      margin: 5px 5px 0 0;
-      width: 48%;
-    }
+    line-height: 1.3;
   }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>Empire of Echoes: The Rise & Fall of DJ Phantom</h1>
-  
-  <div class="disclaimer">
-    <strong>Disclaimer:</strong> This game is a <em>fictional satire</em> inspired by the archetype of a music mogul. Any resemblance to real persons, living or dead, or actual events is purely coincidental.  
-    <br><br>
-    <strong>Important:</strong>  
-    <ul>
-      <li>Real-world harm: Turning real allegations or trauma into entertainment can be disrespectful.</li>
-      <li>Defamation risk: Avoid claiming anyone committed crimes without legal proof.</li>
-      <li>Open cases: Many scandals are unresolved legally, so presenting them as fact is problematic.</li>
-      <li>Platform policies: Content promoting harassment or exploitation is not allowed.</li>
-    </ul>
+  <div id="disclaimer">
+    <strong>Disclaimer:</strong><br>
+    This game is a <em>fictional satirical story</em> inspired by public controversies related to Epsten, Diddy, and the Burning Sun scandal. It is intended purely for entertainment and does not represent verified facts or accusations.<br>
+    Real-world harm: Turning real allegations, trauma, or criminal cases into interactive entertainment—especially without verified outcomes—can be disrespectful.<br>
+    Defamation risk: This game does not claim guilt or innocence and is meant as parody.<br>
+    Platform policies: Please use responsibly.
   </div>
   
-  <div class="timer" id="timer" style="display:none;">Time Left: 60s</div>
-  <div class="scoreboard" id="scoreboard" style="display:none;">
-    Score: <span id="score">0</span> | Secrets Found: <span id="secrets">0</span> 
-    <div class="secret-icons">
-      <img src="https://i.imgur.com/j9e5GQ0.png" id="secret1" alt="Secret Icon" />
-      <img src="https://i.imgur.com/j9e5GQ0.png" id="secret2" alt="Secret Icon" />
-      <img src="https://i.imgur.com/j9e5GQ0.png" id="secret3" alt="Secret Icon" />
-    </div>
+  <h1>Empire of Echoes: The Scandal Scroll Hunt</h1>
+  <p>Explore DJ Phantom’s notorious music lair to uncover hidden scrolls revealing juicy satirical secrets about scandals, shady deals, and the infamous Burning Echoes nightlife — inspired by real-life chaos but turned up to 11.</p>
+  
+  <div id="scene" title="Click the glowing scrolls to collect clues."></div>
+  
+  <div id="inventory">
+    <h2>Collected Scrolls</h2>
+    <div id="scroll-list">None yet. Keep hunting!</div>
   </div>
   
-  <!-- Clue container -->
-  <div id="clue-container"></div>
-  
-  <!-- Final accusation -->
-  <div id="final-accusation" style="display:none; text-align:center;">
-    <h2>Who do you think is behind the empire's downfall?</h2>
+  <div id="final-accusation">
+    <h2>Who Do You Think Pulled the Strings?</h2>
     <button onclick="finalChoice('phantom')">DJ Phantom</button>
-    <button onclick="finalChoice('rival')">The Rival Mogul</button>
-    <button onclick="finalChoice('unknown')">Unknown Forces</button>
-    <div id="final-feedback" class="feedback"></div>
+    <button onclick="finalChoice('epsten')">Mr. Epsten</button>
+    <button onclick="finalChoice('burning')">The Burning Echoes Club</button>
+    <button onclick="finalChoice('unknown')">Unknown Dark Forces</button>
+    <div id="final-feedback"></div>
   </div>
   
-  <!-- Ending -->
-  <div id="ending" style="display:none; text-align:center; margin-top:30px;">
+  <div id="ending">
     <h2>Game Over - Your Result</h2>
     <p id="ending-text"></p>
-    <div class="share-buttons">
-      <button onclick="share('twitter')" style="background:#1da1f2;">Share on Twitter</button>
-      <button onclick="share('facebook')" class="facebook">Share on Facebook</button>
-    </div>
   </div>
-  
 </div>
 
 <script>
-  // Fictional clues data
-  const clues = [
+  // Updated scrolls with satire on Epsten, Diddy, Burning Sun scandal
+  const scrolls = [
     {
-      id:1,
-      title: "Clue 1: The Many Names of Phantom",
-      text: "DJ Phantom changed his stage name multiple times. One of his earliest was a pun on 'Beats'. What was it?",
-      answer: "beatmaster",
-      hint: "It’s a word related to rhythm and being the boss."
+      id: 1,
+      x: 50,
+      y: 80,
+      title: "Scroll #1: The Phantom Alias",
+      text: "DJ Phantom once changed his stage name 12 times in a week — maybe to confuse the feds, or just his PR team.",
     },
     {
-      id:2,
-      title: "Clue 2: Phantom’s First Label",
-      text: "Phantom started his own label, 'Echo Records'. Which fake superstar did he first sign?",
-      answer: "mystic flow",
-      hint: "The artist’s name sounds like a mysterious river."
+      id: 2,
+      x: 250,
+      y: 120,
+      title: "Scroll #2: Epsten’s Whisper",
+      text: "Mr. Epsten’s name pops up in whispers around the studios, always near the locked vault where no one dares to peek.",
     },
     {
-      id:3,
-      title: "Clue 3: The Rivalry",
-      text: "Phantom's main rival was 'MC Venom'. What was Venom's notorious nickname?",
-      answer: "the cobra",
-      hint: "A deadly snake with a hood."
+      id: 3,
+      x: 550,
+      y: 50,
+      title: "Scroll #3: Burning Echoes Club",
+      text: "The hottest club where beats dropped and secrets leaked — rumored to be the epicenter of every shady deal and scandal.",
     },
     {
-      id:4,
-      title: "Clue 4: The Scandalous Tweet",
-      text: "Phantom once accidentally tweeted an embarrassing secret. What was the secret word hidden in the tweet?",
-      answer: "pineapple",
-      hint: "A tropical fruit that’s spiky on the outside."
+      id: 4,
+      x: 380,
+      y: 320,
+      title: "Scroll #4: The Mysterious Pineapple Tweet",
+      text: "Phantom accidentally tweeted a pineapple emoji during a high-profile press conference — conspiracy theorists lost their minds.",
     },
     {
-      id:5,
-      title: "Clue 5: The Hidden Studio",
-      text: "Phantom had a secret recording studio located in a bizarre place. Where was it?",
-      answer: "subway",
-      hint: "It’s underground and moves."
+      id: 5,
+      x: 750,
+      y: 250,
+      title: "Scroll #5: Midnight Karaoke Scandal",
+      text: "Caught on tape: Phantom singing karaoke off-key while plotting his next big empire move — or cover-up?",
     },
     {
-      id:6,
-      title: "Clue 6: The Mysterious Disappearance",
-      text: "One night, Phantom vanished for hours. What was he allegedly doing?",
-      answer: "karaoke",
-      hint: "Singing with a mic and backing tracks."
+      id: 6,
+      x: 130,
+      y: 360,
+      title: "Scroll #6: Epsten’s VIP List",
+      text: "An exclusive VIP list allegedly containing names of powerful figures, mysteriously vanished after a suspicious fire.",
     },
     {
-      id:7,
-      title: "Clue 7: The Business Deal Gone Wrong",
-      text: "Phantom's empire nearly collapsed after a failed deal involving what product?",
-      answer: "energy drink",
-      hint: "It’s a popular caffeinated beverage."
+      id: 7,
+      x: 660,
+      y: 380,
+      title: "Scroll #7: Energy Drink Meltdown",
+      text: "Phantom’s energy drink sponsorship ended when consumers reported hallucinating glowing neon snakes — coincidence?",
     },
     {
-      id:8,
-      title: "Clue 8: The Final Evidence",
-      text: "A leaked audio recording revealed Phantom saying what cryptic phrase?",
-      answer: "echoes never die",
-      hint: "Think about what the empire is named after."
+      id: 8,
+      x: 400,
+      y: 180,
+      title: "Scroll #8: Echoes Never Die",
+      text: "A leaked audio clip suggests ‘Echoes never die’ but neither does corruption in the shadows of the music world.",
     }
   ];
   
-  let currentClue = 0;
-  let score = 0;
-  let secretsFound = 0;
-  let timeLeft = 60;
-  let timerInterval = null;
-  
-  const container = document.getElementById('clue-container');
-  const scoreboard = document.getElementById('scoreboard');
-  const timerDisplay = document.getElementById('timer');
-  const scoreDisplay = document.getElementById('score');
-  const secretsDisplay = document.getElementById('secrets');
-  const finalAccusationDiv = document.getElementById('final-accusation');
+  const scene = document.getElementById('scene');
+  const scrollList = document.getElementById('scroll-list');
+  const finalAccusation = document.getElementById('final-accusation');
   const finalFeedback = document.getElementById('final-feedback');
   const endingDiv = document.getElementById('ending');
   const endingText = document.getElementById('ending-text');
-  const secretIcons = [
-    document.getElementById('secret1'),
-    document.getElementById('secret2'),
-    document.getElementById('secret3')
-  ];
   
-  function startGame(){
-    scoreboard.style.display = 'block';
-    showNextClue();
-  }
+  let foundScrolls = [];
   
-  function showNextClue(){
-    clearInterval(timerInterval);
-    timeLeft = 60;
-    updateTimerDisplay();
-    
-    if(currentClue >= clues.length){
-      // All clues done, show final accusation
-      container.innerHTML = '';
-      timerDisplay.style.display = 'none';
-      finalAccusationDiv.style.display = 'block';
-      return;
-    }
-    
-    timerDisplay.style.display = 'block';
-    
-    const clue = clues[currentClue];
-    
-    container.innerHTML = `
-      <div class="clue">
-        <h2>${clue.title}</h2>
-        <p>${clue.text}</p>
-        <label for="answer-input">Your Answer:</label><br />
-        <input type="text" id="answer-input" autocomplete="off" />
-        <button id="submit-btn">Submit</button>
-        <button id="hint-btn">Hint</button>
-        <div class="feedback" id="feedback"></div>
-        <div class="hint" id="hint">${clue.hint}</div>
-      </div>
-    `;
-    
-    document.getElementById('submit-btn').addEventListener('click', () => {
-      checkAnswer(clue);
-    });
-    document.getElementById('hint-btn').addEventListener('click', toggleHint);
-    
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      updateTimerDisplay();
-      if(timeLeft <= 0){
-        clearInterval(timerInterval);
-        timeUp();
-      }
-    }, 1000);
-  }
+  // Create scroll elements in the scene
+  scrolls.forEach(scroll => {
+    const el = document.createElement('div');
+    el.classList.add('scroll');
+    el.style.left = scroll.x + 'px';
+    el.style.top = scroll.y + 'px';
+    el.textContent = "📜";
+    el.title = "Hidden Scroll";
+    el.dataset.id = scroll.id;
+    el.addEventListener('click', () => collectScroll(scroll, el));
+    scene.appendChild(el);
+  });
   
-  function updateTimerDisplay(){
-    timerDisplay.textContent = `Time Left: ${timeLeft}s`;
-  }
-  
-  function timeUp(){
-    const feedback = document.getElementById('feedback');
-    feedback.textContent = "Time's up! Moving on...";
-    feedback.className = 'feedback wrong';
-    setTimeout(() => {
-      currentClue++;
-      showNextClue();
-    }, 1500);
-  }
-  
-  function checkAnswer(clue){
-    const input = document.getElementById('answer-input');
-    const feedback = document.getElementById('feedback');
-    let answer = input.value.trim().toLowerCase();
-    let correctAnswer = clue.answer.toLowerCase();
-    
-    if(answer === ""){
-      feedback.textContent = "Please enter an answer!";
-      feedback.className = "feedback wrong";
-      return;
-    }
-    
-    if(answer === correctAnswer){
-      feedback.textContent = "Correct! 🎉";
-      feedback.className = "feedback correct";
-      score += 10;
-      scoreDisplay.textContent = score;
-      
-      // Secret icon unlocking for clues 2, 5, 8
-      if([1,4,7].includes(currentClue)){
-        secretsFound++;
-        secretsDisplay.textContent = secretsFound;
-        if(secretsFound <= secretIcons.length){
-          secretIcons[secretsFound-1].classList.add('collected');
-        }
-      }
-      
-      clearInterval(timerInterval);
-      setTimeout(() => {
-        currentClue++;
-        showNextClue();
-      }, 1500);
-      
-    } else {
-      feedback.textContent = "Wrong answer, try again!";
-      feedback.className = "feedback wrong";
+  function collectScroll(scroll, element) {
+    if (foundScrolls.includes(scroll.id)) return;
+    foundScrolls.push(scroll.id);
+    // Add scroll text to inventory
+    if (foundScrolls.length === 1) scrollList.textContent = "";
+    const entry = document.createElement('div');
+    entry.classList.add('scroll-entry');
+    entry.innerHTML = `<strong>${scroll.title}</strong><br>${scroll.text}`;
+    scrollList.appendChild(entry);
+    // Fade out the collected scroll
+    element.style.opacity = 0.3;
+    element.style.pointerEvents = 'none';
+    // When all found, show final accusation section
+    if (foundScrolls.length === scrolls.length) {
+      finalAccusation.style.display = 'block';
+      scrollList.innerHTML += "<br><em>All scrolls found! Time to make your accusation.</em>";
     }
   }
   
-  function toggleHint(){
-    const hintDiv = document.getElementById('hint');
-    if(hintDiv.style.display === 'block'){
-      hintDiv.style.display = 'none';
-    } else {
-      hintDiv.style.display = 'block';
-    }
-  }
-  
-  function finalChoice(choice){
-    let msg = "";
+  function finalChoice(who) {
     finalFeedback.textContent = "";
-    if(choice === 'phantom'){
-      msg = "You accuse DJ Phantom himself. Bold! But is it the whole truth?";
-    } else if(choice === 'rival'){
-      msg = "Blaming the rival mogul? Classic rivalry drama!";
-    } else {
-      msg = "Unknown forces? Maybe some shadowy puppet masters...";
-    }
-    finalFeedback.textContent = msg;
-    finalFeedback.className = "feedback correct";
+    const score = foundScrolls.length;
     
-    setTimeout(() => {
-      showEnding(choice);
-    }, 2000);
-  }
-  
-  function showEnding(choice){
-    finalAccusationDiv.style.display = 'none';
+    // Simple satirical endings based on choice and how many scrolls found
+    let message = "";
+    
+    if (score < scrolls.length) {
+      finalFeedback.style.color = "#ff5555";
+      finalFeedback.textContent = "You need to find all scrolls before accusing!";
+      return;
+    }
+    
+    switch(who) {
+      case 'phantom':
+        message = "You blame DJ Phantom — the chameleon of scandal. Could he really be the mastermind behind the empire's shadows? Maybe... or maybe just a scapegoat.";
+        break;
+      case 'epsten':
+        message = "Pointing the finger at Mr. Epsten, the silent puppeteer behind the scenes. His VIP list is missing for a reason.";
+        break;
+      case 'burning':
+        message = "The Burning Echoes Club, where night whispers secrets and neon lights hide corruption. The heart of the chaos?";
+        break;
+      case 'unknown':
+        message = "You blame unknown dark forces, those shadowy entities beyond reach. Sometimes, the truth is a maze with no exit.";
+        break;
+      default:
+        message = "Hmm, that choice is mysterious...";
+    }
+    
+    finalAccusation.style.display = 'none';
+    endingText.textContent = message + "\n\nThanks for playing this satirical romp through scandal and secrecy!";
     endingDiv.style.display = 'block';
-    
-    let endingMsg = "";
-    
-    if(score >= 70 && secretsFound >= 3){
-      endingMsg = "Congratulations, detective! You uncovered the deepest secrets behind DJ Phantom’s empire. The truth was stranger and funnier than fiction!";
-    } else if(score >= 40) {
-      endingMsg = "Not bad! You got a decent idea of what happened, but some mysteries remain... Maybe Phantom’s empire will rise again.";
-    } else {
-      endingMsg = "You barely scratched the surface. Sometimes, the beat goes on even when the truth is silent.";
-    }
-    
-    if(choice === 'phantom'){
-      endingMsg += " <br><br>As for Phantom, some say he’s still secretly dropping beats from a hidden bunker.";
-    } else if(choice === 'rival'){
-      endingMsg += " <br><br>The rival mogul probably laughed all the way to the bank, or maybe just to the studio.";
-    } else {
-      endingMsg += " <br><br>Whatever the truth, in the music biz, nothing ever really dies—only echoes.";
-    }
-    
-    endingText.innerHTML = endingMsg;
   }
-  
-  function share(platform){
-    let text = encodeURIComponent("I played 'Empire of Echoes: The Rise & Fall of DJ Phantom' and uncovered the secrets of the music empire! Can you beat my score?");
-    let url = encodeURIComponent(window.location.href);
-    
-    if(platform === 'twitter'){
-      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
-    } else if(platform === 'facebook'){
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
-    }
-  }
-  
-  // Start the game automatically on page load
-  window.onload = startGame;
 </script>
 </body>
 </html>
