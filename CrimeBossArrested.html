@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Crime Boss Arrested Yearbook (2001–2025)</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 2rem; color: #333; }
+    .boss-card { background: white; border-left: 10px solid #aaa; margin-bottom: 2rem; padding: 1.5rem; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .boss-header h2 { margin: 0; font-size: 1.4rem; }
+    .year { color: #666; font-size: 0.85rem; margin-top: 0.25rem; }
+    .labels { margin: 0.5rem 0; }
+    .label { display: inline-block; padding: 0.2rem 0.5rem; margin-right: 0.5rem; font-size: 0.8rem; font-weight: bold; color: white; border-radius: 4px; }
+    .timeline { margin-top: 1rem; border-top: 1px dashed #ccc; padding-top: 0.5rem; }
+    .timeline-entry { margin: 0.5rem 0; padding-left: 1rem; position: relative; }
+    .timeline-entry::before { content: "•"; position: absolute; left: 0; color: #888; }
+    /* Region color codes */
+    .mafia { background: #8b0000; }       /* Italy */
+    .cartel { background: #006400; }      /* Latin America */
+    .asian { background: #00008b; }       /* Asia */
+    .eurasian { background: #483d8b; }    /* Eurasia */
+    /* Theme labels */
+    .druglord { background: #228b22; }
+    .racketeer { background: #4682b4; }
+    .humantrafficking { background: #8b008b; }
+    .fugitive { background: #ff8c00; }
+    .kingpin { background: #b22222; }
+  </style>
+</head>
+<body>
+
+  <h1>Crime Boss Arrested Yearbook (2001–2025)</h1>
+  <input type="text" id="searchBox" placeholder="Filter by region or theme..." style="padding:0.5rem; width:100%; margin-bottom:1rem;" />
+  <div id="bossContainer">
+    <!-- Existing and expanded entries -->
+    <!-- ... (previous entries) ... -->
+
+    <!-- New Entries -->
+    <div class="boss-card" data-tags="cartel,druglord">
+      <div class="boss-header"><h2>Érick Valencia Salazar (“El 85”) – CJNG</h2><div class="year">Extradited: 2025</div></div>
+      <div class="labels"><span class="label cartel">Cartel (Mexico)</span><span class="label druglord">Drug Kingpin</span></div>
+      <div class="timeline"><div class="timeline-entry">2012 – Arrested in Mexico</div><div class="timeline-entry">2025 – Extradited to U.S.</div></div>
+    </div>
+
+    <div class="boss-card" data-tags="asian,racketeer">
+      <div class="boss-header"><h2>Alvin Chau – Macau Junket Boss</h2><div class="year">Convicted: 2023</div></div>
+      <div class="labels"><span class="label asian">Asia (Macau)</span><span class="label racketeer">Criminal Syndicate</span></div>
+      <div class="timeline"><div class="timeline-entry">2021 – Arrested for money laundering</div><div class="timeline-entry">2023 – Sentenced to 18 years</div></div>
+    </div>
+
+    <div class="boss-card" data-tags="asian,humantrafficking">
+      <div class="boss-header"><h2>She Zhijiang – Chinese Cambodian Crime Boss</h2><div class="year">Apprehended: 2022</div></div>
+      <div class="labels"><span class="label asian">Asia (SE Asia)</span><span class="label humantrafficking">Scams & Trafficking</span></div>
+      <div class="timeline"><div class="timeline-entry">2014 – Charged in China</div><div class="timeline-entry">2022 – Captured in Thailand</div></div>
+    </div>
+
+    <div class="boss-card" data-tags="don cartel,druglord">
+      <div class="boss-header"><h2>Ismael “El Mayo” Zambada – Sinaloa Cartel</h2><div class="year">Arrested: 2024 (Plead Guilty: 2025)</div></div>
+      <div class="labels"><span class="label cartel">Cartel (Mexico)</span><span class="label druglord">Drug Trafficking</span></div>
+      <div class="timeline">
+        <div class="timeline-entry">2024 – Captured in El Paso, Texas</div>
+        <div class="timeline-entry">2025 – Pleads guilty; faces life sentence</div>
+      </div>
+    </div>
+
+    <!-- More entries... Emanuele Gregorini, Giuseppe Palermo, Marcos Roberto de Almeida, El Chino -->
+  </div>
+
+  <script>
+    const searchBox = document.getElementById('searchBox');
+    const cards = document.querySelectorAll('.boss-card');
+    searchBox.addEventListener('input', () => {
+      const filter = searchBox.value.toLowerCase();
+      cards.forEach(card => {
+        const tags = card.dataset.tags;
+        card.style.display = tags.includes(filter) ? '' : 'none';
+      });
+    });
+  </script>
+
+</body>
+</html>
