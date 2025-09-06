@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Corporate Yearbook: CEOs Under Investigation</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 30px;
+      color: #222;
+    }
+
+    h1.main-title {
+      text-align: center;
+      font-size: 2.5em;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+    }
+
+    .ceo-card {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      border: 4px solid #000;
+      padding: 25px;
+      box-shadow: 5px 5px 15px rgba(0,0,0,0.15);
+    }
+
+    .ceo-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .ceo-image {
+      width: 160px;
+      height: 160px;
+      background: #ccc;
+      border: 2px dashed #888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-style: italic;
+      margin-right: 25px;
+    }
+
+    .ceo-meta h2 {
+      margin: 0;
+      font-size: 1.8em;
+    }
+
+    .ceo-meta .year {
+      color: #777;
+    }
+
+    .labels {
+      margin-top: 10px;
+    }
+
+    .label {
+      display: inline-block;
+      padding: 5px 10px;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 5px;
+      margin-right: 8px;
+      margin-top: 5px;
+      font-size: 0.9em;
+    }
+
+    /* Sector Colors */
+    .tech { background-color: #007BFF; }
+    .finance { background-color: #2ECC40; }
+    .healthcare { background-color: #B10DC9; }
+
+    /* Corruption Types */
+    .insider-trading { background-color: #FF4136; }
+    .tax-fraud { background-color: #8B4513; }
+    .data-privacy { background-color: #FF851B; }
+
+    .crime-details {
+      margin-top: 15px;
+      line-height: 1.6;
+    }
+
+    .timeline {
+      margin-top: 25px;
+      border-top: 2px solid #000;
+      padding-top: 15px;
+    }
+
+    .timeline h3 {
+      margin-bottom: 15px;
+      font-size: 1.3em;
+    }
+
+    .timeline-entry {
+      margin-bottom: 10px;
+    }
+
+    .time {
+      font-weight: bold;
+      color: #555;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.85em;
+      margin-top: 50px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="main-title">Corporate Yearbook: CEOs Under Investigation</h1>
+
+  <!-- CEO 1 -->
+  <div class="ceo-card">
+    <div class="ceo-header">
+      <div class="ceo-image">[Johnathan Blake]</div>
+      <div class="ceo-meta">
+        <h2>Johnathan Blake</h2>
+        <div class="year">Investigation Started: 2025</div>
+        <div class="labels">
+          <span class="label tech">Technology Sector</span>
+          <span class="label insider-trading">Insider Trading</span>
+        </div>
+      </div>
+    </div>
+    <div class="crime-details">
+      CEO of <strong>InnoSync Systems</strong>. Accused of insider trading and data manipulation during AI model releases. Allegedly sold $45M in stock hours before vulnerability disclosures.
+      <ul>
+        <li>Pre-market insider access abuse</li>
+        <li>Blocked whistleblower channels</li>
+        <li>False public disclosures filed with SEC</li>
+      </ul>
+    </div>
+    <div class="timeline">
+      <h3>Timeline</h3>
+      <div class="timeline-entry"><span class="time">09:30 AM</span> - Stock dips 2% on rumors</div>
+      <div class="timeline-entry"><span class="time">10:15 AM</span> - Legal team enters federal courthouse</div>
+      <div class="timeline-entry"><span class="time">01:45 PM</span> - Trading halted by NASDAQ</div>
+      <div class="timeline-entry"><span class="time">04:00 PM</span> - CEO denies all allegations</div>
+    </div>
+  </div>
+
+  <!-- CEO 2 -->
+  <div class="ceo-card">
+    <div class="ceo-header">
+      <div class="ceo-image">[Marissa Vane]</div>
+      <div class="ceo-meta">
+        <h2>Marissa Vane</h2>
+        <div class="year">Investigation Started: 2024</div>
+        <div class="labels">
+          <span class="label finance">Finance Sector</span>
+          <span class="label tax-fraud">Tax Fraud</span>
+        </div>
+      </div>
+    </div>
+    <div class="crime-details">
+      CEO of <strong>Equivest Holdings</strong>. Under IRS and DOJ probe for multi-layered tax evasion schemes using offshore shell corporations and false charitable foundations.
+      <ul>
+        <li>$120M funneled through Caribbean accounts</li>
+        <li>Internal emails indicate intent to deceive auditors</li>
+        <li>Linked to fake donation tax shelters</li>
+      </ul>
+    </div>
+    <div class="timeline">
+      <h3>Timeline</h3>
+      <div class="timeline-entry"><span class="time">08:45 AM</span> - IRS announces formal charges</div>
+      <div class="timeline-entry"><span class="time">11:10 AM</span> - CFO resigns unexpectedly</div>
+      <div class="timeline-entry"><span class="time">02:00 PM</span> - Senate subcommittee requests testimony</div>
+    </div>
+  </div>
+
+  <!-- CEO 3 -->
+  <div class="ceo-card">
+    <div class="ceo-header">
+      <div class="ceo-image">[Dr. Lena Cho]</div>
+      <div class="ceo-meta">
+        <h2>Dr. Lena Cho</h2>
+        <div class="year">Investigation Started: 2023</div>
+        <div class="labels">
+          <span class="label healthcare">Healthcare Sector</span>
+          <span class="label data-privacy">Data Privacy Violation</span>
+        </div>
+      </div>
+    </div>
+    <div class="crime-details">
+      CEO of <strong>Biowave Diagnostics</strong>. Accused of illegally selling anonymized patient data to third-party marketers without patient consent, breaching HIPAA.
+      <ul>
+        <li>Over 2 million patient records compromised</li>
+        <li>Internal audits deleted prior to FTC inspection</li>
+        <li>Class-action lawsuit filed in 3 states</li>
+      </ul>
+    </div>
+    <div class="timeline">
+      <h3>Timeline</h3>
+      <div class="timeline-entry"><span class="time">07:30 AM</span> - Whistleblower files federal complaint</div>
+      <div class="timeline-entry"><span class="time">12:30 PM</span> - FTC confirms investigation</div>
+      <div class="timeline-entry"><span class="time">03:15 PM</span> - CEO subpoenaed for internal emails</div>
+    </div>
+  </div>
+
+  <!-- Bernard Ebbers – WorldCom -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Bernard Ebbers]</div>
+    <div class="ceo-meta">
+      <h2>Bernard Ebbers</h2>
+      <div class="year">Investigation Started: 2002</div>
+      <div class="labels">
+        <span class="label telecom">Telecom Sector</span>
+        <span class="label accounting-fraud">Accounting Fraud</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+    Former CEO of <strong>WorldCom</strong>. Orchestrated accounting fraud by inflating assets by ~$11 billion. Convicted of fraud and conspiracy. :contentReference[oaicite:7]{index=7}
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">2002 –</span> SEC files fraud charges; internal audit exposes irregularities.</div>
+    <div class="timeline-entry"><span class="time">Mid‑2002 –</span> Bankruptcy filing.</div>
+    <div class="timeline-entry"><span class="time">2005 –</span> Ebbers convicted.</div>
+  </div>
+</div>
+
+<!-- Kenneth Lay & Jeffrey Skilling – Enron -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Kenneth Lay & Jeffrey Skilling]</div>
+    <div class="ceo-meta">
+      <h2>Kenneth Lay & Jeffrey Skilling</h2>
+      <div class="year">Investigation Started: 2001</div>
+      <div class="labels">
+        <span class="label energy">Energy Sector</span>
+        <span class="label accounting-fraud">Accounting Fraud</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+    Leadership of <strong>Enron</strong>. Used off‑balance‑sheet SPVs to hide debt and inflate stock price, leading to massive collapse; spurred Sarbanes‑Oxley reform. :contentReference[oaicite:8]{index=8}
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">2001 –</span> Whistleblower reveals accounting fraud; public disclosure begins.</div>
+    <div class="timeline-entry"><span class="time">Late‑2001 –</span> Bankruptcy filing.</div>
+    <div class="timeline-entry"><span class="time">2002 –</span> SOX passed into law.</div>
+  </div>
+</div>
+<!-- Trevor Milton -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Trevor Milton]</div>
+    <div class="ceo-meta">
+      <h2>Trevor Milton</h2>
+      <div class="year">Investigation Started: </div>
+      <div class="labels">
+        <span class="label healthcare">Electric Vehicles / Automotive Tech Sector</span>
+        <span class="label fraud">Securities Fraud</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+    Found guilty of securities and wire fraud related to misleading investors about company capabilities; sentenced.
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">"" –</span> Investigations begin.</div>
+    <div class="timeline-entry"><span class="time">"" –</span> Holmes convicted.</div>
+  </div>
+</div>
+<!-- Elizabeth Holmes – Theranos -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Elizabeth Holmes]</div>
+    <div class="ceo-meta">
+      <h2>Elizabeth Holmes</h2>
+      <div class="year">Investigation Started: 2015</div>
+      <div class="labels">
+        <span class="label healthcare">Healthcare Sector</span>
+        <span class="label fraud">Investor Fraud</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+    Founder and CEO of <strong>Theranos</strong>. Misled investors about blood-testing technology capabilities; convicted of fraud in 2022. :contentReference[oaicite:9]{index=9}
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">2015 –</span> Investigations begin.</div>
+    <div class="timeline-entry"><span class="time">2022 –</span> Holmes convicted.</div>
+  </div>
+</div>
+
+<!-- Rupert Stadler – VW Emissions -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Rupert Stadler]</div>
+    <div class="ceo-meta">
+      <h2>Rupert Stadler</h2>
+      <div class="year">Investigation Started: 2018</div>
+      <div class="labels">
+        <span class="label automotive">Automotive Sector</span>
+        <span class="label emissions-fraud">Emissions Fraud</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+    Former CEO of <strong>Audi</strong>. Arrested in 2018 over VW's diesel emissions cheating. Pleaded guilty in 2023. :contentReference[oaicite:10]{index=10}
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">June 2018 –</span> Arrested in emissions scandal probe.</div>
+    <div class="timeline-entry"><span class="time">May 2023 –</span> Pleaded guilty.</div>
+  </div>
+</div>
+
+<!-- Sam Bankman‑Fried – FTX -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Sam Bankman‑Fried]</div>
+    <div class="ceo-meta">
+      <h2>Sam Bankman‑Fried</h2>
+      <div class="year">Investigation Started: 2022</div>
+      <div class="labels">
+        <span class="label crypto">Crypto Sector</span>
+        <span class="label fraud">Financial Fraud</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+    Founder and CEO of <strong>FTX</strong>. Misallocated billions of customer funds for personal and political expenses; convicted and sentenced to 25 years, ordered to forfeit $11 billion. :contentReference[oaicite:11]{index=11}
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">2022 –</span> FTX collapses; investigation begins.</div>
+    <div class="timeline-entry"><span class="time">2023 –</span> Convicted by jury.</div>
+    <div class="timeline-entry"><span class="time">March 2024 –</span> Sentenced. </div>
+  </div>
+</div>
+
+<!-- Dennis Kozlowski – Tyco -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Dennis Kozlowski]</div>
+    <div class="ceo-meta">
+      <h2>Dennis Kozlowski</h2>
+      <div class="year">Investigation Started: 2002</div>
+      <div class="labels">
+        <span class="label conglomerate">Conglomerate Sector</span>
+        <span class="label embezzlement">Embezzlement</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+    CEO of <strong>Tyco International</strong>. Convicted of stealing ~$600 million for lavish personal use, including extravagant parties and home furnishings. :contentReference[oaicite:12]{index=12}
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">2002 –</span> Scandal exposed.</div>
+    <div class="timeline-entry"><span class="time">Mid‑2000s –</span> Convicted and imprisoned.</div>
+  </div>
+</div>
+
+<!-- Chanpeng "CZ" Zhao (Binance) -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Chanpeng "CZ" Zhao]</div>
+    <div class="ceo-meta">
+      <h2>Chanpeng "CZ" Zhao</h2>
+      <div class="year">Investigation Started: </div>
+      <div class="labels">
+        <span class="label conglomerate">Cryptocurrency Sector</span>
+        <span class="label embezzlement">Money Laundering / Regulatory Violations</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+  Pleaded guilty to anti–money laundering violations; paid $50M fine; served 4 months in prison.
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">"</span> Scandal exposed.</div>
+    <div class="timeline-entry"><span class="time">"" –</span> Convicted and imprisoned.</div>
+  </div>
+</div>
+
+<!-- Kobi Alexander -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Kobi Alexander]</div>
+    <div class="ceo-meta">
+      <h2>Kobi Alexander</h2>
+      <div class="year">Investigation Started: </div>
+      <div class="labels">
+        <span class="label conglomerate">Telecom / Tech Sector</span>
+        <span class="label embezzlement">Securities Fraud (Stock Trading Irregularities)</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+  Charged in 2006 with fraud; fled abroad (Namibia); sentenced but evaded extradition.
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">"</span> Scandal exposed.</div>
+    <div class="timeline-entry"><span class="time">"" –</span> Convicted and imprisoned.</div>
+  </div>
+</div>
+
+<!-- Markus Braun -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Markus Braun]</div>
+    <div class="ceo-meta">
+      <h2>Markus Braun</h2>
+      <div class="year">Investigation Started: </div>
+      <div class="labels">
+        <span class="label conglomerate">Fintech / Payment Processing Sector</span>
+        <span class="label embezzlement">Accounting Fraud / Embezzlement</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+  Arrested in 2020 amid massive accounting scandal; trial commenced in Munich in 2022.
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">"</span> Scandal exposed.</div>
+    <div class="timeline-entry"><span class="time">"" –</span> Convicted and imprisoned.</div>
+  </div>
+</div>
+<!-- Gregory Reyes -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Gregory Reyes]</div>
+    <div class="ceo-meta">
+      <h2>Gregory Reyes</h2>
+      <div class="year">Investigation Started: </div>
+      <div class="labels">
+        <span class="label conglomerate">Networking / Tech Sector</span>
+        <span class="label embezzlement">Stock Options Backdating Fraud</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+  Convicted for fraudulent backdating of stock options; served 18 months and paid $15M fine.
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">"</span> Scandal exposed.</div>
+    <div class="timeline-entry"><span class="time">"" –</span> Convicted and imprisoned.</div>
+  </div>
+</div>
+<!--Sanjay Kumar  -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Sanjay Kumar]</div>
+    <div class="ceo-meta">
+      <h2>Sanjay Kumar</h2>
+      <div class="year">Investigation Started: </div>
+      <div class="labels">
+        <span class="label conglomerate">Software / IT Services Sector</span>
+        <span class="label embezzlement">Accounting Fraud / Obstruction of Justice</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+  Sentenced to 12 years in prison and $8M fine for accounting fraud related to “35‑day month” scandal.
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">"</span> Scandal exposed.</div>
+    <div class="timeline-entry"><span class="time">"" –</span> Convicted and imprisoned.</div>
+  </div>
+</div>
+<!-- Bernard Ebbers -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Bernard Ebbers]</div>
+    <div class="ceo-meta">
+      <h2>Bernard Ebbers</h2>
+      <div class="year">Investigation Started: </div>
+      <div class="labels">
+        <span class="label conglomerate">Telecom / Tech Sector</span>
+        <span class="label embezzlement">Accounting Fraud / Securities Fraud</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+  Orchestrated $11B fraud; sentenced to 25 years (served 13); died in 2020.
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">"</span> Scandal exposed.</div>
+    <div class="timeline-entry"><span class="time">"" –</span> Convicted and imprisoned.</div>
+  </div>
+</div>
+<!--Paul Johnston  -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Paul Johnston]</div>
+    <div class="ceo-meta">
+      <h2>Paul Johnston</h2>
+      <div class="year">Investigation Started: </div>
+      <div class="labels">
+        <span class="label conglomerate">Software / Tech Sector</span>
+        <span class="label embezzlement">Revenue Falsification</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+  Pleaded guilty for falsifying revenue figures to secure investments; got 3 years prison.
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">"</span> Scandal exposed.</div>
+    <div class="timeline-entry"><span class="time">"" –</span> Convicted and imprisoned.</div>
+  </div>
+</div>
+<!--Frances Flood  -->
+<div class="ceo-card">
+  <div class="ceo-header">
+    <div class="ceo-image">[Frances Flood]</div>
+    <div class="ceo-meta">
+      <h2>Frances Flood</h2>
+      <div class="year">Investigation Started: </div>
+      <div class="labels">
+        <span class="label conglomerate">Audio/Video Tech Sector</span>
+        <span class="label embezzlement">Channel Stuffing / Fraud</span>
+      </div>
+    </div>
+  </div>
+  <div class="crime-details">
+  Convicted for fraudulent booking of revenue (channel stuffing); sentenced to 4 years in 2009.
+  </div>
+  <div class="timeline">
+    <h3>Timeline</h3>
+    <div class="timeline-entry"><span class="time">"</span> Scandal exposed.</div>
+    <div class="timeline-entry"><span class="time">"" –</span> Convicted and imprisoned.</div>
+  </div>
+</div>
+  <footer>
+    © 2025 Corporate Yearbook Dossier | All content based on public filings, leaks, and journalistic investigations.
+  </footer>
+
+</body>
+</html>
