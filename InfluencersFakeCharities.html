@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Influencers Linked to Fake Charities Yearbook (2000–2025)</title>
+
+  <!-- Leaflet CSS -->
+  <link 
+    rel="stylesheet" 
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+    crossorigin=""
+  />
+
+  <!-- Leaflet MarkerCluster CSS -->
+  <link 
+    rel="stylesheet" 
+    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" 
+  />
+  <link 
+    rel="stylesheet" 
+    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" 
+  />
+
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 2rem; color: #333; }
+    h1 { margin-bottom: 1rem; }
+    #map { height: 350px; border-radius: 8px; margin-bottom: 2rem; }
+    #charts { display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    canvas { background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+    #filters {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    #filters > * {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: white;
+    }
+    #exportBtn {
+      background: #b22222;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #exportBtn:hover {
+      background: #8a1717;
+    }
+
+    /* Collapsible Panels */
+    .influencer-card {
+      background: white;
+      border-left: 10px solid #aaa;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: background 0.3s;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .influencer-header {
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+    .influencer-header:hover { background: #eee; }
+    .influencer-body {
+      padding: 0 1.5rem 1rem 1.5rem;
+      display: none;
+      font-size: 0.9rem;
+      color: #444;
+    }
+    .influencer-card.active .influencer-body {
+      display: block;
+    }
+    .influencer-card.active {
+      border-left-width: 15px;
+      background: #fafafa;
+    }
+    .year { color: #666; font-size: 0.85rem; }
+    .labels {
+      margin: 0.5rem 0;
+    }
+    .label {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      margin-right: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: white;
+      border-radius: 4px;
+      user-select: none;
+    }
+
+    /* Chakra color codes */
+    .root { background: #b22222; }        /* Large-scale fraud / Ponzi */
+    .sacral { background: #ff8c00; }      /* Deception / False claims */
+    .solar { background: #ffd700; color: #333; } /* Fake audits / Forgery */
+    .heart { background: #228b22; }       /* Abuse of trust / Corruption */
+    .throat { background: #1e90ff; }      /* Social media deception */
+    .third-eye { background: #4b0082; }   /* Manipulation / Hidden agendas */
+    .crown { background: #8a2be2; }       /* High-profile influence abuse */
+
+    /* Highlight selected influencer card */
+    .influencer-card.highlight {
+      border-left-color: #ff4081 !important;
+      background: #fff0f6;
+      box-shadow: 0 0 15px 2px #ff4081;
+      z-index: 999;
+      position: relative;
+    }
+
+    /* Profile photo */
+    .profile-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 1rem;
+      flex-shrink: 0;
+      border: 2px solid #ccc;
+    }
+
+    /* Card content flex */
+    .card-top {
+      display: flex;
+      align-items: center;
+    }
+
+    /* Detailed profile */
+    .detailed-profile {
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    /* Social media stats */
+    .social-stats {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: #333;
+    }
+    .social-stats div {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .social-icon {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Influencers Linked to Fake Charities Yearbook (2000–2025)</h1>
+
+  <div id="map"></div>
+
+  <div id="charts">
+    <canvas id="yearChart" width="400" height="250"></canvas>
+    <canvas id="regionChart" width="400" height="250"></canvas>
+  </div>
+
+  <div id="filters">
+    <select id="regionFilter" aria-label="Filter by Region">
+      <option value="">All Regions</option>
+    </select>
+
+    <select id="themeFilter" aria-label="Filter by Theme">
+      <option value="">All Themes</option>
+    </select>
+
+    <label for="yearRange">Year: <span id="yearValue"></span></label>
+    <input type="range" id="yearRange" min="2000" max="2025" step="1" value="2025" />
+
+    <button id="exportBtn">Export Visible to CSV</button>
+  </div>
+
+  <div id="influencerContainer">
+    <!-- Influencer cards generated dynamically -->
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <!-- Leaflet MarkerCluster -->
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <!-- Leaflet Heatmap -->
+  <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    // Influencer data with photos and social media stats
+    const influencers = [
+      {
+        id: 'john_doe',
+        name: 'John Doe',
+        coords: [40.7128, -74.0060], // NYC
+        year: 2022,
+        region: 'North America',
+        themes: ['throat'], // Social media deception
+        description: 'Popular influencer exposed promoting a fake charity scam raising millions.',
+        detailedProfile: 'John built a massive following on multiple platforms before being revealed to manipulate donations.',
+        photo: 'https://randomuser.me/api/portraits/men/32.jpg',
+        socialStats: {
+          instagram: { followers: '2.5M', engagement: '3.4%' },
+          twitter: { followers: '1.1M', engagement: '2.1%' }
+        }
+      },
+      {
+        id: 'anna_smith',
+        name: 'Anna Smith',
+        coords: [51.5074, -0.1278], // London
+        year: 2021,
+        region: 'Europe',
+        themes: ['heart'], // Abuse of trust
+        description: 'Celebrity caught redirecting charity funds for personal use.',
+        detailedProfile: 'Anna used her celebrity status to gather donations, but diverted funds into personal accounts.',
+        photo: 'https://randomuser.me/api/portraits/women/65.jpg',
+        socialStats: {
+          facebook: { followers: '3.3M', engagement: '4.7%' },
+          instagram: { followers: '1.8M', engagement: '5.0%' }
+        }
+      },
+      {
+        id: 'li_wen',
+        name: 'Li Wen',
+        coords: [31.2304, 121.4737], // Shanghai
+        year: 2020,
+        region: 'Asia',
+        themes: ['root'], // Large-scale fraud
+        description: 'Massive Ponzi-style charity scheme uncovered involving several social figures.',
+        detailedProfile: 'Li orchestrated a vast network of fake charities to launder money and collect donations.',
+        photo: 'https://randomuser.me/api/portraits/men/77.jpg',
+        socialStats: {
+          weibo: { followers: '5.2M', engagement: '6.1%' }
+        }
+      },
+      {
+        id: 'maria_gonzalez',
+        name: 'Maria Gonzalez',
+        coords: [-34.6037, -58.3816], // Buenos Aires
+        year: 2019,
+        region: 'Latin America',
+        themes: ['third-eye'], // Hidden agendas
+        description: 'Influencer network using fake charity events to manipulate public opinion.',
+        detailedProfile: 'Maria led campaigns disguised as charity events that pushed political agendas.',
+        photo: 'https://randomuser.me/api/portraits/women/42.jpg',
+        socialStats: {
+          instagram: { followers: '1.2M', engagement: '4.1%' },
+          facebook: { followers: '800K', engagement: '3.5%' }
+        }
+      },
+      {
+        id: 'omar_khan',
+        name: 'Omar Khan',
+        coords: [24.7136, 46.6753], // Riyadh
+        year: 2018,
+        region: 'Middle East',
+        themes: ['solar'], // Fake audits
+        description: 'High-profile philanthropist discovered fabricating audit reports.',
+        detailedProfile: 'Omar was a respected figure until audits revealed fabricated charity impact reports.',
+        photo: 'https://randomuser.me/api/portraits/men/58.jpg',
+        socialStats: {
+          twitter: { followers: '900K', engagement: '2.8%' },
+          instagram: { followers: '700K', engagement: '3.0%' }
+        }
+      },
+      {
+        id: 'sophia_lee',
+        name: 'Sophia Lee',
+        coords: [37.5665, 126.9780], // Seoul
+        year: 2017,
+        region: 'Asia',
+        themes: ['throat'],
+        description: 'Social media star linked to multiple charity scams using deceptive tactics.',
+        detailedProfile: 'Sophia’s large following was exploited to push fake fundraising campaigns.',
+        photo: 'https://randomuser.me/api/portraits/women/22.jpg',
+        socialStats: {
+          instagram: { followers: '4.1M', engagement: '5.5%' },
+          tiktok: { followers: '3.5M', engagement: '6.0%' }
+        }
+      },
+      {
+        id: 'alex_johnson',
+        name: 'Alex Johnson',
+        coords: [34.0522, -118.2437], // Los Angeles
+        year: 2023,
+        region: 'North America',
+        themes: ['crown'], // High-profile influence abuse
+        description: 'Business mogul implicated in a fake charity tax fraud scheme.',
+        detailedProfile: 'Alex used influence and financial power to cover up fraudulent charity activities.',
+        photo: 'https://randomuser.me/api/portraits/men/88.jpg',
+        socialStats: {
+          twitter: { followers: '2.0M', engagement: '3.9%' },
+          linkedin: { followers: '1.5M', engagement: '4.0%' }
+        }
+      }
+    ];
+
+    // Chakra colors for themes
+    const chakraColors = {
+      root: '#b22222',
+      sacral: '#ff8c00',
+      solar: '#ffd700',
+      heart: '#228b22',
+      throat: '#1e90ff',
+      'third-eye': '#4b0082',
+      crown: '#8a2be2'
+    };
+
+    // Social media SVG icons
+    const socialIcons = {
+      instagram: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm7 3a1 1 0 110 2 1 1 0 010-2zm-7 3a5 5 0 100 10 5 5 0 000-10zm5 5a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`,
+      twitter: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14.86 4.48 4.48 0 001.98-2.48 9.1 9.1 0 01-2.88 1.1 4.52 4.52 0 00-7.7 4.12 12.84 12.84 0 01-9.32-4.7 4.52 4.52 0 001.4 6.03 4.52 4.52 0 01-2.05-.56v.06a4.52 4.52 0 003.62 4.43 4.52 4.52 0 01-2.04.08 4.52 4.52 0 004.22 3.13 9.06 9.06 0 01-5.6 1.93A9.07 9.07 0 012 19.54a12.76 12.76 0 006.92 2.02c8.3 0 12.84-6.87 12.84-12.84 0-.2 0-.42-.01-.63A9.17 9.17 0 0023 3z"/></svg>`,
+      facebook: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.99 3.66 9.13 8.44 9.88v-6.99H7.9v-2.89h2.54v-2.2c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.89h-2.34v6.99C18.34 21.13 22 16.99 22 12z"/></svg>`,
+      linkedin: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M4.98 3.5A2.48 2.48 0 002.5 6v12a2.48 2.48 0 002.48 2.5h14.04A2.48 2.48 0 0021.5 18V6a2.48 2.48 0 00-2.48-2.5H4.98zm3.5 14.5h-3v-7h3v7zm-1.5-8.08a1.7 1.7 0 110-3.4 1.7 1.7 0 010 3.4zm7.5 8.08h-3v-3.5c0-.87-.32-1.5-1.12-1.5-.6 0-.96.4-1.12.8-.06.15-.08.36-.08.57v3.63h-3v-7h3v1c.43-.65 1.2-1.25 2.6-1.25 1.8 0 3.15 1.17 3.15 3.68v3.57z"/></svg>`,
+      tiktok: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M9 7v7.67a3.5 3.5 0 11-3.5-3.5v2.46a1 1 0 102 0V7zM18 7h-2a3.5 3.5 0 01-3.5-3.5v10a5.5 5.5 0 106.5-5.1z"/></svg>`,
+      weibo: `<svg class="social-icon" viewBox="0 0 24 24"><path d="M12 2c-5.52 0-10 3.87-10 8.67 0 3.5 3.04 6.5 7.44 7.4-.04-1.9-.2-4.25 1.12-5.82 1.03-1.18 2.47-1.3 3.4-1.44a4.8 4.8 0 01.48 2.56c0 1.9-1.4 3.22-3 3.22-.4 0-.78-.12-1.1-.32-.3.92-.48 1.95-.5 3.1 1.32.4 2.77.58 4.25.58 5.52 0 10-3.87 10-8.67S17.52 2 12 2z"/></svg>`
+    };
+
+    // Elements
+    const regionFilter = document.getElementById('regionFilter');
+    const themeFilter = document.getElementById('themeFilter');
+    const yearRange = document.getElementById('yearRange');
+    const yearValue = document.getElementById('yearValue');
+    const influencerContainer = document.getElementById('influencerContainer');
+    const exportBtn = document.getElementById('exportBtn');
+
+    // Populate filter dropdowns
+    const regions = [...new Set(influencers.map(f => f.region))].sort();
+    regions.forEach(region => {
+      const opt = document.createElement('option');
+      opt.value = region.toLowerCase();
+      opt.textContent = region;
+      regionFilter.appendChild(opt);
+    });
+
+    const themes = [...new Set(influencers.flatMap(f => f.themes))].sort();
+    themes.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = t.charAt(0).toUpperCase() + t.slice(1).replace('-', ' ');
+      themeFilter.appendChild(opt);
+    });
+
+    yearRange.min = 2000;
+    yearRange.max = 2025;
+    yearRange.value = 2025;
+    yearValue.textContent = yearRange.value;
+
+    // Leaflet map init
+    const map = L.map('map').setView([20, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Marker cluster group
+    const markers = L.markerClusterGroup();
+
+    // Heatmap points
+    const heatPoints = influencers.map(f => [...f.coords, 0.7]);
+    const heat = L.heatLayer(heatPoints, {radius: 25, blur: 15, maxZoom: 10}).addTo(map);
+
+    // Store markers by id
+    const markerById = {};
+
+    // Add markers
+    influencers.forEach(f => {
+      const color = chakraColors[f.themes[0]] || '#888';
+      const marker = L.circleMarker(f.coords, {
+        radius: 10,
+        fillColor: color,
+        color: '#333',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      });
+
+      marker.bindTooltip(`${f.name} (${f.year})`, {sticky: true});
+      marker.on('click', () => {
+        highlightInfluencerCard(f.id);
+        document.getElementById(f.id).scrollIntoView({behavior: 'smooth', block: 'center'});
+      });
+
+      markers.addLayer(marker);
+      markerById[f.id] = marker;
+    });
+
+    map.addLayer(markers);
+
+    // Render influencer cards
+    function renderInfluencerCards(data) {
+      influencerContainer.innerHTML = '';
+      data.forEach(f => {
+        const labels = f.themes.map(t => `<span class="label ${t}">${t.charAt(0).toUpperCase() + t.slice(1).replace('-', ' ')}</span>`).join('');
+        
+        // Social media stats HTML
+        let socialHTML = '';
+        if (f.socialStats) {
+          socialHTML = '<div class="social-stats">';
+          for (const [platform, stats] of Object.entries(f.socialStats)) {
+            const icon = socialIcons[platform] || '';
+            socialHTML += `
+              <div title="${platform.charAt(0).toUpperCase() + platform.slice(1)}">
+                ${icon}
+                <span>${stats.followers} followers</span> • 
+                <span>${stats.engagement} engagement</span>
+              </div>`;
+          }
+          socialHTML += '</div>';
+        }
+
+        const card = document.createElement('div');
+        card.className = 'influencer-card';
+        card.id = f.id;
+        card.dataset.region = f.region.toLowerCase();
+        card.dataset.year = f.year;
+        card.dataset.themes = f.themes.join(' ').toLowerCase();
+
+        card.innerHTML = `
+          <div class="influencer-header" tabindex="0" role="button" aria-expanded="false" aria-controls="${f.id}-details">
+            <div class="card-top">
+              <img class="profile-photo" src="${f.photo}" alt="Photo of ${f.name}" />
+              <div>
+                <div>${f.name}</div>
+                <div class="year">${f.year} — ${f.region}</div>
+                <div class="labels">${labels}</div>
+              </div>
+            </div>
+            <div aria-hidden="true" style="margin-left: auto;">&#x25bc;</div>
+          </div>
+          <div class="influencer-body" id="${f.id}-details" aria-live="polite" aria-atomic="true">
+            <p>${f.description}</p>
+            <p class="detailed-profile">${f.detailedProfile}</p>
+            ${socialHTML}
+          </div>
+        `;
+
+        influencerContainer.appendChild(card);
+
+        // Toggle collapsible on click or keyboard enter/space
+        const header = card.querySelector('.influencer-header');
+        const body = card.querySelector('.influencer-body');
+        header.addEventListener('click', () => toggleCard(card));
+        header.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleCard(card);
+          }
+        });
+      });
+    }
+
+    function toggleCard(card) {
+      const isActive = card.classList.toggle('active');
+      const header = card.querySelector('.influencer-header');
+      header.setAttribute('aria-expanded', isActive);
+    }
+
+    // Filtering logic
+    function filterInfluencers() {
+      const regionVal = regionFilter.value;
+      const themeVal = themeFilter.value;
+      const yearVal = +yearRange.value;
+
+      const filtered = influencers.filter(f => {
+        const regionMatch = regionVal ? f.region.toLowerCase() === regionVal : true;
+        const themeMatch = themeVal ? f.themes.includes(themeVal) : true;
+        const yearMatch = f.year <= yearVal;
+        return regionMatch && themeMatch && yearMatch;
+      });
+
+      renderInfluencerCards(filtered);
+
+      // Update markers visibility
+      markers.clearLayers();
+      filtered.forEach(f => {
+        if(markerById[f.id]) markers.addLayer(markerById[f.id]);
+      });
+
+      updateCharts(filtered);
+    }
+
+    // Highlight card by marker click
+    function highlightInfluencerCard(id) {
+      document.querySelectorAll('.influencer-card').forEach(card => {
+        card.classList.toggle('highlight', card.id === id);
+        if (card.id === id && !card.classList.contains('active')) {
+          toggleCard(card);
+        }
+      });
+    }
+
+    // Export visible influencers to CSV
+    exportBtn.addEventListener('click', () => {
+      const visibleCards = Array.from(document.querySelectorAll('.influencer-card'));
+      if (!visibleCards.length) return alert('No data to export.');
+
+      const rows = [['Name', 'Year', 'Region', 'Themes', 'Description', 'Followers & Engagement']];
+      visibleCards.forEach(card => {
+        const f = influencers.find(i => i.id === card.id);
+        if (!f) return;
+        const themesStr = f.themes.map(t => t.charAt(0).toUpperCase() + t.slice(1).replace('-', ' ')).join('; ');
+        let socialStr = '';
+        if (f.socialStats) {
+          socialStr = Object.entries(f.socialStats).map(([platform, stats]) =>
+            `${platform}: ${stats.followers} followers, ${stats.engagement} engagement`
+          ).join(' | ');
+        }
+        rows.push([
+          f.name,
+          f.year,
+          f.region,
+          themesStr,
+          f.description.replace(/,/g, ';'), // replace commas to avoid CSV issues
+          socialStr
+        ]);
+      });
+
+      const csvContent = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+      const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `influencers_fake_charities_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Charts
+    const yearCtx = document.getElementById('yearChart').getContext('2d');
+    const regionCtx = document.getElementById('regionChart').getContext('2d');
+
+    let yearChart, regionChart;
+
+    function updateCharts(data) {
+      // Count arrests by year
+      const countsByYear = {};
+      for(let y = 2000; y <= 2025; y++) countsByYear[y] = 0;
+      data.forEach(f => { countsByYear[f.year] = (countsByYear[f.year] || 0) + 1; });
+
+      const years = Object.keys(countsByYear);
+      const yearCounts = Object.values(countsByYear);
+
+      // Count arrests by region
+      const countsByRegion = {};
+      data.forEach(f => {
+        countsByRegion[f.region] = (countsByRegion[f.region] || 0) + 1;
+      });
+
+      const regions = Object.keys(countsByRegion);
+      const regionCounts = Object.values(countsByRegion);
+
+      if (yearChart) yearChart.destroy();
+      yearChart = new Chart(yearCtx, {
+        type: 'bar',
+        data: {
+          labels: years,
+          datasets: [{
+            label: 'Cases by Year',
+            data: yearCounts,
+            backgroundColor: '#1e90ff'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { title: { display: true, text: 'Year' } },
+            y: { beginAtZero: true, title: { display: true, text: 'Number of Cases' } }
+          }
+        }
+      });
+
+      if (regionChart) regionChart.destroy();
+      regionChart = new Chart(regionCtx, {
+        type: 'pie',
+        data: {
+          labels: regions,
+          datasets: [{
+            label: 'Cases by Region',
+            data: regionCounts,
+            backgroundColor: regions.map((_, i) => `hsl(${(i * 360 / regions.length)}, 70%, 50%)`)
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'right' }
+          }
+        }
+      });
+    }
+
+    // Initial render
+    renderInfluencerCards(influencers);
+    updateCharts(influencers);
+
+    // Event listeners
+    regionFilter.addEventListener('change', filterInfluencers);
+    themeFilter.addEventListener('change', filterInfluencers);
+    yearRange.addEventListener('input', () => {
+      yearValue.textContent = yearRange.value;
+      filterInfluencers();
+    });
+  </script>
+</body>
+</html>
