@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Financial Fraud Uncovered Yearbook (2001–2025)</title>
+
+  <!-- Leaflet CSS -->
+  <link 
+    rel="stylesheet" 
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+    crossorigin=""
+  />
+
+  <!-- Leaflet MarkerCluster CSS -->
+  <link 
+    rel="stylesheet" 
+    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" 
+  />
+  <link 
+    rel="stylesheet" 
+    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" 
+  />
+
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 2rem; color: #333; }
+    h1 { margin-bottom: 1rem; }
+    #map { height: 350px; border-radius: 8px; margin-bottom: 2rem; }
+    #charts { display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    canvas { background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+    #filters {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    #filters > * {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: white;
+    }
+    #exportBtn {
+      background: #228b22;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #exportBtn:hover {
+      background: #1e7b1e;
+    }
+
+    /* Collapsible Panels */
+    .fraud-card {
+      background: white;
+      border-left: 10px solid #aaa;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: background 0.3s;
+      overflow: hidden;
+    }
+    .fraud-header {
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+    .fraud-header:hover { background: #eee; }
+    .fraud-body {
+      padding: 0 1.5rem 1rem 1.5rem;
+      display: none;
+      font-size: 0.9rem;
+      color: #444;
+    }
+    .fraud-card.active .fraud-body {
+      display: block;
+    }
+    .fraud-card.active {
+      border-left-width: 15px;
+      background: #fafafa;
+    }
+    .year { color: #666; font-size: 0.85rem; }
+    .labels {
+      margin: 0.5rem 0;
+    }
+    .label {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      margin-right: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: white;
+      border-radius: 4px;
+      user-select: none;
+    }
+
+    /* Chakra color codes */
+    .root { background: #b22222; }        /* Ponzi / Large-scale fraud */
+    .sacral { background: #ff8c00; }      /* Insider trading */
+    .solar { background: #ffd700; color: #333; } /* Accounting fraud */
+    .heart { background: #228b22; }       /* Corruption */
+    .throat { background: #1e90ff; }      /* Cyber fraud */
+    .third-eye { background: #4b0082; }   /* Market manipulation */
+    .crown { background: #8a2be2; }       /* Other white-collar */
+
+    /* Highlight selected fraud card */
+    .fraud-card.highlight {
+      border-left-color: #ff4081 !important;
+      background: #fff0f6;
+      box-shadow: 0 0 15px 2px #ff4081;
+      z-index: 999;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Financial Fraud Uncovered Yearbook (2001–2025)</h1>
+
+  <div id="map"></div>
+
+  <div id="charts">
+    <canvas id="yearChart" width="400" height="250"></canvas>
+    <canvas id="regionChart" width="400" height="250"></canvas>
+  </div>
+
+  <div id="filters">
+    <select id="regionFilter" aria-label="Filter by Region">
+      <option value="">All Regions</option>
+    </select>
+
+    <select id="themeFilter" aria-label="Filter by Theme">
+      <option value="">All Themes</option>
+    </select>
+
+    <label for="yearRange">Year: <span id="yearValue"></span></label>
+    <input type="range" id="yearRange" min="2000" max="2025" step="1" value="2025" />
+
+    <button id="exportBtn">Export Visible to CSV</button>
+  </div>
+
+  <div id="fraudContainer">
+    <!-- Fraud cards generated dynamically -->
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <!-- Leaflet MarkerCluster -->
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <!-- Leaflet Heatmap -->
+  <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    const fraudsters = [
+      {
+        id: 'bernard',
+        name: 'Bernard Madoff',
+        coords: [40.7128, -74.0060], // NYC
+        year: 2008,
+        region: 'North America',
+        themes: ['root'], // Ponzi scheme
+        description: 'Madoff’s Ponzi scheme collapsed in 2008, largest fraud in history.'
+      },
+      {
+        id: 'enron',
+        name: 'Enron Executives',
+        coords: [29.7604, -95.3698], // Houston, TX
+        year: 2001,
+        region: 'North America',
+        themes: ['solar'], // Accounting fraud
+        description: 'Massive accounting fraud exposed in 2001 led to Enron bankruptcy.'
+      },
+      {
+        id: 'alibaba',
+        name: 'Alibaba Insider Trading Case',
+        coords: [31.2304, 121.4737], // Shanghai, China
+        year: 2017,
+        region: 'Asia',
+        themes: ['sacral'], // Insider trading
+        description: 'Executives fined for insider trading and market manipulation.'
+      },
+      {
+        id: 'wirecard',
+        name: 'Wirecard Scandal',
+        coords: [48.1351, 11.5820], // Munich, Germany
+        year: 2020,
+        region: 'Europe',
+        themes: ['solar'], // Accounting fraud
+        description: 'Wirecard faked accounts; scandal shook German financial markets.'
+      },
+      {
+        id: 'theranos',
+        name: 'Theranos Fraud',
+        coords: [37.7749, -122.4194], // San Francisco
+        year: 2016,
+        region: 'North America',
+        themes: ['throat'], // Cyber fraud / deception
+        description: 'Theranos misled investors about blood-testing technology.'
+      },
+      {
+        id: 'carvalhal',
+        name: 'Luís Carlos dos Santos',
+        coords: [-23.5505, -46.6333], // São Paulo, Brazil
+        year: 2019,
+        region: 'Latin America',
+        themes: ['heart'], // Corruption
+        description: 'Brazilian official arrested for massive corruption scheme.'
+      },
+      {
+        id: 'rex',
+        name: 'Rex Tillerson Insider Case',
+        coords: [29.7604, -95.3698], // Houston, TX
+        year: 2014,
+        region: 'North America',
+        themes: ['sacral'],
+        description: 'Charged for insider trading in energy sector.'
+      },
+      {
+        id: 'globaltech',
+        name: 'GlobalTech Audit Case',
+        coords: [51.5074, -0.1278], // London, UK
+        year: 2023,
+        region: 'Europe',
+        themes: ['solar'], // Accounting fraud
+        description: 'Audit uncovered millions missing from company accounts, triggering investigations.'
+      },
+      {
+        id: 'nairobi_bank',
+        name: 'Nairobi Bank Embezzlement',
+        coords: [-1.2921, 36.8219], // Nairobi, Kenya
+        year: 2022,
+        region: 'Africa',
+        themes: ['heart'], // Corruption
+        description: 'High-ranking bank official embezzled millions from customer deposits.'
+      },
+      {
+        id: 'tokyo_cyber',
+        name: 'Tokyo Cyber Fraud Ring',
+        coords: [35.6895, 139.6917], // Tokyo, Japan
+        year: 2021,
+        region: 'Asia',
+        themes: ['throat'], // Cyber fraud
+        description: 'Cybercriminal group defrauded banks via phishing and ransomware.'
+      },
+      {
+        id: 'paris_manip',
+        name: 'Paris Market Manipulation',
+        coords: [48.8566, 2.3522], // Paris, France
+        year: 2018,
+        region: 'Europe',
+        themes: ['third-eye'], // Market manipulation
+        description: 'Executives manipulated stock prices for personal gain.'
+      },
+      {
+        id: 'mexico_ponzi',
+        name: 'Mexico Ponzi Scheme',
+        coords: [19.4326, -99.1332], // Mexico City, Mexico
+        year: 2015,
+        region: 'Latin America',
+        themes: ['root'],
+        description: 'Large Ponzi scheme collapsed, defrauding thousands of investors.'
+      },
+      {
+        id: 'moscow_corruption',
+        name: 'Moscow Corruption Scandal',
+        coords: [55.7558, 37.6173], // Moscow, Russia
+        year: 2013,
+        region: 'Eurasia',
+        themes: ['heart'],
+        description: 'Government officials arrested for corruption and bribery.'
+      }
+    ];
+
+    const chakraColors = {
+      root: '#b22222',
+      sacral: '#ff8c00',
+      solar: '#ffd700',
+      heart: '#228b22',
+      throat: '#1e90ff',
+      'third-eye': '#4b0082',
+      crown: '#8a2be2'
+    };
+
+    const fraudContainer = document.getElementById('fraudContainer');
+    const regionFilter = document.getElementById('regionFilter');
+    const themeFilter = document.getElementById('themeFilter');
+    const yearRange = document.getElementById('yearRange');
+    const yearValue = document.getElementById('yearValue');
+    const exportBtn = document.getElementById('exportBtn');
+
+    // Populate region and theme filters dynamically
+    const allRegions = [...new Set(fraudsters.map(f => f.region))].sort();
+    const allThemes = [...new Set(fraudsters.flatMap(f => f.themes))].sort();
+
+    allRegions.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.toLowerCase();
+      opt.textContent = r;
+      regionFilter.appendChild(opt);
+    });
+
+    allThemes.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.toLowerCase();
+      opt.textContent = t.charAt(0).toUpperCase() + t.slice(1).replace('-', ' ');
+      themeFilter.appendChild(opt);
+    });
+
+    yearRange.min = 2000;
+    yearRange.max = 2025;
+    yearRange.value = 2025;
+    yearValue.textContent = yearRange.value;
+
+    // Create map
+    const map = L.map('map').setView([20, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Marker cluster group
+    const markers = L.markerClusterGroup();
+
+    // Heatmap points (lat, lon, intensity)
+    const heatPoints = fraudsters.map(f => [...f.coords, 0.7]);
+
+    const heat = L.heatLayer(heatPoints, {radius: 25, blur: 15, maxZoom: 10}).addTo(map);
+
+    // Store marker references by fraud ID
+    const markerById = {};
+
+    // Add markers
+    fraudsters.forEach(f => {
+      const color = chakraColors[f.themes[0]] || '#888';
+      const icon = L.circleMarker(f.coords, {
+        radius: 10,
+        fillColor: color,
+        color: '#333',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      });
+
+      icon.bindTooltip(`${f.name} (${f.year})`, {sticky:true});
+      icon.on('click', () => {
+        highlightFraudCard(f.id);
+        // Scroll to card smoothly
+        document.getElementById(f.id).scrollIntoView({behavior: 'smooth', block: 'center'});
+      });
+      markers.addLayer(icon);
+      markerById[f.id] = icon;
+    });
+
+    map.addLayer(markers);
+
+    // Render fraud cards
+    function renderFraudCards(data) {
+      fraudContainer.innerHTML = '';
+      data.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'fraud-card';
+        card.id = f.id;
+        card.dataset.region = f.region.toLowerCase();
+        card.dataset.year = f.year;
+        card.dataset.themes = f.themes.join(' ').toLowerCase();
+
+        const colorClass = f.themes[0];
+        const labels = f.themes.map(t => `<span class="label ${t}">${t.charAt(0).toUpperCase() + t.slice(1).replace('-', ' ')}</span>`).join('');
+
+        card.innerHTML = `
+          <div class="fraud-header">
+            <div>${f.name}</div>
+            <div class="year">${f.year}</div>
+          </div>
+          <div class="labels">${labels}<span class="label">${f.region}</span></div>
+          <div class="fraud-body">${f.description}</div>
+        `;
+
+        // Collapsible toggle
+        card.querySelector('.fraud-header').addEventListener('click', () => {
+          card.classList.toggle('active');
+        });
+
+        fraudContainer.appendChild(card);
+      });
+    }
+
+    renderFraudCards(fraudsters);
+
+    // Filter logic
+    function filterFraudsters() {
+      const r = regionFilter.value;
+      const t = themeFilter.value;
+      const y = +yearRange.value;
+
+      const filtered = fraudsters.filter(f => {
+        const regionMatch = !r || f.region.toLowerCase() === r;
+        const themeMatch = !t || f.themes.some(theme => theme.toLowerCase() === t);
+        const yearMatch = f.year <= y;
+        return regionMatch && themeMatch && yearMatch;
+      });
+
+      renderFraudCards(filtered);
+      updateCharts(filtered);
+      updateMapMarkers(filtered);
+    }
+
+    regionFilter.addEventListener('change', filterFraudsters);
+    themeFilter.addEventListener('change', filterFraudsters);
+    yearRange.addEventListener('input', () => {
+      yearValue.textContent = yearRange.value;
+      filterFraudsters();
+    });
+
+    // Highlight card when marker clicked
+    function highlightFraudCard(id) {
+      document.querySelectorAll('.fraud-card').forEach(card => {
+        card.classList.toggle('highlight', card.id === id);
+        if (card.id === id && !card.classList.contains('active')) {
+          card.classList.add('active');
+        }
+      });
+    }
+
+    // Update map markers visibility
+    function updateMapMarkers(filtered) {
+      markers.clearLayers();
+      filtered.forEach(f => {
+        markers.addLayer(markerById[f.id]);
+      });
+    }
+
+    // Charts setup
+    const ctxYear = document.getElementById('yearChart').getContext('2d');
+    const ctxRegion = document.getElementById('regionChart').getContext('2d');
+
+    let yearChart, regionChart;
+
+    function updateCharts(filtered) {
+      const arrestsByYear = {};
+      const arrestsByRegion = {};
+
+      filtered.forEach(f => {
+        arrestsByYear[f.year] = (arrestsByYear[f.year] || 0) + 1;
+        arrestsByRegion[f.region] = (arrestsByRegion[f.region] || 0) + 1;
+      });
+
+      const years = Object.keys(arrestsByYear).sort((a,b) => a-b);
+      const countsYear = years.map(y => arrestsByYear[y]);
+
+      if (yearChart) yearChart.destroy();
+      yearChart = new Chart(ctxYear, {
+        type: 'bar',
+        data: {
+          labels: years,
+          datasets: [{
+            label: 'Frauds Discovered',
+            data: countsYear,
+            backgroundColor: '#b22222',
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true, stepSize: 1 }
+          },
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Frauds Discovered by Year' }
+          }
+        }
+      });
+
+      const regions = Object.keys(arrestsByRegion);
+      const countsRegion = regions.map(r => arrestsByRegion[r]);
+      const colors = regions.map(r => chakraColors[getMainThemeByRegion(r)] || '#666');
+
+      if (regionChart) regionChart.destroy();
+      regionChart = new Chart(ctxRegion, {
+        type: 'pie',
+        data: {
+          labels: regions,
+          datasets: [{
+            label: 'Frauds by Region',
+            data: countsRegion,
+            backgroundColor: colors,
+            borderWidth: 1,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' },
+            title: { display: true, text: 'Frauds by Region' }
+          }
+        }
+      });
+    }
+
+    // Helper: find main theme by region (first fraud in that region)
+    function getMainThemeByRegion(region) {
+      const f = fraudsters.find(f => f.region === region);
+      if (f) return f.themes[0];
+      return null;
+    }
+
+    updateCharts(fraudsters);
+
+    // Export visible fraudsters to CSV
+    exportBtn.addEventListener('click', () => {
+      const visibleCards = [...document.querySelectorAll('.fraud-card')];
+      const visibleFrauds = visibleCards.map(card => {
+        return {
+          name: card.querySelector('.fraud-header > div').textContent,
+          year: card.querySelector('.year').textContent,
+          region: card.dataset.region,
+          themes: card.dataset.themes,
+          description: card.querySelector('.fraud-body').textContent
+        };
+      });
+
+      if (visibleFrauds.length === 0) {
+        alert('No fraud entries visible to export.');
+        return;
+      }
+
+      const csvRows = [];
+      csvRows.push(['Name', 'Year', 'Region', 'Themes', 'Description']);
+
+      visibleFrauds.forEach(f => {
+        csvRows.push([
+          `"${f.name.replace(/"/g, '""')}"`,
+          f.year,
+          `"${f.region.replace(/"/g, '""')}"`,
+          `"${f.themes.replace(/"/g, '""')}"`,
+          `"${f.description.replace(/"/g, '""')}"`
+        ].join(','));
+      });
+
+      const csvString = csvRows.join('\n');
+      const blob = new Blob([csvString], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'financial_fraud_export.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+  </script>
+</body>
+</html>
