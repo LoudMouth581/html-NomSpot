@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Global Karma</title>
+<style>
+  body {
+    font-family: sans-serif;
+    padding: 20px;
+    background: radial-gradient(ellipse at center, #0a0a1a 0%, #000010 100%);
+    color: #c0c8f0;
+  }
+  h1, h2 {
+    text-align: center;
+    color: #89b8ff;
+    text-shadow: 0 0 6px #89b8ff;
+  }
+  .section {
+    margin-bottom: 40px;
+  }
+  .box {
+    border: 2px solid #3f51b5;
+    background: rgba(20, 20, 40, 0.85);
+    padding: 15px;
+    border-radius: 12px;
+    margin: 10px auto;
+    max-width: 400px;
+    box-shadow: 0 0 10px #3f51b5 inset;
+    color: #c0c8f0;
+    transition: background-color 0.5s ease;
+  }
+  .wheel {
+    width: 180px;
+    height: 180px;
+    margin: 10px auto;
+    display: block;
+    filter: drop-shadow(0 0 3px #f5a623);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  th, td {
+    border: 1px solid #4a4a8c;
+    padding: 4px 8px;
+    text-align: left;
+    color: #c0c8f0;
+  }
+  th {
+    background-color: #202040;
+  }
+  .karma {
+    font-style: italic;
+    color: #9ab9ff;
+    margin-top: 10px;
+  }
+  .element-Fire {
+    color: #ff6f61;
+    font-weight: bold;
+    text-shadow: 0 0 4px #ff6f61;
+  }
+  .element-Earth {
+    color: #7ccc4d;
+    font-weight: bold;
+    text-shadow: 0 0 5px #7ccc4d;
+  }
+  .element-Air {
+    color: #4ecaff;
+    font-weight: bold;
+    text-shadow: 0 0 5px #4ecaff;
+  }
+  .element-Water {
+    color: #a478ff;
+    font-weight: bold;
+    text-shadow: 0 0 6px #a478ff;
+  }
+  .chakra-root { background-color: rgba(140, 0, 0, 0.75); box-shadow: 0 0 12px #bb0000; color: #ffdcdc; }
+  .chakra-sacral { background-color: rgba(150, 75, 0, 0.75); box-shadow: 0 0 12px #ff7f00; color: #ffe6cc; }
+  .chakra-solarplexus { background-color: rgba(150, 150, 0, 0.75); box-shadow: 0 0 12px #ffff00; color: #ffffcc; }
+  .chakra-heart { background-color: rgba(0, 75, 20, 0.75); box-shadow: 0 0 12px #00ff44; color: #ccffcc; }
+  .chakra-throat { background-color: rgba(0, 40, 150, 0.75); box-shadow: 0 0 12px #0066ff; color: #cce0ff; }
+  .chakra-thirdeye { background-color: rgba(45, 0, 110, 0.75); box-shadow: 0 0 12px #6600ff; color: #d6ccff; }
+  .chakra-crown { background-color: rgba(60, 0, 110, 0.75); box-shadow: 0 0 12px #9900ff; color: #e0ccff; }
+</style>
+</head>
+<body>
+
+<h1>🌍 Cosmic Karma </h1>
+
+<div class="section" id="continents-section">
+  <h2>Continents</h2>
+</div>
+
+<div class="section" id="leaders-section">
+  <h2>Live Updates</h2>
+</div>
+
+<script>
+
+  // ========== MODULARIZE LATER: ZODIAC SIGNS ==========
+  const zodiac = [
+    'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
+    'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
+  ];
+  const elements = {
+    'Aries': 'Fire',
+    'Taurus': 'Earth',
+    'Gemini': 'Air',
+    'Cancer': 'Water',
+    'Leo': 'Fire',
+    'Virgo': 'Earth',
+    'Libra': 'Air',
+    'Scorpio': 'Water',
+    'Sagittarius': 'Fire',
+    'Capricorn': 'Earth',
+    'Aquarius': 'Air',
+    'Pisces': 'Water'
+  };
+
+  const nakshatras = [
+    "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu",
+    "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni",
+    "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshta",
+    "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta",
+    "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"
+  ];
+
+  // ========== MODULARIZE LATER: CHAKRA CLASS FUNCTION ==========
+  function chakraClassForDeg(deg) {
+    const mod = deg % 210;
+    if(mod < 30) return 'chakra-root';
+    if(mod < 60) return 'chakra-sacral';
+    if(mod < 90) return 'chakra-solarplexus';
+    if(mod < 120) return 'chakra-heart';
+    if(mod < 150) return 'chakra-throat';
+    if(mod < 180) return 'chakra-thirdeye';
+    return 'chakra-crown';
+  }
+
+  // Improved getDayOfYear with UTC handling (Fix #1)
+function getDayOfYear(date) {
+  const start = new Date(Date.UTC(date.getUTCFullYear(), 0, 0));
+  const diff = date - start;
+  return Math.floor(diff / (1000 * 60 * 60 * 24)); // Returns 1-based day?
+}
+
+  // Calculate sun position in degrees based on day of year
+  function sunPosition(date) {
+    const dayOfYear = getDayOfYear(date);
+    return (dayOfYear / 365.25) * 360;
+  }
+
+  // Known new moon reference and synodic month for moon calculations
+  const knownNewMoon = new Date(Date.UTC(2020, 0, 24, 21, 42)); // Jan 24, 2020 21:42 UTC
+  const synodicMonth = 29.530588853;
+
+  function moonAge(date) {
+    const diffMs = date.getTime() - knownNewMoon.getTime();
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    const age = diffDays % synodicMonth;
+    return age < 0 ? age + synodicMonth : age;
+  }
+
+  function moonPosition(date) {
+    const age = moonAge(date);
+    return (age / synodicMonth) * 360;
+  }
+
+  function getAspect(deg1, deg2) {
+    const diff = Math.abs(deg1 - deg2);
+    const angle = diff > 180 ? 360 - diff : diff;
+    const aspects = [
+      {name: "Conjunction", angle: 0, orb: 8},
+      {name: "Opposition", angle: 180, orb: 8},
+      {name: "Trine", angle: 120, orb: 8},
+      {name: "Square", angle: 90, orb: 8},
+      {name: "Sextile", angle: 60, orb: 6}
+    ];
+    for (let asp of aspects) {
+      if (Math.abs(angle - asp.angle) <= asp.orb) return asp.name;
+    }
+    return null;
+  }
+
+  function elementClass(zodiacSign) {
+    const elem = elements[zodiacSign];
+    return 'element-' + elem;
+  }
+
+  function getNakshatra(deg) {
+    const index = Math.floor((deg / 360) * 28);
+    return nakshatras[index];
+  }
+
+   function makeWheel(sunDeg, moonDeg) {
+    const sunColor = '#ffb347';
+    const moonColor = '#7aaaff';
+    const radius = 45;
+    const center = 50;
+
+    function arcPath(deg) {
+      const largeArc = deg > 180 ? 1 : 0;
+      const radians = deg * Math.PI / 180;
+      const x = center + radius * Math.sin(radians);
+      const y = center - radius * Math.cos(radians);
+      return `M${center} ${center - radius} A${radius} ${radius} 0 ${largeArc} 1 ${x} ${y}`;
+    }
+
+    const sunArc = arcPath(sunDeg);
+    const moonArc = arcPath(moonDeg);
+
+    const sunX = center + radius * Math.sin(sunDeg * Math.PI / 180);
+    const sunY = center - radius * Math.cos(sunDeg * Math.PI / 180);
+
+    const moonX = center + radius * Math.sin(moonDeg * Math.PI / 180);
+    const moonY = center - radius * Math.cos(moonDeg * Math.PI / 180);
+
+    return `
+        <svg viewBox="0 0 100 100" class="wheel" role="img" aria-label="Sun and Moon wheel showing sun at ${sunDeg.toFixed(1)} degrees and moon at ${moonDeg.toFixed(1)} degrees" tabindex="0">
+        <circle cx="${center}" cy="${center}" r="${radius}" stroke="#555" stroke-width="2" fill="none" />
+        <path d="${sunArc}" fill="none" stroke="${sunColor}" stroke-width="6" stroke-linecap="round" />
+        <circle cx="${sunX}" cy="${sunY}" r="5" fill="${sunColor}" />
+        <path d="${moonArc}" fill="none" stroke="${moonColor}" stroke-width="6" stroke-linecap="round" />
+        <circle cx="${moonX}" cy="${moonY}" r="5" fill="${moonColor}" />
+        <text x="${center}" y="95" fill="#ccc" font-size="7" text-anchor="middle">Sun & Moon Positions</text>
+      </svg>
+    `;
+  }
+
+// Ayanamsa correction for sidereal zodiac (approximate)
+  const ayanamsa = 24.0;
+
+  function siderealSunPosition(date) {
+    let tropical = sunPosition(date);
+    let sidereal = tropical - ayanamsa;
+    if (sidereal < 0) sidereal += 360;
+    return sidereal;
+  }
+
+  function siderealMoonPosition(date) {
+    let tropical = moonPosition(date);
+    let sidereal = tropical - ayanamsa;
+    if (sidereal < 0) sidereal += 360;
+    return sidereal;
+  }
+
+  function updateLiveKarma() {
+    const now = new Date();
+
+    const sunDeg = siderealSunPosition(now);
+    const moonDeg = siderealMoonPosition(now);
+
+    const sunSign = zodiac[Math.floor(sunDeg / 30)];
+    const moonSign = zodiac[Math.floor(moonDeg / 30)];
+
+    const wheelSVG = makeWheel(sunDeg, moonDeg);
+
+    const leadersSection = document.getElementById('leaders-section');
+    leadersSection.innerHTML = `
+      <div class="box" aria-live="polite" aria-atomic="true">
+        <h3>Current Sidereal Positions</h3>
+        ${wheelSVG}
+        <p>Sun: <span class="${elementClass(sunSign)}">${sunSign}</span> (${sunDeg.toFixed(1)}°)</p>
+        <p>Moon: <span class="${elementClass(moonSign)}">${moonSign}</span> (${moonDeg.toFixed(1)}°)</p>
+        <p>Aspect: <strong>${getAspect(sunDeg, moonDeg) || 'None'}</strong></p>
+      </div>
+    `;
+  }
+
+  updateLiveKarma();
+  setInterval(updateLiveKarma, 10000);
+
+  // Example continents with founding dates
+  const continents = [
+    { name: 'Africa (South Africa)', karma: 75, date: new Date(1910, 4, 31) },
+    { name: 'Asia (China)', karma: 88, date: new Date(1949, 9, 1) },
+    { name: 'Europe (EU)', karma: 92, date: new Date(1993, 10, 1) },
+    { name: 'North America (USA)', karma: 80, date: new Date(1776, 6, 4) },
+    { name: 'South America (Brazil)', karma: 70, date: new Date(1822, 8, 7) },
+    { name: 'Australia', karma: 78, date: new Date(1901, 0, 1) },
+    { name: 'Antarctica (Treaty)', karma: 50, date: new Date(1959, 11, 1) }
+  ];
+
+  function renderContinents() {
+    const container = document.getElementById('continents-section');
+    container.innerHTML = '<h2>Continents / Countries Birth Charts</h2>';
+
+    const now = new Date(); // Live time (Fix #2)
+
+    continents.forEach(continent => {
+      // Using live sun/moon positions instead of static birthdate
+      const sunDeg = sunPosition(now);
+      const moonDeg = moonPosition(now);
+      const sunSign = zodiac[Math.floor(((sunDeg % 360) / 30))];
+      const moonSign = zodiac[Math.floor(((moonDeg % 360) / 30))];
+      const sunNakshatra = getNakshatra(sunDeg);
+      const moonNakshatra = getNakshatra(moonDeg);
+      const aspect = getAspect(sunDeg, moonDeg);
+
+      const box = document.createElement('div');
+      box.className = 'box';
+      box.innerHTML = `
+        <h3>${continent.name}</h3>
+        ${makeWheel(sunDeg, moonDeg)}
+        <table role="table" aria-label="${continent.name} astrological details">
+          <thead>
+            <tr><th>Sun</th><th>Moon</th><th>Aspect</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="${elementClass(sunSign)}">${sunSign} (${sunDeg.toFixed(1)}°)<br/>Nakshatra: ${sunNakshatra}</td>
+              <td class="${elementClass(moonSign)}">${moonSign} (${moonDeg.toFixed(1)}°)<br/>Nakshatra: ${moonNakshatra}</td>
+              <td>${aspect || 'None'}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="karma">Karma is always evolving...</div>
+      `;
+      container.appendChild(box);
+    });
+  }
+
+  // Example world leaders with birthdates (to demo live sun/moon positions)
+  const leaders = [
+    { name: "Kim Jong Un", birthDate: new Date(1984, 0, 8), country: "North Korea" },
+    { name: "Xi Jinping", birthDate: new Date(1953, 5, 15), country: "China" },
+    { name: "Vladimir Putin", birthDate: new Date(1952, 8, 7), country: "Russia" },
+    { name: "Narendra Modi", birthDate: new Date(1950, 8, 17), country: "India" },
+    { name: "Rishi Sunak", birthDate: new Date(1980, 4, 12), country: "UK" },
+    { name: "Elon Musk", birthDate: new Date(1971, 5, 28), country: "South Africa" },
+    { name: "Peter Thiel", birthDate: new Date(1967, 9, 11), country: "USA" },
+    { name: "Mohammed bin Salman", birthDate: new Date(1985, 7, 31), country: "Saudi Arabia" },
+    { name: "Donald Trump", birthDate: new Date(1946, 5, 14), country: "USA" }
+  ];
+
+  function renderLeaders() {
+    const container = document.getElementById('leaders-section');
+    container.innerHTML = '<h2>TOP 9</h2>';
+
+    const now = new Date(); // Live time (Fix #2)
+
+   leaders.forEach(leader => {
+  // Lock sun/moon positions to birthDate (which you already do)
+  const sunDeg = siderealSunPosition(leader.birthDate);
+  const moonDeg = siderealMoonPosition(leader.birthDate);
+      const sunSign = zodiac[Math.floor(((sunDeg % 360) / 30))];
+      const moonSign = zodiac[Math.floor(((moonDeg % 360) / 30))];
+      const sunNakshatra = getNakshatra(sunDeg);
+      const moonNakshatra = getNakshatra(moonDeg);
+      const aspect = getAspect(sunDeg, moonDeg);
+
+      const box = document.createElement('div');
+      box.className = 'box';
+      box.innerHTML = `
+        <h3>${leader.name}</h3>
+        ${makeWheel(sunDeg, moonDeg)}
+        <table role="table" aria-label="${leader.name} astrological details">
+          <thead>
+            <tr><th>Sun</th><th>Moon</th><th>Aspect</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="${elementClass(sunSign)}">${sunSign} (${sunDeg.toFixed(1)}°)<br/>Nakshatra: ${sunNakshatra}</td>
+              <td class="${elementClass(moonSign)}">${moonSign} (${moonDeg.toFixed(1)}°)<br/>Nakshatra: ${moonNakshatra}</td>
+              <td>${aspect || 'None'}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="karma">Live cosmic karma update.</div>
+      `;
+      container.appendChild(box);
+    });
+  }
+
+  // Initial render and live update every 10 seconds
+  function refresh() {
+    renderContinents();
+    renderLeaders();
+  }
+
+  refresh();
+  setInterval(refresh, 10000);
+
+  // TODO: For future modularization:
+  // - Extract zodiac, elements, chakraClassForDeg, moon/sun position functions into separate JS modules/files.
+  // - Use ES modules import/export for better code structure and reusability.
+</script>
+
+</body>
+</html>
