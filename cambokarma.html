@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Karma Loop</title>
+  <style>
+    body {
+      background: #0b0c1a;
+      color: #eee;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #ff5555;
+      text-shadow: 0 0 10px #ff5555;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .leader-card {
+      background: #1a1a2e;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 0 30px #aa2244 inset;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      position: relative;
+    }
+    .leader-img {
+      border-radius: 15px;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      box-shadow: 0 0 15px #ff5577;
+      border: 3px solid #ff5577;
+    }
+    .info {
+      flex: 1;
+    }
+    .name {
+      font-size: 1.8em;
+      font-weight: 700;
+      color: #ff8899;
+      margin-bottom: 6px;
+      letter-spacing: 1.2px;
+    }
+    .karma-loop {
+      font-style: italic;
+      color: #bbb;
+      margin-bottom: 8px;
+    }
+    .houses-loop {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+    .house {
+      flex: 1;
+      background: #330000;
+      padding: 12px;
+      border-radius: 12px;
+      box-shadow: 0 0 14px #bb4444;
+      text-align: center;
+      font-weight: 600;
+      color: #ffbbbb;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+    .house.active {
+      background: #bb4444;
+      color: #fff;
+      box-shadow: 0 0 24px #ff6666;
+      font-weight: 700;
+    }
+    .nakshatra-list {
+      margin-top: 30px;
+      background: #222244;
+      border-radius: 15px;
+      padding: 18px;
+      box-shadow: 0 0 20px #884444 inset;
+      text-align: center;
+    }
+    .nakshatra {
+      display: inline-block;
+      margin: 4px 8px;
+      padding: 7px 12px;
+      border-radius: 14px;
+      background: #553344;
+      cursor: default;
+      transition: background 0.3s ease;
+      font-weight: 600;
+      color: #eeccddee;
+    }
+    .nakshatra.negative {
+      background: #cc4444;
+      box-shadow: 0 0 12px #ff4444;
+      font-weight: 800;
+      color: #fff;
+    }
+    .activation {
+      margin-top: 12px;
+      font-weight: 700;
+      color: #ff4444;
+      text-shadow: 0 0 10px #ff2222;
+    }
+    /* Chakra meter container */
+    .chakra-meter {
+      display: flex;
+      justify-content: space-between;
+      max-width: 280px;
+      margin-top: 10px;
+      user-select: none;
+    }
+    .chakra {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #333355;
+      box-shadow: 0 0 8px #222266 inset;
+      position: relative;
+      transition: all 0.4s ease;
+      cursor: default;
+    }
+    .chakra.active {
+      box-shadow: 0 0 15px 5px #ff6699;
+      background: #ff6699 !important;
+    }
+    .chakra::after {
+      content: attr(data-name);
+      position: absolute;
+      bottom: -18px;
+      font-size: 9px;
+      color: #ff99bbaa;
+      width: 100%;
+      text-align: center;
+      font-weight: 600;
+    }
+   
+    .karma-impact-container {
+      margin-top: 10px;
+      background: #440000;
+      border-radius: 10px;
+      width: 100%;
+      height: 18px;
+      box-shadow: inset 0 0 8px #bb4444;
+    }
+    .karma-impact-bar {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #ff4444, #ff9999);
+      box-shadow: 0 0 10px #ff5555;
+      width: 0;
+      transition: width 1.2s ease;
+    }
+    .karma-impact-text {
+      margin-top: 4px;
+      font-size: 0.9em;
+      color: #ffbbbb;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+    }
+    
+    .puppet-strings {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(to bottom, transparent 5px, #ff4455 6px, transparent 7px),
+        linear-gradient(to bottom, transparent 15px, #ff4455 16px, transparent 17px),
+        linear-gradient(to bottom, transparent 25px, #ff4455 26px, transparent 27px),
+        linear-gradient(to bottom, transparent 35px, #ff4455 36px, transparent 37px);
+      background-repeat: repeat-x;
+      background-size: 4px 40px;
+      opacity: 0.15;
+    }
+
+    .karma-impact-bar.animate {
+      transition: none;
+    }
+
+    @media (max-width: 768px) {
+      .leader-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .leader-img {
+        width: 100%;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Karmic Loops</h1>
+    <p style="text-align:center; color:#ccc; max-width:720px; margin: 10px auto 30px;">
+      These MORONS have <strong>no free will</strong> and are trapped in relentless karmic loops cycling through the <em>6th</em> and <em>8th houses</em>. Their soul energy (chakra) fluctuates, but they remain bound as cosmic puppets under the influence of the <strong>Ardra Nakshatra</strong> — the most negative of the 28 Nakshatras.
+    </p>
+    <div id="leaders"></div>
+
+    <h2>28 Nakshatras</h2>
+    <div class="nakshatra-list" id="nakshatra-list"></div>
+  </div>
+
+  <script>
+    const chakraNames = [
+      "Root", "Sacral", "Solar", "Heart", "Throat", "Third Eye", "Crown"
+    ];
+
+    const chakraColors = [
+      "#ff0000", 
+      "#ff7f00", 
+      "#ffff00", 
+      "#00ff00", 
+      "#0000ff", 
+      "#4b0082", 
+      "#9400d3"  
+    ];
+
+    const nakshatras = [
+      "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira",
+      "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha",
+      "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati",
+      "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha",
+      "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada",
+      "Uttara Bhadrapada", "Revati", "Abhijit"
+    ];
+
+    const negativeNakshatra = "Ardra";
+
+    const houseLoop = [6, 8];
+
+    const leaders = [
+  {
+    name: "Hun Sen",
+    img: "https://upload.wikimedia.org/wikipedia/commons/5/5c/%ED%9B%88_%EC%84%BC_%EC%A0%84_%EC%BA%84%EB%B3%B4%EB%94%94%EC%95%84_%EC%B4%9D%EB%A6%AC_%282024%EB%85%84_9%EC%9B%94_10%EC%9D%BC%29.jpg",
+    karma: "Legacy Control Loop",
+    nakshatra: "Ardra",
+    karmaPercent: 88,
+    chakraActiveIndex: 4,
+    currentHouseIndex: 0
+  },
+  {
+    name: "Hun Manet",
+    img: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hun_Manet_in_Australia_on_March_5%2C_2024.jpg",
+    karma: "Inherited Dharma Trap",
+    nakshatra: "Ardra",
+    karmaPercent: 84,
+    chakraActiveIndex: 2,
+    currentHouseIndex: 0
+  },
+  {
+    name: "VannDa",
+    img: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Vannda0%E2%80%9902%E2%80%9D.jpg",
+    karma: "Rhythmic Samsara",
+    nakshatra: "Ardra",
+    karmaPercent: 76,
+    chakraActiveIndex: 3,
+    currentHouseIndex: 0
+  },
+  {
+    name: "Laura Mam",
+    img: "https://upload.wikimedia.org/wikipedia/commons/6/68/Laura_Mam_at_US_Embassy_Cambodia.jpg",
+    karma: "Cultural Karma Pulse",
+    nakshatra: "Pushya",
+    karmaPercent: 71,
+    chakraActiveIndex: 1,
+    currentHouseIndex: 0
+  }
+];
+
+
+
+    const leadersContainer = document.getElementById("leaders");
+    const nakshatraListDiv = document.getElementById("nakshatra-list");
+
+    
+    nakshatras.forEach(nak => {
+      const span = document.createElement("span");
+      span.textContent = nak;
+      span.className = "nakshatra";
+      if (nak === negativeNakshatra) span.classList.add("negative");
+      nakshatraListDiv.appendChild(span);
+    });
+
+  
+    leaders.forEach((leader, index) => {
+      const card = document.createElement("div");
+      card.className = "leader-card";
+
+      const puppetStrings = document.createElement("div");
+      puppetStrings.className = "puppet-strings";
+      card.appendChild(puppetStrings);
+
+      const img = document.createElement("img");
+      img.className = "leader-img";
+      img.src = leader.img;
+      img.alt = leader.name;
+      card.appendChild(img);
+
+      const info = document.createElement("div");
+      info.className = "info";
+
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = leader.name;
+      info.appendChild(name);
+
+      const karmaLoop = document.createElement("div");
+      karmaLoop.className = "karma-loop";
+      karmaLoop.textContent = `Karmic Loop: ${leader.karma}`;
+      info.appendChild(karmaLoop);
+
+      const housesLoopDiv = document.createElement("div");
+      housesLoopDiv.className = "houses-loop";
+      houseLoop.forEach((houseNum, i) => {
+        const houseDiv = document.createElement("div");
+        houseDiv.className = "house";
+        houseDiv.textContent = `${houseNum}th House`;
+        if (i === leader.currentHouseIndex) {
+          houseDiv.classList.add("active");
+        }
+        housesLoopDiv.appendChild(houseDiv);
+      });
+      info.appendChild(housesLoopDiv);
+
+      
+      const chakraMeter = document.createElement("div");
+      chakraMeter.className = "chakra-meter";
+      chakraNames.forEach((chakra, idx) => {
+        const chakraDiv = document.createElement("div");
+        chakraDiv.className = "chakra";
+        chakraDiv.dataset.name = chakra;
+        chakraDiv.style.backgroundColor = chakraColors[idx];
+        if (idx === leader.chakraActiveIndex) {
+          chakraDiv.classList.add("active");
+        }
+        chakraMeter.appendChild(chakraDiv);
+      });
+      info.appendChild(chakraMeter);
+
+      
+      const karmaImpactContainer = document.createElement("div");
+      karmaImpactContainer.className = "karma-impact-container";
+      const karmaImpactBar = document.createElement("div");
+      karmaImpactBar.className = "karma-impact-bar";
+      karmaImpactBar.style.width = leader.karmaPercent + "%";
+      karmaImpactContainer.appendChild(karmaImpactBar);
+      info.appendChild(karmaImpactContainer);
+
+      const karmaImpactText = document.createElement("div");
+      karmaImpactText.className = "karma-impact-text";
+      karmaImpactText.textContent = `Karma Impact: ${leader.karmaPercent}%`;
+      info.appendChild(karmaImpactText);
+
+      
+      const nakshatraInfo = document.createElement("div");
+      nakshatraInfo.className = "activation";
+      nakshatraInfo.textContent = `Nakshatra: ${leader.nakshatra}`;
+      if (leader.nakshatra === negativeNakshatra) {
+        nakshatraInfo.textContent += " (Negative Influence)";
+      }
+      info.appendChild(nakshatraInfo);
+
+   
+      leader.houseEls = housesLoopDiv.querySelectorAll('.house');
+      leader.chakraEls = chakraMeter.querySelectorAll('.chakra');
+      leader.karmaBarEl = karmaImpactBar;
+
+      card.appendChild(info);
+      leadersContainer.appendChild(card);
+    });
+
+    
+    function cycleLeaders() {
+      leaders.forEach((leader) => {
+       
+        leader.chakraActiveIndex = (leader.chakraActiveIndex + 1) % chakraNames.length;
+        leader.chakraEls.forEach((el, i) => {
+          el.classList.toggle('active', i === leader.chakraActiveIndex);
+        });
+
+       
+        leader.currentHouseIndex = (leader.currentHouseIndex + 1) % houseLoop.length;
+        leader.houseEls.forEach((el, i) => {
+          el.classList.toggle('active', i === leader.currentHouseIndex);
+        });
+
+        
+        leader.karmaBarEl.style.transition = 'width 0.8s ease-in-out';
+        leader.karmaBarEl.style.width = (leader.karmaPercent - 10) + '%';
+        setTimeout(() => {
+          leader.karmaBarEl.style.width = leader.karmaPercent + '%';
+        }, 900);
+      });
+    }
+
+    
+    setInterval(cycleLeaders, 3000);
+  </script>
+</body>
+</html>
