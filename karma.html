@@ -284,7 +284,7 @@ function getDayOfYear(date) {
 
   function renderContinents() {
     const container = document.getElementById('continents-section');
-    container.innerHTML = '<h2>Continents / Countries Birth Charts</h2>';
+    container.innerHTML = '<h2>Continents</h2>';
 
     const now = new Date(); // Live time (Fix #2)
 
@@ -321,7 +321,7 @@ function getDayOfYear(date) {
     });
   }
 
-  // Example world leaders with birthdates (to demo live sun/moon positions)
+  // Example  with birthdates (to demo live sun/moon positions)
   const leaders = [
     { name: "Kim Jong Un", birthDate: new Date(1984, 0, 8), country: "North Korea" },
     { name: "Xi Jinping", birthDate: new Date(1953, 5, 15), country: "China" },
@@ -341,7 +341,7 @@ function getDayOfYear(date) {
     const now = new Date(); // Live time (Fix #2)
 
    leaders.forEach(leader => {
-  // Lock sun/moon positions to birthDate (which you already do)
+  //  sun/moon positions to birthDate (which you already do)
   const sunDeg = siderealSunPosition(leader.birthDate);
   const moonDeg = siderealMoonPosition(leader.birthDate);
       const sunSign = zodiac[Math.floor(((sunDeg % 360) / 30))];
@@ -367,7 +367,7 @@ function getDayOfYear(date) {
             </tr>
           </tbody>
         </table>
-        <div class="karma">Live cosmic karma update.</div>
+        <div class="karma">Live update.</div>
       `;
       container.appendChild(box);
     });
@@ -389,3 +389,4 @@ function getDayOfYear(date) {
 
 </body>
 </html>
+
