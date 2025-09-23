@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mystery Game – Levels</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      image-rendering: pixelated;
+    }
+    .clue-popup {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111820;
+      color: #00ff9c;
+      border: 2px solid #00ff9c;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 20px #00ff9c;
+      z-index: 10;
+      text-align: center;
+      max-width: 300px;
+      display: none;
+    }
+    .clue-popup img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+</head>
+<body>
+
+<!-- Clue popup -->
+<div id="cluePopup" class="clue-popup">
+  <strong id="clueTitle">Clue Found!</strong>
+  <p id="clueText"></p>
+  <img id="clueGif" src="" alt="Clue image">
+</div>
+
+<script>
+  const clues = [
+    {
+      title: "Whisper in the Walls",
+      text: "The walls remember what they shouldn't. Who spoke first?",
+      gif: "https://media.giphy.com/media/l0HU7jj0ivEFy5U6Q/giphy.gif"
+    },
+    {
+      title: "Echoed Deal",
+      text: "A deal struck at midnight, sealed with neon blood.",
+      gif: "https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif"
+    }
+  ];
+
+  class BaseLevel extends Phaser.Scene {
+    constructor(key, mapKey, nextScene) {
+      super(key);
+      this.mapKey = mapKey;
+      this.nextScene = nextScene;
+    }
+
+    preload() {
+      this.load.image('tiles', 'https://labs.phaser.io/assets/tilemaps/tiles/platformer_tiles.png');
+      this.load.tilemapTiledJSON(this.mapKey, `https://yourdomain.com/assets/${this.mapKey}.json`);
+      this.load.spritesheet('player', 'https://labs.phaser.io/assets/sprites/dude.png', { frameWidth: 32, frameHeight: 48 });
+      this.load.image('box', 'https://labs.phaser.io/assets/sprites/crate.png');
+      this.load.image('portal', 'https://labs.phaser.io/assets/particles/blue.png');
+    }
+
+    create() {
+      const map = this.make.tilemap({ key: this.mapKey });
+      const tileset = map.addTilesetImage('platformer_tiles', 'tiles');
+      const layer = map.createLayer('Tile Layer 1', tileset, 0, 0);
+      layer.setCollisionByProperty({ collides: true });
+
+      this.player = this.physics.add.sprite(100, 400, 'player');
+      this.player.setBounce(0.1);
+      this.player.setCollideWorldBounds(true);
+
+      this.anims.create({
+        key: 'left',
+        frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1
+      });
+      this.anims.create({
+        key: 'turn',
+        frames: [ { key: 'player', frame: 4 } ],
+        frameRate: 20
+      });
+      this.anims.create({
+        key: 'right',
+        frames: this.anims.generateFrameNumbers('player', { start: 5, end: 8 }),
+        frameRate: 10,
+        repeat: -1
+      });
+
+      this.physics.add.collider(this.player, layer);
+
+      // Clue boxes
+      this.clueBoxes = this.physics.add.group();
+      for (let i = 0; i < clues.length; i++) {
+        const box = this.clueBoxes.create(200 + i * 150, 0, 'box');
+        box.body.setBounce(0.6);
+        box.setData('clueIndex', i);
+      }
+
+      this.physics.add.collider(this.clueBoxes, layer);
+      this.physics.add.collider(this.player, this.clueBoxes, this.hitClue, null, this);
+
+      // Portal
+      const portal = this.physics.add.sprite(700, 500, 'portal');
+      portal.setScale(1.5);
+      portal.body.setAllowGravity(false);
+      this.physics.add.overlap(this.player, portal, () => {
+        this.scene.start(this.nextScene);
+      });
+
+      this.cursors = this.input.keyboard.createCursorKeys();
+    }
+
+    update() {
+      const player = this.player;
+      if (this.cursors.left.isDown) {
+        player.setVelocityX(-160);
+        player.anims.play('left', true);
+      } else if (this.cursors.right.isDown) {
+        player.setVelocityX(160);
+        player.anims.play('right', true);
+      } else {
+        player.setVelocityX(0);
+        player.anims.play('turn');
+      }
+
+      if (this.cursors.up.isDown && player.body.blocked.down) {
+        player.setVelocityY(-330);
+      }
+    }
+
+    hitClue(player, box) {
+      const index = box.getData('clueIndex');
+      if (index !== null && clues[index]) {
+        showClue(clues[index]);
+        box.disableBody(true, true);
+      }
+    }
+  }
+
+  class Level1 extends BaseLevel {
+    constructor() {
+      super('Level1', 'map1', 'Level2');
+    }
+  }
+
+  class Level2 extends BaseLevel {
+    constructor() {
+      super('Level2', 'map2', 'Level1');
+    }
+  }
+
+  function showClue(clue) {
+    const popup = document.getElementById('cluePopup');
+    document.getElementById('clueTitle').textContent = clue.title;
+    document.getElementById('clueText').textContent = clue.text;
+    document.getElementById('clueGif').src = clue.gif;
+    popup.style.display = 'block';
+
+    setTimeout(() => {
+      popup.style.display = 'none';
+    }, 5000);
+  }
+
+  const config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
+    backgroundColor: '#0d0d0d',
+    pixelArt: true,
+    physics: {
+      default: 'arcade',
+      arcade: {
+        gravity: { y: 500 },
+        debug: false
+      }
+    },
+    scene: [Level1, Level2]
+  };
+
+  const game = new Phaser.Game(config);
+</script>
+
+</body>
+</html>
