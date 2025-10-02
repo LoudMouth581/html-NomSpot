@@ -3,92 +3,56 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Math Invaders - Animated Boss Edition</title>
+<title>Math Invaders - Classic Style</title>
 <style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
   body {
-    font-family: monospace;
-    background: #000;
-    color: #fff;
+    margin: 0; 
+    background: black;
     overflow: hidden;
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+    user-select: none;
   }
   #game {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background: #111;
-    user-select: none;
+    background: radial-gradient(circle at center, #000000 0%, #0a0a0a 100%);
+    overflow: hidden;
   }
   #ship {
     position: absolute;
-    bottom: 20px;
-    width: 50px;
+    bottom: 10px;
+    width: 60px;
     height: 30px;
-    background: lime;
     left: 50%;
     transform: translateX(-50%);
-    border-radius: 8px;
-    box-shadow: 0 0 8px lime;
-  }
-  .answer {
-    position: absolute;
-    padding: 10px 15px;
-    background: linear-gradient(45deg, #222, #555);
-    border: 2px solid white;
-    border-radius: 10px;
-    font-size: 20px;
-    top: 80px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    text-align: center;
-    width: 90px;
-  }
-  .answer.boss {
-    border-color: gold;
-    background: linear-gradient(45deg, darkred, gold);
-    color: gold;
-    font-weight: bold;
-  }
-  .answer.animate {
-    animation: floaty 3s ease-in-out infinite;
-  }
-  @keyframes floaty {
-    0%, 100% {
-      transform: translateY(0);
-      box-shadow: 0 0 10px #fff;
-    }
-    50% {
-      transform: translateY(10px);
-      box-shadow: 0 0 25px gold;
-    }
+    background: linear-gradient(45deg, #0f0, #070);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 0 12px #0f0;
   }
   .bullet {
     position: absolute;
-    width: 5px;
-    height: 15px;
-    background: red;
+    width: 4px;
+    height: 14px;
+    background: #ff3333;
     border-radius: 2px;
-    box-shadow: 0 0 8px red;
-  }
-  #question {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 24px;
+    box-shadow: 0 0 8px #ff4444;
   }
   #score, #modeDisplay {
     position: absolute;
     top: 10px;
     left: 10px;
-    user-select: none;
+    font-size: 18px;
   }
   #modeDisplay {
-    top: 40px;
+    top: 35px;
+  }
+  #question {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
   }
   #controls {
     position: absolute;
@@ -96,24 +60,77 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 20px;
-    user-select: none;
+    gap: 15px;
   }
   .btn {
-    padding: 10px 20px;
     background: #222;
-    color: white;
-    border: 1px solid #fff;
-    border-radius: 5px;
-    font-size: 18px;
+    border: 1px solid #0f0;
+    border-radius: 6px;
+    color: #0f0;
+    padding: 12px 22px;
+    font-size: 20px;
     cursor: pointer;
     user-select: none;
+    transition: background 0.3s;
+  }
+  .btn:hover {
+    background: #0f0;
+    color: black;
   }
   #speedControl {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 70px;
+    left: 10px;
+    width: 120px;
+  }
+  /* Enemy styling */
+  .enemy {
+    position: absolute;
+    width: 70px;
+    height: 50px;
+    background: linear-gradient(135deg, #004400, #009900);
+    border-radius: 12px;
+    color: #ccffcc;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    line-height: 50px;
+    box-shadow: 0 0 12px #00ff00;
     user-select: none;
+  }
+  .enemy.boss {
+    background: linear-gradient(135deg, #880000, #ff0000);
+    font-size: 28px;
+    box-shadow: 0 0 20px gold;
+    font-weight: bolder;
+  }
+  @media (max-width: 600px) {
+    #controls {
+      gap: 10px;
+    }
+    .btn {
+      padding: 16px 30px;
+      font-size: 28px;
+    }
+    .enemy {
+      width: 80px;
+      height: 60px;
+      font-size: 24px;
+      line-height: 60px;
+    }
+    .enemy.boss {
+      font-size: 36px;
+      width: 100px;
+      height: 70px;
+      line-height: 70px;
+    }
+    #score, #modeDisplay, #question {
+      font-size: 22px;
+    }
+    #speedControl {
+      width: 140px;
+      top: 60px;
+    }
   }
 </style>
 </head>
@@ -121,9 +138,9 @@
 
 <div id="game">
   <div id="ship"></div>
-  <div id="question">Question: </div>
   <div id="score">Score: 0</div>
   <div id="modeDisplay">Mode: +</div>
+  <div id="question">Question:</div>
   <input type="range" min="1" max="5" value="2" id="speedControl" title="Adjust speed" />
   <div id="controls">
     <button class="btn" id="btnLeft">⬅️</button>
@@ -142,9 +159,9 @@
 (() => {
   const game = document.getElementById('game');
   const ship = document.getElementById('ship');
-  const questionEl = document.getElementById('question');
   const scoreEl = document.getElementById('score');
   const modeDisplay = document.getElementById('modeDisplay');
+  const questionEl = document.getElementById('question');
   const speedControl = document.getElementById('speedControl');
   const btnLeft = document.getElementById('btnLeft');
   const btnRight = document.getElementById('btnRight');
@@ -154,205 +171,240 @@
   const sndCorrect = document.getElementById('sndCorrect');
   const sndWrong = document.getElementById('sndWrong');
   const bgMusic = document.getElementById('bgMusic');
-  bgMusic.volume = 0.15;
+  bgMusic.volume = 0.12;
   bgMusic.play();
 
   const modes = ['+', '-', '*', '/'];
   let modeIndex = 0;
   let score = 0;
-  let shipX = window.innerWidth / 2 - 25;
-  let currentQuestion = {};
-  let answerElements = [];
-  let bulletList = [];
+  let shipX = window.innerWidth / 2 - 30;
   let speed = +speedControl.value;
+  let bullet = null;
+  let enemies = [];
+  let enemyDirection = 1; // 1 = right, -1 = left
+  let enemyStepDown = 20;
+  let enemySpeedCounter = 0;
+  let enemySpeedThreshold = 30; // Lower = faster enemy moves
   let lastAnswerTime = Date.now();
+
+  // Generate enemies in grid
+  const enemyRows = 3;
+  const enemyCols = 6;
+  const enemySpacingX = 90;
+  const enemySpacingY = 70;
+  const enemyStartX = 60;
+  const enemyStartY = 100;
 
   function playSound(sound) {
     sound.currentTime = 0;
     sound.play();
   }
 
-  function nextMode() {
-    modeIndex = (modeIndex + 1) % modes.length;
-    modeDisplay.innerText = `Mode: ${modes[modeIndex]}`;
+  function createEnemy(x, y, problem, correct, isBoss=false) {
+    const e = document.createElement('div');
+    e.classList.add('enemy');
+    if(isBoss) e.classList.add('boss');
+    e.style.left = x + 'px';
+    e.style.top = y + 'px';
+    e.textContent = problem;
+    e.dataset.correct = correct;
+    e.dataset.isBoss = isBoss;
+    game.appendChild(e);
+    return e;
   }
 
-  function randomQuestion() {
-    let a = Math.floor(Math.random() * (10 + modeIndex * 5)) + 1;
-    let b = Math.floor(Math.random() * (10 + modeIndex * 5)) + 1;
+  function generateProblem() {
+    let a = Math.floor(Math.random() * (10 + modeIndex * 10)) + 1;
+    let b = Math.floor(Math.random() * (10 + modeIndex * 10)) + 1;
     let op = modes[modeIndex];
 
-    if (op === '-' && b > a) [a, b] = [b, a];
-    if (op === '/') {
+    if(op === '-' && b > a) [a,b] = [b,a];
+    if(op === '/') {
       b = Math.floor(Math.random() * 9) + 1;
-      a = b * (Math.floor(Math.random() * 5) + 1);
+      a = b * (Math.floor(Math.random() * 7) + 1);
     }
-
-    const answer = eval(`${a}${op}${b}`);
-    currentQuestion = { text: `${a} ${op} ${b}`, correct: answer };
-    questionEl.innerText = `Question: ${currentQuestion.text}`;
+    let answer = eval(`${a}${op}${b}`);
+    return { text: `${a} ${op} ${b}`, answer };
   }
 
-  function spawnAnswers() {
-    answerElements.forEach(a => a.remove());
-    answerElements = [];
+  function setupEnemies() {
+    enemies.forEach(e => e.el.remove());
+    enemies = [];
 
-    const correctPos = Math.floor(Math.random() * 4);
-    for (let i = 0; i < 4; i++) {
-      const div = document.createElement('div');
-      div.classList.add('answer', 'animate');
-      div.style.left = `${100 + i * 110}px`;
-      const val = i === correctPos 
-        ? currentQuestion.correct 
-        : currentQuestion.correct + (Math.floor(Math.random() * 10) - 5);
-
-      div.innerText = val;
-      div.dataset.value = val;
-      if ((score + 1) % 10 === 0) div.classList.add('boss');
-
-      game.appendChild(div);
-      answerElements.push(div);
+    // Boss level every 10 points: one big enemy
+    if(score > 0 && score % 10 === 0) {
+      const bossProb = generateProblem();
+      const x = (window.innerWidth / 2) - 50;
+      const y = enemyStartY;
+      const el = createEnemy(x, y, bossProb.text, bossProb.answer, true);
+      enemies.push({ el, x, y, correct: bossProb.answer, isBoss: true });
+      questionEl.textContent = `Boss fight! Solve: ${bossProb.text}`;
+      return;
     }
-  }
 
-  function moveAnswers() {
-    answerElements.forEach(a => {
-      const top = parseInt(a.style.top || '80');
-      const newTop = top + speed;
-      a.style.top = newTop + 'px';
-      if (newTop > window.innerHeight - 80) {
-        gameOver('You missed the answer!');
+    questionEl.textContent = 'Shoot the correct problem!';
+
+    for(let r=0; r < enemyRows; r++) {
+      for(let c=0; c < enemyCols; c++) {
+        const prob = generateProblem();
+        const x = enemyStartX + c * enemySpacingX;
+        const y = enemyStartY + r * enemySpacingY;
+        const el = createEnemy(x, y, prob.text, prob.answer);
+        enemies.push({ el, x, y, correct: prob.answer, isBoss: false });
       }
+    }
+  }
+
+  function updateEnemiesPosition() {
+    enemySpeedCounter++;
+    if(enemySpeedCounter < enemySpeedThreshold) return;
+    enemySpeedCounter = 0;
+
+    // Check if any enemy hits right or left edges, then move down and change direction
+    let shouldStepDown = false;
+    for(let e of enemies) {
+      let nextX = e.x + enemyDirection * 15;
+      if(nextX < 0 || nextX + e.el.offsetWidth > window.innerWidth) {
+        shouldStepDown = true;
+        break;
+      }
+    }
+    if(shouldStepDown) {
+      enemyDirection *= -1;
+      enemies.forEach(e => {
+        e.y += enemyStepDown;
+        if(e.y + e.el.offsetHeight >= ship.offsetTop) {
+          gameOver('Enemies reached you!');
+        }
+      });
+    } else {
+      enemies.forEach(e => e.x += enemyDirection * 15);
+    }
+    enemies.forEach(e => {
+      e.el.style.left = e.x + 'px';
+      e.el.style.top = e.y + 'px';
     });
   }
 
-  function moveLeft() {
-    shipX = Math.max(0, shipX - 30);
+  function moveShip(dir) {
+    shipX += dir * 30;
+    shipX = Math.max(0, Math.min(window.innerWidth - ship.offsetWidth, shipX));
     ship.style.left = shipX + 'px';
   }
 
-  function moveRight() {
-    shipX = Math.min(window.innerWidth - 50, shipX + 30);
-    ship.style.left = shipX + 'px';
-  }
-
-  function fire() {
-    const bullet = document.createElement('div');
+  function fireBullet() {
+    if(bullet) return; // only one bullet at a time
+    bullet = document.createElement('div');
     bullet.className = 'bullet';
-    bullet.style.left = (shipX + 22) + 'px';
-    bullet.style.top = (window.innerHeight - 60) + 'px';
+    bullet.style.left = (shipX + ship.offsetWidth / 2 - 2) + 'px';
+    bullet.style.top = (window.innerHeight - 40) + 'px';
     game.appendChild(bullet);
-    bulletList.push(bullet);
     playSound(sndShoot);
   }
 
-  function moveBullets() {
-    bulletList.forEach((b, i) => {
-      let y = parseInt(b.style.top);
-      y -= 12;
-      b.style.top = y + 'px';
+  function updateBullet() {
+    if(!bullet) return;
 
-      answerElements.forEach((a, j) => {
-        const ax = parseInt(a.style.left);
-        const ay = parseInt(a.style.top);
-        const bx = parseInt(b.style.left);
+    let y = parseInt(bullet.style.top);
+    y -= 15;
+    bullet.style.top = y + 'px';
 
-        if (
-          Math.abs(bx - ax) < 40 &&
-          Math.abs(y - ay) < 30
-        ) {
-          const val = Number(a.dataset.value);
-          if (val === currentQuestion.correct) {
-            // Correct!
-            score++;
-            updateUI();
+    if(y < 0) {
+      bullet.remove();
+      bullet = null;
+      return;
+    }
 
-            // Adaptive difficulty: faster speed if player answers quickly
-            const now = Date.now();
-            let delta = now - lastAnswerTime;
-            lastAnswerTime = now;
-            // If player answers under 2s, increase speed (max 5)
-            if (delta < 2000) {
-              speed = Math.min(5, speed + 0.2);
-            } else if (speed > 1) {
-              speed -= 0.1; // slow down if slow answers
-            }
-            speedControl.value = Math.round(speed);
+    // Check collision with enemies
+    for(let i = 0; i < enemies.length; i++) {
+      const e = enemies[i];
+      const ex = e.x;
+      const ey = e.y;
+      const ew = e.el.offsetWidth;
+      const eh = e.el.offsetHeight;
 
-            playSound(sndCorrect);
+      const bx = parseInt(bullet.style.left);
+      const by = y;
 
-            // Boss & mode check every 10 points
-            if (score % 10 === 0) {
-              alert("🔥 Boss Level! Advancing to next mode.");
-              nextMode();
-            }
-            nextTurn();
-          } else {
-            gameOver('Wrong answer!');
+      if(bx > ex && bx < ex + ew && by > ey && by < ey + eh) {
+        // Hit enemy
+        let correctAnswer = e.correct;
+        let text = e.el.textContent;
+        if(correctAnswer === currentAnswer) {
+          // Correct shot
+          playSound(sndCorrect);
+          score++;
+          scoreEl.textContent = 'Score: ' + score;
+
+          // Remove enemy
+          e.el.remove();
+          enemies.splice(i, 1);
+          bullet.remove();
+          bullet = null;
+
+          // Update mode every 5 points to keep it fresh
+          if(score % 5 === 0) {
+            modeIndex = (modeIndex + 1) % modes.length;
+            modeDisplay.textContent = 'Mode: ' + modes[modeIndex];
+            enemySpeedThreshold = Math.max(5, enemySpeedThreshold - 2);
           }
-          // Remove bullet and answer
-          b.remove();
-          bulletList.splice(i, 1);
-          a.remove();
-          answerElements.splice(j, 1);
+          setupEnemies();
+          generateCurrentQuestion();
+          return;
+        } else {
+          // Wrong shot
+          playSound(sndWrong);
+          bullet.remove();
+          bullet = null;
+          return;
         }
-      });
-
-      if (y < 0) {
-        b.remove();
-        bulletList.splice(i, 1);
       }
-    });
+    }
   }
 
-  function updateUI() {
-    scoreEl.innerText = `Score: ${score}`;
+  function generateCurrentQuestion() {
+    const prob = generateProblem();
+    currentAnswer = prob.answer;
+    questionEl.textContent = `Shoot the problem: ${prob.text}`;
   }
 
-  function nextTurn() {
-    answerElements.forEach(a => a.remove());
-    bulletList.forEach(b => b.remove());
-    bulletList = [];
-    spawnQuestion();
-  }
-
-  function spawnQuestion() {
-    randomQuestion();
-    spawnAnswers();
-  }
-
-  function gameOver(reason) {
-    playSound(sndWrong);
-    alert(reason + "\nGame Over! Your final score: " + score + "\nRestart?");
+  function gameOver(msg) {
+    alert(msg + "\nGame Over!\nYour score: " + score);
     location.reload();
   }
 
-  function gameLoop() {
-    moveAnswers();
-    moveBullets();
-  }
+  // Controls
+  btnLeft.onclick = () => moveShip(-1);
+  btnRight.onclick = () => moveShip(1);
+  btnFire.onclick = () => fireBullet();
+  speedControl.oninput = (e) => {
+    speed = +e.target.value;
+  };
 
-  btnLeft.addEventListener('click', moveLeft);
-  btnRight.addEventListener('click', moveRight);
-  btnFire.addEventListener('click', fire);
-
-  speedControl.addEventListener('input', () => {
-    speed = +speedControl.value;
-  });
-
-  // Initialize ship position and start
-  ship.style.left = shipX + 'px';
-  spawnQuestion();
-  lastAnswerTime = Date.now();
-  setInterval(gameLoop, 50);
+  let currentAnswer = null;
 
   // Keyboard controls
-  window.addEventListener('keydown', e => {
-    if(e.key === 'ArrowLeft') moveLeft();
-    else if(e.key === 'ArrowRight') moveRight();
-    else if(e.key === ' ') fire();
+  window.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowLeft') moveShip(-1);
+    else if(e.key === 'ArrowRight') moveShip(1);
+    else if(e.key === ' ' || e.key === 'ArrowUp') fireBullet();
   });
+
+  // Initialization
+  ship.style.left = shipX + 'px';
+  modeDisplay.textContent = 'Mode: ' + modes[modeIndex];
+  generateCurrentQuestion();
+  setupEnemies();
+
+  // Game loop
+  function loop() {
+    updateEnemiesPosition();
+    updateBullet();
+    requestAnimationFrame(loop);
+  }
+  loop();
 })();
 </script>
+
 </body>
 </html>
