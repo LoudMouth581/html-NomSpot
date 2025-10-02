@@ -2,16 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Math Invaders - Ultimate</title>
+  <title>Math Invaders: Boss Edition</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: monospace;
-      background: black;
-      color: white;
+      background: #000;
+      color: #fff;
       overflow: hidden;
-      user-select: none;
     }
 
     #game {
@@ -19,7 +18,6 @@
       width: 100vw;
       height: 100vh;
       background: #111;
-      overflow: hidden;
     }
 
     #ship {
@@ -32,6 +30,16 @@
       transform: translateX(-50%);
     }
 
+    .answer {
+      position: absolute;
+      padding: 10px 15px;
+      background: #333;
+      border: 2px solid white;
+      border-radius: 5px;
+      font-size: 20px;
+      top: 80px;
+    }
+
     .bullet {
       position: absolute;
       width: 5px;
@@ -39,62 +47,53 @@
       background: red;
     }
 
-    .problem {
+    #question {
       position: absolute;
-      padding: 10px 15px;
-      background: #444;
-      border: 2px solid #fff;
-      border-radius: 5px;
-      font-size: 18px;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
     }
 
-    #score, #timer, #level, #highScore {
+    #score, #modeDisplay {
       position: absolute;
       top: 10px;
       left: 10px;
-      font-size: 18px;
     }
 
-    #timer {
-      left: auto;
-      right: 10px;
-    }
-
-    #level {
+    #modeDisplay {
       top: 40px;
-    }
-
-    #highScore {
-      top: 70px;
     }
 
     #controls {
       position: absolute;
       bottom: 10px;
       width: 100%;
-      text-align: center;
       display: flex;
-      justify-content: space-around;
+      justify-content: center;
+      gap: 20px;
     }
 
     .btn {
       padding: 10px 20px;
-      background: #333;
+      background: #222;
       color: white;
       border: 1px solid #fff;
-      border-radius: 8px;
-      font-size: 16px;
+      border-radius: 5px;
+      font-size: 18px;
     }
 
-    .btn:active {
-      background: #555;
-    }
-
-    #modeSelect {
+    #speedControl {
       position: absolute;
-      top: 100px;
-      left: 10px;
-      font-size: 16px;
+      top: 10px;
+      right: 10px;
+    }
+
+    .boss {
+      border-color: gold;
+      background: darkred;
+      color: gold;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -102,248 +101,168 @@
 
 <div id="game">
   <div id="ship"></div>
+  <div id="question">Question: </div>
   <div id="score">Score: 0</div>
-  <div id="timer">Time: 60</div>
-  <div id="level">Level: 1</div>
-  <div id="highScore">High Score: 0</div>
+  <div id="modeDisplay">Mode: +</div>
 
-  <select id="modeSelect">
-    <option value="+">Addition</option>
-    <option value="-">Subtraction</option>
-    <option value="*">Multiplication</option>
-    <option value="/">Division</option>
-  </select>
+  <input type="range" min="1" max="5" value="2" id="speedControl" />
 
   <div id="controls">
-    <button class="btn" id="leftBtn">⬅️</button>
-    <button class="btn" id="fireBtn">🔥</button>
-    <button class="btn" id="rightBtn">➡️</button>
+    <button class="btn" onclick="moveLeft()">⬅️</button>
+    <button class="btn" onclick="fire()">🔥</button>
+    <button class="btn" onclick="moveRight()">➡️</button>
   </div>
-
-  <!-- Sounds -->
-  <audio id="sndShoot" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
-  <audio id="sndCorrect" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg"></audio>
-  <audio id="sndWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
-  <audio id="bgMusic" src="https://actions.google.com/sounds/v1/ambiences/retro_game_start.ogg" loop></audio>
 </div>
 
 <script>
   const game = document.getElementById('game');
   const ship = document.getElementById('ship');
+  const questionEl = document.getElementById('question');
   const scoreEl = document.getElementById('score');
-  const timerEl = document.getElementById('timer');
-  const levelEl = document.getElementById('level');
-  const highScoreEl = document.getElementById('highScore');
-  const modeSelect = document.getElementById('modeSelect');
+  const modeDisplay = document.getElementById('modeDisplay');
+  const speedControl = document.getElementById('speedControl');
 
-  let playerName = prompt("Enter your name:") || "Anonymous";
-
-  let score = 0, level = 1, timeLeft = 60;
+  let score = 0;
   let shipX = window.innerWidth / 2 - 25;
-  let bullets = [];
-  let problems = [];
-  let mode = '+';
-  let highScore = localStorage.getItem('mathHighScore') || 0;
+  let currentQuestion = {};
+  let modeIndex = 0;
+  let bulletInterval;
+  let answerElements = [];
+  let bulletList = [];
 
-  highScoreEl.innerText = `High Score: ${highScore}`;
+  const modes = ['+', '-', '*', '/'];
 
-  function playSound(id) {
-    const sound = document.getElementById(id);
-    if (sound) {
-      sound.currentTime = 0;
-      sound.play();
-    }
+  function nextMode() {
+    modeIndex = (modeIndex + 1) % modes.length;
+    modeDisplay.innerText = "Mode: " + modes[modeIndex];
   }
 
-  function randomProblem() {
-    let a = Math.floor(Math.random() * (10 + level * 2));
-    let b = Math.floor(Math.random() * (10 + level * 2));
-    if (mode === '-' && b > a) [a, b] = [b, a];
-    if (mode === '/') {
+  function randomQuestion() {
+    let a = Math.floor(Math.random() * 10) + 1;
+    let b = Math.floor(Math.random() * 10) + 1;
+    let op = modes[modeIndex];
+
+    if (op === '-' && b > a) [a, b] = [b, a];
+    if (op === '/') {
       b = Math.floor(Math.random() * 9) + 1;
-      a = b * (Math.floor(Math.random() * 5) + 1);
+      a = b * (Math.floor(Math.random() * 4) + 1);
     }
-    return {
-      question: `${a} ${mode} ${b}`,
-      answer: eval(`${a}${mode}${b}`)
-    };
+
+    const answer = eval(`${a}${op}${b}`);
+    currentQuestion = { text: `${a} ${op} ${b}`, correct: answer };
+    questionEl.innerText = `Question: ${currentQuestion.text}`;
   }
 
-  function spawnProblems() {
-    const total = 4 + Math.floor(level / 2);
-    const correctIndex = Math.floor(Math.random() * total);
-    problems.forEach(p => p.el.remove());
-    problems = [];
+  function spawnAnswers() {
+    answerElements.forEach(a => a.remove());
+    answerElements = [];
 
-    for (let i = 0; i < total; i++) {
-      const { question, answer } = randomProblem();
-      const el = document.createElement('div');
-      el.className = 'problem';
-      el.innerText = question;
-      const x = 50 + i * (window.innerWidth / total);
-      const problem = { el, x, y: 0, answer, isCorrect: i === correctIndex };
-      el.style.left = `${x}px`;
-      el.style.top = `0px`;
-      game.appendChild(el);
-      problems.push(problem);
+    const correctPos = Math.floor(Math.random() * 4);
+    for (let i = 0; i < 4; i++) {
+      const div = document.createElement('div');
+      div.classList.add('answer');
+      div.style.left = `${100 + i * 100}px`;
+      const val = i === correctPos ? currentQuestion.correct : currentQuestion.correct + Math.floor(Math.random() * 10) - 5;
+      div.innerText = val;
+      div.dataset.value = val;
+      if (score > 0 && score % 10 === 0) {
+        div.classList.add('boss');
+      }
+      game.appendChild(div);
+      answerElements.push(div);
     }
   }
 
-  function moveProblems() {
-    problems.forEach(p => {
-      p.y += 1 + level * 0.5;
-      p.el.style.top = `${p.y}px`;
-      if (p.y > window.innerHeight) endGame();
+  function moveAnswers() {
+    answerElements.forEach(a => {
+      const speed = parseInt(speedControl.value);
+      const top = parseInt(a.style.top || '80');
+      a.style.top = `${top + speed}px`;
+      if (top > window.innerHeight - 80) {
+        // Missed
+        alert("❌ Missed! Game Over.");
+        location.reload();
+      }
     });
   }
 
-  function fireBullet() {
+  function moveLeft() {
+    shipX = Math.max(0, shipX - 30);
+    ship.style.left = `${shipX}px`;
+  }
+
+  function moveRight() {
+    shipX = Math.min(window.innerWidth - 50, shipX + 30);
+    ship.style.left = `${shipX}px`;
+  }
+
+  function fire() {
     const bullet = document.createElement('div');
     bullet.className = 'bullet';
     bullet.style.left = `${shipX + 22}px`;
     bullet.style.top = `${window.innerHeight - 60}px`;
     game.appendChild(bullet);
-    bullets.push({ el: bullet, y: window.innerHeight - 60 });
-    playSound('sndShoot');
+    bulletList.push(bullet);
   }
 
   function moveBullets() {
-    bullets.forEach((b, bi) => {
-      b.y -= 8;
-      b.el.style.top = `${b.y}px`;
-      problems.forEach((p, pi) => {
-        const px = parseInt(p.el.style.left);
-        const py = parseInt(p.el.style.top);
-        if (
-          b.y < py + 30 && b.y > py &&
-          b.el.offsetLeft > px && b.el.offsetLeft < px + 80
-        ) {
-          if (p.isCorrect) {
+    bulletList.forEach((b, i) => {
+      let y = parseInt(b.style.top);
+      y -= 8;
+      b.style.top = `${y}px`;
+
+      // Check collision with answers
+      answerElements.forEach((a, j) => {
+        const ax = parseInt(a.style.left);
+        const ay = parseInt(a.style.top || '80');
+        const bx = parseInt(b.style.left);
+
+        if (Math.abs(bx - ax) < 40 && Math.abs(y - ay) < 30) {
+          const val = Number(a.dataset.value);
+          if (val === currentQuestion.correct) {
             score++;
-            level = Math.floor(score / 5) + 1;
-            spawnProblems();
-            playSound('sndCorrect');
+            if (score % 10 === 0) nextMode(); // Boss level transition
+            updateUI();
+            nextTurn();
           } else {
-            score = Math.max(0, score - 1);
-            playSound('sndWrong');
+            alert("💥 Wrong answer! Game Over.");
+            location.reload();
           }
-          updateUI();
-          b.el.remove();
-          bullets.splice(bi, 1);
         }
       });
-      if (b.y < 0) {
-        b.el.remove();
-        bullets.splice(bi, 1);
+
+      if (y < 0) {
+        b.remove();
+        bulletList.splice(i, 1);
       }
     });
   }
 
   function updateUI() {
     scoreEl.innerText = `Score: ${score}`;
-    levelEl.innerText = `Level: ${level}`;
-    if (score > highScore) {
-      highScore = score;
-      localStorage.setItem('mathHighScore', highScore);
-      highScoreEl.innerText = `High Score: ${highScore}`;
-    }
   }
 
-  function endGame() {
-    saveToLeaderboard(playerName, score);
-    showLeaderboard();
-    alert(`Game Over!\n${playerName}'s Final Score: ${score}`);
-    location.reload();
+  function nextTurn() {
+    answerElements.forEach(a => a.remove());
+    bulletList.forEach(b => b.remove());
+    bulletList = [];
+    spawnQuestion();
   }
 
-  function gameTick() {
-    moveProblems();
+  function spawnQuestion() {
+    randomQuestion();
+    spawnAnswers();
+  }
+
+  function gameLoop() {
+    moveAnswers();
     moveBullets();
   }
 
-  function gameTimer() {
-    timeLeft--;
-    timerEl.innerText = `Time: ${timeLeft}`;
-    if (timeLeft <= 0) endGame();
-  }
-
-  function spawnPowerUp() {
-    const el = document.createElement('div');
-    el.className = 'problem';
-    el.innerText = '⚡';
-    el.style.background = 'gold';
-    let x = Math.random() * (window.innerWidth - 50);
-    el.style.left = `${x}px`;
-    el.style.top = `0px`;
-    game.appendChild(el);
-
-    let y = 0;
-    const interval = setInterval(() => {
-      y += 3;
-      el.style.top = `${y}px`;
-      if (y > window.innerHeight) {
-        el.remove();
-        clearInterval(interval);
-      }
-      const shipTop = window.innerHeight - 60;
-      if (y > shipTop && x > shipX - 30 && x < shipX + 50) {
-        score += 5;
-        updateUI();
-        el.remove();
-        clearInterval(interval);
-        playSound('sndCorrect');
-      }
-    }, 30);
-  }
-
-  function saveToLeaderboard(name, score) {
-    const lb = JSON.parse(localStorage.getItem("mathLeaderboard") || "[]");
-    lb.push({ name, score });
-    lb.sort((a, b) => b.score - a.score);
-    localStorage.setItem("mathLeaderboard", JSON.stringify(lb.slice(0, 5)));
-  }
-
-  function showLeaderboard() {
-    const lb = JSON.parse(localStorage.getItem("mathLeaderboard") || "[]");
-    let list = lb.map((e, i) => `${i + 1}. ${e.name}: ${e.score}`).join('\n');
-    alert("🏆 Leaderboard:\n\n" + list);
-  }
-
-  function startGame() {
-    ship.style.left = `${shipX}px`;
-    spawnProblems();
-    setInterval(gameTick, 30);
-    setInterval(gameTimer, 1000);
-    setInterval(spawnPowerUp, 15000);
-    const bgMusic = document.getElementById("bgMusic");
-    bgMusic.volume = 0.2;
-    bgMusic.play();
-  }
-
-  // Controls
-  document.getElementById('leftBtn').onclick = () => {
-    shipX -= 30;
-    shipX = Math.max(0, shipX);
-    ship.style.left = `${shipX}px`;
-  };
-  document.getElementById('rightBtn').onclick = () => {
-    shipX += 30;
-    shipX = Math.min(window.innerWidth - 50, shipX);
-    ship.style.left = `${shipX}px`;
-  };
-  document.getElementById('fireBtn').onclick = fireBullet;
-
-  modeSelect.onchange = () => {
-    mode = modeSelect.value;
-    score = 0;
-    level = 1;
-    timeLeft = 60;
-    updateUI();
-    spawnProblems();
-  };
-
-  // Start
-  startGame();
+  // Start game
+  ship.style.left = `${shipX}px`;
+  spawnQuestion();
+  setInterval(gameLoop, 50);
 </script>
 
 </body>
