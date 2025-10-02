@@ -1,101 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Math Invaders: Boss Edition</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: monospace;
-      background: #000;
-      color: #fff;
-      overflow: hidden;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Math Invaders - Animated Boss Edition</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: monospace;
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+  }
+  #game {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: #111;
+    user-select: none;
+  }
+  #ship {
+    position: absolute;
+    bottom: 20px;
+    width: 50px;
+    height: 30px;
+    background: lime;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 8px;
+    box-shadow: 0 0 8px lime;
+  }
+  .answer {
+    position: absolute;
+    padding: 10px 15px;
+    background: linear-gradient(45deg, #222, #555);
+    border: 2px solid white;
+    border-radius: 10px;
+    font-size: 20px;
+    top: 80px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    text-align: center;
+    width: 90px;
+  }
+  .answer.boss {
+    border-color: gold;
+    background: linear-gradient(45deg, darkred, gold);
+    color: gold;
+    font-weight: bold;
+  }
+  .answer.animate {
+    animation: floaty 3s ease-in-out infinite;
+  }
+  @keyframes floaty {
+    0%, 100% {
+      transform: translateY(0);
+      box-shadow: 0 0 10px #fff;
     }
-
-    #game {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: #111;
+    50% {
+      transform: translateY(10px);
+      box-shadow: 0 0 25px gold;
     }
-
-    #ship {
-      position: absolute;
-      bottom: 20px;
-      width: 50px;
-      height: 30px;
-      background: lime;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .answer {
-      position: absolute;
-      padding: 10px 15px;
-      background: #333;
-      border: 2px solid white;
-      border-radius: 5px;
-      font-size: 20px;
-      top: 80px;
-    }
-
-    .bullet {
-      position: absolute;
-      width: 5px;
-      height: 15px;
-      background: red;
-    }
-
-    #question {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 24px;
-    }
-
-    #score, #modeDisplay {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-    }
-
-    #modeDisplay {
-      top: 40px;
-    }
-
-    #controls {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .btn {
-      padding: 10px 20px;
-      background: #222;
-      color: white;
-      border: 1px solid #fff;
-      border-radius: 5px;
-      font-size: 18px;
-    }
-
-    #speedControl {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-    }
-
-    .boss {
-      border-color: gold;
-      background: darkred;
-      color: gold;
-      font-weight: bold;
-    }
-  </style>
+  }
+  .bullet {
+    position: absolute;
+    width: 5px;
+    height: 15px;
+    background: red;
+    border-radius: 2px;
+    box-shadow: 0 0 8px red;
+  }
+  #question {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+  }
+  #score, #modeDisplay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    user-select: none;
+  }
+  #modeDisplay {
+    top: 40px;
+  }
+  #controls {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    user-select: none;
+  }
+  .btn {
+    padding: 10px 20px;
+    background: #222;
+    color: white;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+  #speedControl {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    user-select: none;
+  }
+</style>
 </head>
 <body>
 
@@ -104,48 +124,68 @@
   <div id="question">Question: </div>
   <div id="score">Score: 0</div>
   <div id="modeDisplay">Mode: +</div>
-
-  <input type="range" min="1" max="5" value="2" id="speedControl" />
-
+  <input type="range" min="1" max="5" value="2" id="speedControl" title="Adjust speed" />
   <div id="controls">
-    <button class="btn" onclick="moveLeft()">⬅️</button>
-    <button class="btn" onclick="fire()">🔥</button>
-    <button class="btn" onclick="moveRight()">➡️</button>
+    <button class="btn" id="btnLeft">⬅️</button>
+    <button class="btn" id="btnFire">🔥</button>
+    <button class="btn" id="btnRight">➡️</button>
   </div>
+
+  <!-- Sounds -->
+  <audio id="sndShoot" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+  <audio id="sndCorrect" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg"></audio>
+  <audio id="sndWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+  <audio id="bgMusic" src="https://actions.google.com/sounds/v1/ambiences/retro_game_start.ogg" loop></audio>
 </div>
 
 <script>
+(() => {
   const game = document.getElementById('game');
   const ship = document.getElementById('ship');
   const questionEl = document.getElementById('question');
   const scoreEl = document.getElementById('score');
   const modeDisplay = document.getElementById('modeDisplay');
   const speedControl = document.getElementById('speedControl');
+  const btnLeft = document.getElementById('btnLeft');
+  const btnRight = document.getElementById('btnRight');
+  const btnFire = document.getElementById('btnFire');
 
+  const sndShoot = document.getElementById('sndShoot');
+  const sndCorrect = document.getElementById('sndCorrect');
+  const sndWrong = document.getElementById('sndWrong');
+  const bgMusic = document.getElementById('bgMusic');
+  bgMusic.volume = 0.15;
+  bgMusic.play();
+
+  const modes = ['+', '-', '*', '/'];
+  let modeIndex = 0;
   let score = 0;
   let shipX = window.innerWidth / 2 - 25;
   let currentQuestion = {};
-  let modeIndex = 0;
-  let bulletInterval;
   let answerElements = [];
   let bulletList = [];
+  let speed = +speedControl.value;
+  let lastAnswerTime = Date.now();
 
-  const modes = ['+', '-', '*', '/'];
+  function playSound(sound) {
+    sound.currentTime = 0;
+    sound.play();
+  }
 
   function nextMode() {
     modeIndex = (modeIndex + 1) % modes.length;
-    modeDisplay.innerText = "Mode: " + modes[modeIndex];
+    modeDisplay.innerText = `Mode: ${modes[modeIndex]}`;
   }
 
   function randomQuestion() {
-    let a = Math.floor(Math.random() * 10) + 1;
-    let b = Math.floor(Math.random() * 10) + 1;
+    let a = Math.floor(Math.random() * (10 + modeIndex * 5)) + 1;
+    let b = Math.floor(Math.random() * (10 + modeIndex * 5)) + 1;
     let op = modes[modeIndex];
 
     if (op === '-' && b > a) [a, b] = [b, a];
     if (op === '/') {
       b = Math.floor(Math.random() * 9) + 1;
-      a = b * (Math.floor(Math.random() * 4) + 1);
+      a = b * (Math.floor(Math.random() * 5) + 1);
     }
 
     const answer = eval(`${a}${op}${b}`);
@@ -160,14 +200,16 @@
     const correctPos = Math.floor(Math.random() * 4);
     for (let i = 0; i < 4; i++) {
       const div = document.createElement('div');
-      div.classList.add('answer');
-      div.style.left = `${100 + i * 100}px`;
-      const val = i === correctPos ? currentQuestion.correct : currentQuestion.correct + Math.floor(Math.random() * 10) - 5;
+      div.classList.add('answer', 'animate');
+      div.style.left = `${100 + i * 110}px`;
+      const val = i === correctPos 
+        ? currentQuestion.correct 
+        : currentQuestion.correct + (Math.floor(Math.random() * 10) - 5);
+
       div.innerText = val;
       div.dataset.value = val;
-      if (score > 0 && score % 10 === 0) {
-        div.classList.add('boss');
-      }
+      if ((score + 1) % 10 === 0) div.classList.add('boss');
+
       game.appendChild(div);
       answerElements.push(div);
     }
@@ -175,59 +217,84 @@
 
   function moveAnswers() {
     answerElements.forEach(a => {
-      const speed = parseInt(speedControl.value);
       const top = parseInt(a.style.top || '80');
-      a.style.top = `${top + speed}px`;
-      if (top > window.innerHeight - 80) {
-        // Missed
-        alert("❌ Missed! Game Over.");
-        location.reload();
+      const newTop = top + speed;
+      a.style.top = newTop + 'px';
+      if (newTop > window.innerHeight - 80) {
+        gameOver('You missed the answer!');
       }
     });
   }
 
   function moveLeft() {
     shipX = Math.max(0, shipX - 30);
-    ship.style.left = `${shipX}px`;
+    ship.style.left = shipX + 'px';
   }
 
   function moveRight() {
     shipX = Math.min(window.innerWidth - 50, shipX + 30);
-    ship.style.left = `${shipX}px`;
+    ship.style.left = shipX + 'px';
   }
 
   function fire() {
     const bullet = document.createElement('div');
     bullet.className = 'bullet';
-    bullet.style.left = `${shipX + 22}px`;
-    bullet.style.top = `${window.innerHeight - 60}px`;
+    bullet.style.left = (shipX + 22) + 'px';
+    bullet.style.top = (window.innerHeight - 60) + 'px';
     game.appendChild(bullet);
     bulletList.push(bullet);
+    playSound(sndShoot);
   }
 
   function moveBullets() {
     bulletList.forEach((b, i) => {
       let y = parseInt(b.style.top);
-      y -= 8;
-      b.style.top = `${y}px`;
+      y -= 12;
+      b.style.top = y + 'px';
 
-      // Check collision with answers
       answerElements.forEach((a, j) => {
         const ax = parseInt(a.style.left);
-        const ay = parseInt(a.style.top || '80');
+        const ay = parseInt(a.style.top);
         const bx = parseInt(b.style.left);
 
-        if (Math.abs(bx - ax) < 40 && Math.abs(y - ay) < 30) {
+        if (
+          Math.abs(bx - ax) < 40 &&
+          Math.abs(y - ay) < 30
+        ) {
           const val = Number(a.dataset.value);
           if (val === currentQuestion.correct) {
+            // Correct!
             score++;
-            if (score % 10 === 0) nextMode(); // Boss level transition
             updateUI();
+
+            // Adaptive difficulty: faster speed if player answers quickly
+            const now = Date.now();
+            let delta = now - lastAnswerTime;
+            lastAnswerTime = now;
+            // If player answers under 2s, increase speed (max 5)
+            if (delta < 2000) {
+              speed = Math.min(5, speed + 0.2);
+            } else if (speed > 1) {
+              speed -= 0.1; // slow down if slow answers
+            }
+            speedControl.value = Math.round(speed);
+
+            playSound(sndCorrect);
+
+            // Boss & mode check every 10 points
+            if (score % 10 === 0) {
+              alert("🔥 Boss Level! Advancing to next mode.");
+              nextMode();
+            }
             nextTurn();
           } else {
-            alert("💥 Wrong answer! Game Over.");
-            location.reload();
+            gameOver('Wrong answer!');
           }
+          // Remove bullet and answer
+          b.remove();
+          bulletList.splice(i, 1);
+          a.remove();
+          answerElements.splice(j, 1);
         }
       });
 
@@ -254,16 +321,38 @@
     spawnAnswers();
   }
 
+  function gameOver(reason) {
+    playSound(sndWrong);
+    alert(reason + "\nGame Over! Your final score: " + score + "\nRestart?");
+    location.reload();
+  }
+
   function gameLoop() {
     moveAnswers();
     moveBullets();
   }
 
-  // Start game
-  ship.style.left = `${shipX}px`;
-  spawnQuestion();
-  setInterval(gameLoop, 50);
-</script>
+  btnLeft.addEventListener('click', moveLeft);
+  btnRight.addEventListener('click', moveRight);
+  btnFire.addEventListener('click', fire);
 
+  speedControl.addEventListener('input', () => {
+    speed = +speedControl.value;
+  });
+
+  // Initialize ship position and start
+  ship.style.left = shipX + 'px';
+  spawnQuestion();
+  lastAnswerTime = Date.now();
+  setInterval(gameLoop, 50);
+
+  // Keyboard controls
+  window.addEventListener('keydown', e => {
+    if(e.key === 'ArrowLeft') moveLeft();
+    else if(e.key === 'ArrowRight') moveRight();
+    else if(e.key === ' ') fire();
+  });
+})();
+</script>
 </body>
 </html>
