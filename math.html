@@ -3,133 +3,204 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Math Invaders - Classic Style</title>
+<title>Math Invaders - Star Battle</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
   body {
-    margin: 0; 
-    background: black;
-    overflow: hidden;
-    font-family: 'Courier New', Courier, monospace;
-    color: white;
+    margin: 0;
+    background: radial-gradient(circle at center, #000010, #000000);
+    font-family: 'Orbitron', monospace;
+    color: #0ff;
+    overflow-x: hidden;
     user-select: none;
   }
   #game {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background: radial-gradient(circle at center, #000000 0%, #0a0a0a 100%);
     overflow: hidden;
   }
+
+  /* Question Billboard */
+  #questionBillboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #001122;
+    border: 3px solid #0ff;
+    border-radius: 20px;
+    box-shadow: 0 0 25px #0ff;
+    font-size: 2rem;
+    font-weight: 700;
+    padding: 15px 30px;
+    width: 90%;
+    max-width: 600px;
+    margin: 15px auto 10px;
+    text-align: center;
+  }
+
+  /* Ship */
   #ship {
     position: absolute;
-    bottom: 10px;
-    width: 60px;
-    height: 30px;
+    bottom: 15px;
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(45deg, #0f0, #070);
-    border-radius: 8px 8px 0 0;
-    box-shadow: 0 0 12px #0f0;
+    width: 60px;
+    height: 60px;
+    filter: drop-shadow(0 0 8px #0ff);
+    cursor: pointer;
   }
-  .bullet {
+  /* Star shape for ship */
+  #ship svg {
+    fill: #0ff;
+    stroke: #0cc;
+    stroke-width: 2;
+  }
+
+  /* Projectile star */
+  .projectile {
     position: absolute;
-    width: 4px;
-    height: 14px;
-    background: #ff3333;
-    border-radius: 2px;
-    box-shadow: 0 0 8px #ff4444;
+    width: 40px;
+    height: 40px;
+    pointer-events: none;
+    filter: drop-shadow(0 0 6px #ff0);
+    animation: glowStar 1s infinite alternate;
   }
-  #score, #modeDisplay {
+  @keyframes glowStar {
+    from { filter: drop-shadow(0 0 6px #ff0);}
+    to { filter: drop-shadow(0 0 14px #ff0);}
+  }
+
+  /* Answers container flexbox */
+  #answersContainer {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
     position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 18px;
+    top: 100px;
+    width: 100%;
+    max-width: 900px;
+    left: 50%;
+    transform: translateX(-50%);
+    user-select: none;
   }
-  #modeDisplay {
-    top: 35px;
+
+  /* Star bubble shape for answers */
+  .answerBubble {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(45deg, #00ffff, #006666);
+    clip-path: polygon(
+      50% 0%, 61% 35%, 98% 35%, 68% 57%,
+      79% 91%, 50% 70%, 21% 91%, 32% 57%,
+      2% 35%, 39% 35%
+    );
+    box-shadow: 0 0 15px #0ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #002222;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    user-select: none;
   }
-  #question {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 18px;
+  .answerBubble:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 25px #0ff, 0 0 40px #0ff;
+    color: #00ffff;
   }
+
+  /* Controls container */
   #controls {
     position: absolute;
-    bottom: 10px;
+    bottom: 15px;
     width: 100%;
     display: flex;
     justify-content: center;
     gap: 15px;
   }
   .btn {
-    background: #222;
-    border: 1px solid #0f0;
-    border-radius: 6px;
-    color: #0f0;
-    padding: 12px 22px;
-    font-size: 20px;
+    background: #001122;
+    border: 2px solid #0ff;
+    border-radius: 12px;
+    color: #0ff;
+    font-weight: 700;
+    font-size: 24px;
+    padding: 12px 24px;
     cursor: pointer;
+    transition: background 0.3s, color 0.3s;
     user-select: none;
-    transition: background 0.3s;
   }
   .btn:hover {
-    background: #0f0;
-    color: black;
+    background: #0ff;
+    color: #001122;
   }
+
+  /* Speed slider as star */
   #speedControl {
     position: absolute;
-    top: 70px;
-    left: 10px;
-    width: 120px;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    -webkit-appearance: none;
+    background: transparent;
   }
-  /* Enemy styling */
-  .enemy {
-    position: absolute;
-    width: 70px;
-    height: 50px;
-    background: linear-gradient(135deg, #004400, #009900);
-    border-radius: 12px;
-    color: #ccffcc;
-    font-weight: bold;
-    font-size: 20px;
-    text-align: center;
-    line-height: 50px;
-    box-shadow: 0 0 12px #00ff00;
-    user-select: none;
-  }
-  .enemy.boss {
-    background: linear-gradient(135deg, #880000, #ff0000);
-    font-size: 28px;
+  #speedControl::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 40px;
+    height: 40px;
+    background: gold;
+    clip-path: polygon(
+      50% 0%, 61% 35%, 98% 35%, 68% 57%,
+      79% 91%, 50% 70%, 21% 91%, 32% 57%,
+      2% 35%, 39% 35%
+    );
+    cursor: pointer;
     box-shadow: 0 0 20px gold;
-    font-weight: bolder;
+    transition: background 0.3s ease;
   }
+  #speedControl::-webkit-slider-thumb:hover {
+    background: #ffaa00;
+  }
+  #speedControl:focus {
+    outline: none;
+  }
+  #speedControl::-moz-range-thumb {
+    width: 40px;
+    height: 40px;
+    background: gold;
+    clip-path: polygon(
+      50% 0%, 61% 35%, 98% 35%, 68% 57%,
+      79% 91%, 50% 70%, 21% 91%, 32% 57%,
+      2% 35%, 39% 35%
+    );
+    cursor: pointer;
+    box-shadow: 0 0 20px gold;
+  }
+
+  /* Responsive */
   @media (max-width: 600px) {
-    #controls {
-      gap: 10px;
+    #questionBillboard {
+      font-size: 1.5rem;
+      width: 95%;
+      padding: 10px 15px;
     }
-    .btn {
-      padding: 16px 30px;
-      font-size: 28px;
-    }
-    .enemy {
-      width: 80px;
-      height: 60px;
-      font-size: 24px;
-      line-height: 60px;
-    }
-    .enemy.boss {
-      font-size: 36px;
-      width: 100px;
+    .answerBubble {
+      width: 70px;
       height: 70px;
-      line-height: 70px;
-    }
-    #score, #modeDisplay, #question {
-      font-size: 22px;
+      font-size: 1.3rem;
     }
     #speedControl {
-      width: 140px;
-      top: 60px;
+      width: 120px;
+    }
+    .btn {
+      font-size: 20px;
+      padding: 10px 18px;
     }
   }
 </style>
@@ -137,14 +208,23 @@
 <body>
 
 <div id="game">
-  <div id="ship"></div>
-  <div id="score">Score: 0</div>
-  <div id="modeDisplay">Mode: +</div>
-  <div id="question">Question:</div>
-  <input type="range" min="1" max="5" value="2" id="speedControl" title="Adjust speed" />
+
+  <div id="questionBillboard">Loading...</div>
+
+  <div id="answersContainer"></div>
+
+  <div id="ship" title="Your ship (tap buttons or arrow keys)">
+    <!-- Simple star SVG ship -->
+    <svg viewBox="0 0 64 64" width="60" height="60" aria-hidden="true">
+      <polygon points="32,4 39,24 60,24 42,38 49,58 32,44 15,58 22,38 4,24 25,24" />
+    </svg>
+  </div>
+
+  <input type="range" id="speedControl" min="1" max="5" value="3" title="Adjust speed" />
+
   <div id="controls">
     <button class="btn" id="btnLeft">⬅️</button>
-    <button class="btn" id="btnFire">🔥</button>
+    <button class="btn" id="btnFire">🌟</button>
     <button class="btn" id="btnRight">➡️</button>
   </div>
 
@@ -153,64 +233,49 @@
   <audio id="sndCorrect" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg"></audio>
   <audio id="sndWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
   <audio id="bgMusic" src="https://actions.google.com/sounds/v1/ambiences/retro_game_start.ogg" loop></audio>
+
 </div>
 
 <script>
 (() => {
   const game = document.getElementById('game');
+  const questionBillboard = document.getElementById('questionBillboard');
+  const answersContainer = document.getElementById('answersContainer');
   const ship = document.getElementById('ship');
-  const scoreEl = document.getElementById('score');
-  const modeDisplay = document.getElementById('modeDisplay');
-  const questionEl = document.getElementById('question');
-  const speedControl = document.getElementById('speedControl');
   const btnLeft = document.getElementById('btnLeft');
   const btnRight = document.getElementById('btnRight');
   const btnFire = document.getElementById('btnFire');
+  const speedControl = document.getElementById('speedControl');
 
   const sndShoot = document.getElementById('sndShoot');
   const sndCorrect = document.getElementById('sndCorrect');
   const sndWrong = document.getElementById('sndWrong');
   const bgMusic = document.getElementById('bgMusic');
-  bgMusic.volume = 0.12;
+  bgMusic.volume = 0.1;
   bgMusic.play();
 
   const modes = ['+', '-', '*', '/'];
   let modeIndex = 0;
   let score = 0;
-  let shipX = window.innerWidth / 2 - 30;
   let speed = +speedControl.value;
-  let bullet = null;
-  let enemies = [];
-  let enemyDirection = 1; // 1 = right, -1 = left
-  let enemyStepDown = 20;
-  let enemySpeedCounter = 0;
-  let enemySpeedThreshold = 30; // Lower = faster enemy moves
-  let lastAnswerTime = Date.now();
+  let shipX = window.innerWidth / 2 - 30; // ship width/2 offset
+  let projectile = null;
+  let projectileSpeed = 15;
+  let currentAnswer = null;
+  let answers = [];
+  let question = '';
+  let answerPositions = []; // track x positions of answer bubbles for collision
 
-  // Generate enemies in grid
-  const enemyRows = 3;
-  const enemyCols = 6;
-  const enemySpacingX = 90;
-  const enemySpacingY = 70;
-  const enemyStartX = 60;
-  const enemyStartY = 100;
+  ship.style.left = shipX + 'px';
+
+  // Helper star SVG for projectile
+  const starSVG = `<svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true" fill="gold" stroke="#ffaa00" stroke-width="2">
+    <polygon points="32,4 39,24 60,24 42,38 49,58 32,44 15,58 22,38 4,24 25,24"/>
+  </svg>`;
 
   function playSound(sound) {
     sound.currentTime = 0;
     sound.play();
-  }
-
-  function createEnemy(x, y, problem, correct, isBoss=false) {
-    const e = document.createElement('div');
-    e.classList.add('enemy');
-    if(isBoss) e.classList.add('boss');
-    e.style.left = x + 'px';
-    e.style.top = y + 'px';
-    e.textContent = problem;
-    e.dataset.correct = correct;
-    e.dataset.isBoss = isBoss;
-    game.appendChild(e);
-    return e;
   }
 
   function generateProblem() {
@@ -224,185 +289,222 @@
       a = b * (Math.floor(Math.random() * 7) + 1);
     }
     let answer = eval(`${a}${op}${b}`);
+    if(!Number.isInteger(answer)) answer = answer.toFixed(2);
     return { text: `${a} ${op} ${b}`, answer };
   }
 
-  function setupEnemies() {
-    enemies.forEach(e => e.el.remove());
-    enemies = [];
+  function setupAnswers() {
+    answersContainer.innerHTML = '';
+    answers = [];
 
-    // Boss level every 10 points: one big enemy
-    if(score > 0 && score % 10 === 0) {
-      const bossProb = generateProblem();
-      const x = (window.innerWidth / 2) - 50;
-      const y = enemyStartY;
-      const el = createEnemy(x, y, bossProb.text, bossProb.answer, true);
-      enemies.push({ el, x, y, correct: bossProb.answer, isBoss: true });
-      questionEl.textContent = `Boss fight! Solve: ${bossProb.text}`;
-      return;
+    // Create 5 answer bubbles including the correct answer
+    let correctPos = Math.floor(Math.random() * 5);
+
+    // generate wrong answers (close to correct)
+    let wrongAnswers = new Set();
+    while(wrongAnswers.size < 4) {
+      let diff = (Math.random() < 0.5 ? -1 : 1) * (Math.floor(Math.random() * 5) + 1);
+      let wrong = Number(currentAnswer) + diff;
+      if(wrong !== currentAnswer && wrong > 0) wrongAnswers.add(wrong);
+    }
+    wrongAnswers = Array.from(wrongAnswers);
+
+    for(let i = 0; i < 5; i++) {
+      let val = (i === correctPos) ? currentAnswer : wrongAnswers.pop();
+      let bubble = document.createElement('div');
+      bubble.classList.add('answerBubble');
+      bubble.textContent = val;
+      answersContainer.appendChild(bubble);
+      answers.push({el: bubble, val: val});
     }
 
-    questionEl.textContent = 'Shoot the correct problem!';
+    // Save answer bubble horizontal positions for collision detection
+    // We'll set horizontal movement animation on them now:
+    answerPositions = [];
+    answers.forEach((a,i) => {
+      // Set initial position
+      a.el.style.position = 'relative';
+      a.el.style.left = '0px';
 
-    for(let r=0; r < enemyRows; r++) {
-      for(let c=0; c < enemyCols; c++) {
-        const prob = generateProblem();
-        const x = enemyStartX + c * enemySpacingX;
-        const y = enemyStartY + r * enemySpacingY;
-        const el = createEnemy(x, y, prob.text, prob.answer);
-        enemies.push({ el, x, y, correct: prob.answer, isBoss: false });
-      }
-    }
-  }
-
-  function updateEnemiesPosition() {
-    enemySpeedCounter++;
-    if(enemySpeedCounter < enemySpeedThreshold) return;
-    enemySpeedCounter = 0;
-
-    // Check if any enemy hits right or left edges, then move down and change direction
-    let shouldStepDown = false;
-    for(let e of enemies) {
-      let nextX = e.x + enemyDirection * 15;
-      if(nextX < 0 || nextX + e.el.offsetWidth > window.innerWidth) {
-        shouldStepDown = true;
-        break;
-      }
-    }
-    if(shouldStepDown) {
-      enemyDirection *= -1;
-      enemies.forEach(e => {
-        e.y += enemyStepDown;
-        if(e.y + e.el.offsetHeight >= ship.offsetTop) {
-          gameOver('Enemies reached you!');
-        }
+      // Animate gentle side to side float
+      let amplitude = 20 + Math.random()*15;
+      let speedAnim = 2000 + Math.random()*2000;
+      a.el.animate([
+        { transform: `translateX(0px)` },
+        { transform: `translateX(${amplitude}px)` },
+        { transform: `translateX(0px)` },
+        { transform: `translateX(${-amplitude}px)` },
+        { transform: `translateX(0px)` }
+      ], {
+        duration: speedAnim,
+        iterations: Infinity
       });
-    } else {
-      enemies.forEach(e => e.x += enemyDirection * 15);
-    }
-    enemies.forEach(e => {
-      e.el.style.left = e.x + 'px';
-      e.el.style.top = e.y + 'px';
     });
   }
 
+  function generateCurrentQuestion() {
+    let prob = generateProblem();
+    question = prob.text;
+    currentAnswer = prob.answer;
+    questionBillboard.textContent = `Solve: ${question}`;
+  }
+
+  // Move ship left or right
   function moveShip(dir) {
     shipX += dir * 30;
     shipX = Math.max(0, Math.min(window.innerWidth - ship.offsetWidth, shipX));
     ship.style.left = shipX + 'px';
   }
 
-  function fireBullet() {
-    if(bullet) return; // only one bullet at a time
-    bullet = document.createElement('div');
-    bullet.className = 'bullet';
-    bullet.style.left = (shipX + ship.offsetWidth / 2 - 2) + 'px';
-    bullet.style.top = (window.innerHeight - 40) + 'px';
-    game.appendChild(bullet);
+  // Fire projectile (giant star)
+  function fireProjectile() {
+    if(projectile) return;
+    projectile = document.createElement('div');
+    projectile.classList.add('projectile');
+    projectile.style.left = (shipX + ship.offsetWidth / 2 - 20) + 'px';
+    projectile.style.top = (window.innerHeight - 80) + 'px';
+    projectile.innerHTML = starSVG;
+    game.appendChild(projectile);
     playSound(sndShoot);
   }
 
-  function updateBullet() {
-    if(!bullet) return;
+  // Update projectile position and check collision with answers
+  function updateProjectile() {
+    if(!projectile) return;
+    let top = parseFloat(projectile.style.top);
+    top -= projectileSpeed + (speed - 1) * 2; // scale speed with slider
+    projectile.style.top = top + 'px';
 
-    let y = parseInt(bullet.style.top);
-    y -= 15;
-    bullet.style.top = y + 'px';
-
-    if(y < 0) {
-      bullet.remove();
-      bullet = null;
+    if(top < 0) {
+      projectile.remove();
+      projectile = null;
       return;
     }
 
-    // Check collision with enemies
-    for(let i = 0; i < enemies.length; i++) {
-      const e = enemies[i];
-      const ex = e.x;
-      const ey = e.y;
-      const ew = e.el.offsetWidth;
-      const eh = e.el.offsetHeight;
+    // Collision check: projectile's horizontal center with each bubble bounding box
+    let projX = parseFloat(projectile.style.left) + 20;
+    let projY = top + 20;
 
-      const bx = parseInt(bullet.style.left);
-      const by = y;
+    for(let i=0; i < answers.length; i++) {
+      const bubble = answers[i];
+      const rect = bubble.el.getBoundingClientRect();
 
-      if(bx > ex && bx < ex + ew && by > ey && by < ey + eh) {
-        // Hit enemy
-        let correctAnswer = e.correct;
-        let text = e.el.textContent;
-        if(correctAnswer === currentAnswer) {
-          // Correct shot
+      if(projX > rect.left && projX < rect.right && projY > rect.top && projY < rect.bottom) {
+        // Hit answer bubble
+        if(bubble.val == currentAnswer) {
+          // Correct hit!
           playSound(sndCorrect);
           score++;
-          scoreEl.textContent = 'Score: ' + score;
-
-          // Remove enemy
-          e.el.remove();
-          enemies.splice(i, 1);
-          bullet.remove();
-          bullet = null;
-
-          // Update mode every 5 points to keep it fresh
-          if(score % 5 === 0) {
-            modeIndex = (modeIndex + 1) % modes.length;
-            modeDisplay.textContent = 'Mode: ' + modes[modeIndex];
-            enemySpeedThreshold = Math.max(5, enemySpeedThreshold - 2);
-          }
-          setupEnemies();
-          generateCurrentQuestion();
+          questionBillboard.textContent = `Correct! Score: ${score}`;
+          projectile.remove();
+          projectile = null;
+          nextRound();
           return;
         } else {
-          // Wrong shot
           playSound(sndWrong);
-          bullet.remove();
-          bullet = null;
+          questionBillboard.textContent = `Wrong! Try again.`;
+          projectile.remove();
+          projectile = null;
           return;
         }
       }
     }
   }
 
-  function generateCurrentQuestion() {
-    const prob = generateProblem();
-    currentAnswer = prob.answer;
-    questionEl.textContent = `Shoot the problem: ${prob.text}`;
+  // Start next round: change difficulty and question
+  function nextRound() {
+    // Every 5 points increase difficulty by cycling mode and speeding up
+    if(score % 5 === 0) {
+      modeIndex = (modeIndex + 1) % modes.length;
+      questionBillboard.textContent += ` Mode: ${modes[modeIndex]}`;
+      speedControl.value = Math.min(5, +speedControl.value + 1);
+      speed = +speedControl.value;
+    }
+    generateCurrentQuestion();
+    setupAnswers();
   }
 
-  function gameOver(msg) {
-    alert(msg + "\nGame Over!\nYour score: " + score);
-    location.reload();
-  }
-
-  // Controls
+  // Controls events
   btnLeft.onclick = () => moveShip(-1);
   btnRight.onclick = () => moveShip(1);
-  btnFire.onclick = () => fireBullet();
+  btnFire.onclick = () => fireProjectile();
   speedControl.oninput = (e) => {
     speed = +e.target.value;
   };
 
-  let currentAnswer = null;
-
-  // Keyboard controls
-  window.addEventListener('keydown', (e) => {
+  // Keyboard support
+  window.addEventListener('keydown', e => {
     if(e.key === 'ArrowLeft') moveShip(-1);
-    else if(e.key === 'ArrowRight') moveShip(1);
-    else if(e.key === ' ' || e.key === 'ArrowUp') fireBullet();
+    if(e.key === 'ArrowRight') moveShip(1);
+    if(e.key === ' ' || e.key === 'ArrowUp') fireProjectile();
   });
 
-  // Initialization
-  ship.style.left = shipX + 'px';
-  modeDisplay.textContent = 'Mode: ' + modes[modeIndex];
-  generateCurrentQuestion();
-  setupEnemies();
-
   // Game loop
-  function loop() {
-    updateEnemiesPosition();
-    updateBullet();
-    requestAnimationFrame(loop);
+  function gameLoop() {
+    updateProjectile();
+    requestAnimationFrame(gameLoop);
   }
-  loop();
+
+  // Initialize
+  generateCurrentQuestion();
+  setupAnswers();
+  gameLoop();
+
+  // Optional: Restart prompt on game over (wrong answer more than 3 times)
+  let wrongCount = 0;
+  function handleWrong() {
+    wrongCount++;
+    if(wrongCount >= 3) {
+      if(confirm(`Too many wrong answers! Restart game?`)) {
+        location.reload();
+      } else {
+        wrongCount = 0;
+      }
+    }
+  }
+  // Modify updateProjectile to call handleWrong on wrong hit:
+  const originalUpdateProjectile = updateProjectile;
+  updateProjectile = () => {
+    if(!projectile) return;
+    let top = parseFloat(projectile.style.top);
+    top -= projectileSpeed + (speed - 1) * 2; 
+    projectile.style.top = top + 'px';
+
+    if(top < 0) {
+      projectile.remove();
+      projectile = null;
+      return;
+    }
+
+    let projX = parseFloat(projectile.style.left) + 20;
+    let projY = top + 20;
+
+    for(let i=0; i < answers.length; i++) {
+      const bubble = answers[i];
+      const rect = bubble.el.getBoundingClientRect();
+
+      if(projX > rect.left && projX < rect.right && projY > rect.top && projY < rect.bottom) {
+        if(bubble.val == currentAnswer) {
+          playSound(sndCorrect);
+          score++;
+          questionBillboard.textContent = `Correct! Score: ${score}`;
+          projectile.remove();
+          projectile = null;
+          wrongCount = 0;
+          nextRound();
+          return;
+        } else {
+          playSound(sndWrong);
+          questionBillboard.textContent = `Wrong! Try again.`;
+          projectile.remove();
+          projectile = null;
+          handleWrong();
+          return;
+        }
+      }
+    }
+  };
+
 })();
 </script>
 
