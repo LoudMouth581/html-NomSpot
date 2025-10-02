@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Math Invaders - Ultimate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: monospace;
+      background: black;
+      color: white;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    #game {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #111;
+      overflow: hidden;
+    }
+
+    #ship {
+      position: absolute;
+      bottom: 20px;
+      width: 50px;
+      height: 30px;
+      background: lime;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .bullet {
+      position: absolute;
+      width: 5px;
+      height: 15px;
+      background: red;
+    }
+
+    .problem {
+      position: absolute;
+      padding: 10px 15px;
+      background: #444;
+      border: 2px solid #fff;
+      border-radius: 5px;
+      font-size: 18px;
+    }
+
+    #score, #timer, #level, #highScore {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 18px;
+    }
+
+    #timer {
+      left: auto;
+      right: 10px;
+    }
+
+    #level {
+      top: 40px;
+    }
+
+    #highScore {
+      top: 70px;
+    }
+
+    #controls {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background: #333;
+      color: white;
+      border: 1px solid #fff;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .btn:active {
+      background: #555;
+    }
+
+    #modeSelect {
+      position: absolute;
+      top: 100px;
+      left: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="game">
+  <div id="ship"></div>
+  <div id="score">Score: 0</div>
+  <div id="timer">Time: 60</div>
+  <div id="level">Level: 1</div>
+  <div id="highScore">High Score: 0</div>
+
+  <select id="modeSelect">
+    <option value="+">Addition</option>
+    <option value="-">Subtraction</option>
+    <option value="*">Multiplication</option>
+    <option value="/">Division</option>
+  </select>
+
+  <div id="controls">
+    <button class="btn" id="leftBtn">⬅️</button>
+    <button class="btn" id="fireBtn">🔥</button>
+    <button class="btn" id="rightBtn">➡️</button>
+  </div>
+
+  <!-- Sounds -->
+  <audio id="sndShoot" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+  <audio id="sndCorrect" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg"></audio>
+  <audio id="sndWrong" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+  <audio id="bgMusic" src="https://actions.google.com/sounds/v1/ambiences/retro_game_start.ogg" loop></audio>
+</div>
+
+<script>
+  const game = document.getElementById('game');
+  const ship = document.getElementById('ship');
+  const scoreEl = document.getElementById('score');
+  const timerEl = document.getElementById('timer');
+  const levelEl = document.getElementById('level');
+  const highScoreEl = document.getElementById('highScore');
+  const modeSelect = document.getElementById('modeSelect');
+
+  let playerName = prompt("Enter your name:") || "Anonymous";
+
+  let score = 0, level = 1, timeLeft = 60;
+  let shipX = window.innerWidth / 2 - 25;
+  let bullets = [];
+  let problems = [];
+  let mode = '+';
+  let highScore = localStorage.getItem('mathHighScore') || 0;
+
+  highScoreEl.innerText = `High Score: ${highScore}`;
+
+  function playSound(id) {
+    const sound = document.getElementById(id);
+    if (sound) {
+      sound.currentTime = 0;
+      sound.play();
+    }
+  }
+
+  function randomProblem() {
+    let a = Math.floor(Math.random() * (10 + level * 2));
+    let b = Math.floor(Math.random() * (10 + level * 2));
+    if (mode === '-' && b > a) [a, b] = [b, a];
+    if (mode === '/') {
+      b = Math.floor(Math.random() * 9) + 1;
+      a = b * (Math.floor(Math.random() * 5) + 1);
+    }
+    return {
+      question: `${a} ${mode} ${b}`,
+      answer: eval(`${a}${mode}${b}`)
+    };
+  }
+
+  function spawnProblems() {
+    const total = 4 + Math.floor(level / 2);
+    const correctIndex = Math.floor(Math.random() * total);
+    problems.forEach(p => p.el.remove());
+    problems = [];
+
+    for (let i = 0; i < total; i++) {
+      const { question, answer } = randomProblem();
+      const el = document.createElement('div');
+      el.className = 'problem';
+      el.innerText = question;
+      const x = 50 + i * (window.innerWidth / total);
+      const problem = { el, x, y: 0, answer, isCorrect: i === correctIndex };
+      el.style.left = `${x}px`;
+      el.style.top = `0px`;
+      game.appendChild(el);
+      problems.push(problem);
+    }
+  }
+
+  function moveProblems() {
+    problems.forEach(p => {
+      p.y += 1 + level * 0.5;
+      p.el.style.top = `${p.y}px`;
+      if (p.y > window.innerHeight) endGame();
+    });
+  }
+
+  function fireBullet() {
+    const bullet = document.createElement('div');
+    bullet.className = 'bullet';
+    bullet.style.left = `${shipX + 22}px`;
+    bullet.style.top = `${window.innerHeight - 60}px`;
+    game.appendChild(bullet);
+    bullets.push({ el: bullet, y: window.innerHeight - 60 });
+    playSound('sndShoot');
+  }
+
+  function moveBullets() {
+    bullets.forEach((b, bi) => {
+      b.y -= 8;
+      b.el.style.top = `${b.y}px`;
+      problems.forEach((p, pi) => {
+        const px = parseInt(p.el.style.left);
+        const py = parseInt(p.el.style.top);
+        if (
+          b.y < py + 30 && b.y > py &&
+          b.el.offsetLeft > px && b.el.offsetLeft < px + 80
+        ) {
+          if (p.isCorrect) {
+            score++;
+            level = Math.floor(score / 5) + 1;
+            spawnProblems();
+            playSound('sndCorrect');
+          } else {
+            score = Math.max(0, score - 1);
+            playSound('sndWrong');
+          }
+          updateUI();
+          b.el.remove();
+          bullets.splice(bi, 1);
+        }
+      });
+      if (b.y < 0) {
+        b.el.remove();
+        bullets.splice(bi, 1);
+      }
+    });
+  }
+
+  function updateUI() {
+    scoreEl.innerText = `Score: ${score}`;
+    levelEl.innerText = `Level: ${level}`;
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem('mathHighScore', highScore);
+      highScoreEl.innerText = `High Score: ${highScore}`;
+    }
+  }
+
+  function endGame() {
+    saveToLeaderboard(playerName, score);
+    showLeaderboard();
+    alert(`Game Over!\n${playerName}'s Final Score: ${score}`);
+    location.reload();
+  }
+
+  function gameTick() {
+    moveProblems();
+    moveBullets();
+  }
+
+  function gameTimer() {
+    timeLeft--;
+    timerEl.innerText = `Time: ${timeLeft}`;
+    if (timeLeft <= 0) endGame();
+  }
+
+  function spawnPowerUp() {
+    const el = document.createElement('div');
+    el.className = 'problem';
+    el.innerText = '⚡';
+    el.style.background = 'gold';
+    let x = Math.random() * (window.innerWidth - 50);
+    el.style.left = `${x}px`;
+    el.style.top = `0px`;
+    game.appendChild(el);
+
+    let y = 0;
+    const interval = setInterval(() => {
+      y += 3;
+      el.style.top = `${y}px`;
+      if (y > window.innerHeight) {
+        el.remove();
+        clearInterval(interval);
+      }
+      const shipTop = window.innerHeight - 60;
+      if (y > shipTop && x > shipX - 30 && x < shipX + 50) {
+        score += 5;
+        updateUI();
+        el.remove();
+        clearInterval(interval);
+        playSound('sndCorrect');
+      }
+    }, 30);
+  }
+
+  function saveToLeaderboard(name, score) {
+    const lb = JSON.parse(localStorage.getItem("mathLeaderboard") || "[]");
+    lb.push({ name, score });
+    lb.sort((a, b) => b.score - a.score);
+    localStorage.setItem("mathLeaderboard", JSON.stringify(lb.slice(0, 5)));
+  }
+
+  function showLeaderboard() {
+    const lb = JSON.parse(localStorage.getItem("mathLeaderboard") || "[]");
+    let list = lb.map((e, i) => `${i + 1}. ${e.name}: ${e.score}`).join('\n');
+    alert("🏆 Leaderboard:\n\n" + list);
+  }
+
+  function startGame() {
+    ship.style.left = `${shipX}px`;
+    spawnProblems();
+    setInterval(gameTick, 30);
+    setInterval(gameTimer, 1000);
+    setInterval(spawnPowerUp, 15000);
+    const bgMusic = document.getElementById("bgMusic");
+    bgMusic.volume = 0.2;
+    bgMusic.play();
+  }
+
+  // Controls
+  document.getElementById('leftBtn').onclick = () => {
+    shipX -= 30;
+    shipX = Math.max(0, shipX);
+    ship.style.left = `${shipX}px`;
+  };
+  document.getElementById('rightBtn').onclick = () => {
+    shipX += 30;
+    shipX = Math.min(window.innerWidth - 50, shipX);
+    ship.style.left = `${shipX}px`;
+  };
+  document.getElementById('fireBtn').onclick = fireBullet;
+
+  modeSelect.onchange = () => {
+    mode = modeSelect.value;
+    score = 0;
+    level = 1;
+    timeLeft = 60;
+    updateUI();
+    spawnProblems();
+  };
+
+  // Start
+  startGame();
+</script>
+
+</body>
+</html>
