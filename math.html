@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Math Star Battle — Scalable Controls</title>
+  <title>Math Star Battle with Effects</title>
   <style>
     body {
-      margin:0; padding:0;
+      margin: 0;
+      padding: 0;
       background: radial-gradient(circle at center, #000010, #000000);
       color: #0ff;
       font-family: 'Segoe UI', sans-serif;
@@ -99,6 +100,23 @@
       user-select: none;
       z-index: 100;
     }
+    .burstEffect {
+      position: absolute;
+      pointer-events: none;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%);
+      width: 20px; height: 20px;
+      transform: scale(0);
+      opacity: 1;
+      animation: burstAnim 0.6s ease-out forwards;
+      z-index: 150;
+    }
+    @keyframes burstAnim {
+      to {
+        transform: scale(3);
+        opacity: 0;
+      }
+    }
     #aiTutor {
       position: absolute;
       bottom: 20px;
@@ -139,12 +157,11 @@
         <polygon points="32,4 39,24 60,24 42,38 49,58 32,44 15,58 22,38 4,24 25,24" />
       </svg>
     </div>
-    <div id="aiTutor"><div class="starOrb"></div><div id="aiMessage">Welcome, math star!</div></div>
+    <div id="aiTutor"><div class="starOrb"></div><div id="aiMessage">Get ready!</div></div>
   </div>
 
 <script>
 (() => {
-  // Elements
   const scoreEl = document.getElementById('score');
   const timerEl = document.getElementById('timer');
   const questionEl = document.getElementById('question');
@@ -152,7 +169,6 @@
   const ship = document.getElementById('ship');
   const aiMessage = document.getElementById('aiMessage');
 
-  // Game state
   let score = 0;
   let timeLeft = 60;
   let timerInterval = null;
@@ -162,10 +178,9 @@
   let floatDir = [];
   let shipIdx = 0;
   let projectile = null;
-  let speed = 3;  // base speed
+  let speed = 3;
   let wrongCount = 0;
 
-  // AI tutor messages
   const tips = [
     "You're shining bright!",
     "Stay focused on the math star",
@@ -185,23 +200,19 @@
   }
 
   function generateQA() {
-    // scale difficulty with score
-    const diff = Math.min(10 + Math.floor(score/10), 50);
-    const op = '+';  // for simplicity, using addition for now; you can expand
+    const diff = Math.min(10 + Math.floor(score / 10), 50);
     const a = randomInt(1, diff);
     const b = randomInt(1, diff);
-    const question = `${a} + ${b}`;
     const answer = a + b;
-    // generate answers set
+    const question = `${a} + ${b}`;
     const arr = new Set([answer]);
-    while(arr.size < 5) {
+    while (arr.size < 5) {
       let cand = answer + randomInt(-diff, diff);
-      if(cand < 0) cand = 0;
+      if (cand < 0) cand = 0;
       arr.add(cand);
     }
     const ansArr = Array.from(arr);
-    // shuffle
-    for(let i = ansArr.length - 1; i > 0; i--) {
+    for (let i = ansArr.length - 1; i > 0; i--) {
       const j = randomInt(0, i);
       [ansArr[i], ansArr[j]] = [ansArr[j], ansArr[i]];
     }
@@ -219,42 +230,44 @@
     currentAnswer = answer;
 
     const contRect = answersContainer.getBoundingClientRect();
-    const w = contRect.width, h = contRect.height;
+    const w = answersContainer.clientWidth;
+    const h = answersContainer.clientHeight;
 
-    ansArr.forEach((val,i) => {
+    ansArr.forEach((val, i) => {
       const bubble = document.createElement('div');
       bubble.className = 'answerBubble';
       bubble.textContent = val;
       answersContainer.appendChild(bubble);
-      answers.push({el: bubble, val});
+      answers.push({ el: bubble, val });
 
-      // random initial pos
       const x = randomInt(10, w - 80);
       const y = randomInt(10, h - 80);
-      floatPos.push({x, y});
+      floatPos.push({ x, y });
       floatDir.push({
-        x: (Math.random()*2 -1) * 0.5,
-        y: (Math.random()*2 -1) * 0.5
+        x: (Math.random() - 0.5) * 0.6,
+        y: (Math.random() - 0.5) * 0.6
       });
-    }
 
-    );
+      // Mobile / desktop tap listener
+      bubble.addEventListener('click', () => {
+        attemptHit(i);
+      });
+    });
+
     shipIdx = 0;
     positionShip();
   }
 
   function animateBubbles() {
-    const contRect = answersContainer.getBoundingClientRect();
-    const w = contRect.width, h = contRect.height;
-
-    answers.forEach((ans,i) => {
+    const w = answersContainer.clientWidth;
+    const h = answersContainer.clientHeight;
+    answers.forEach((ans, i) => {
       let pos = floatPos[i];
       let dir = floatDir[i];
       pos.x += dir.x;
       pos.y += dir.y;
-      // bounce edges
-      if(pos.x < 0 || pos.x > w - 80) dir.x = -dir.x;
-      if(pos.y < 0 || pos.y > h - 80) dir.y = -dir.y;
+      if (pos.x < 0 || pos.x > w - 80) dir.x = -dir.x;
+      if (pos.y < 0 || pos.y > h - 80) dir.y = -dir.y;
       floatPos[i] = pos;
       floatDir[i] = dir;
       ans.el.style.left = pos.x + 'px';
@@ -263,15 +276,15 @@
   }
 
   function positionShip() {
-    if(answers.length === 0) return;
-    const bubbleCenters = answers.map(ans => {
-      const rect = ans.el.getBoundingClientRect();
+    if (answers.length === 0) return;
+    const bubbleCenters = answers.map(a => {
+      const r = a.el.getBoundingClientRect();
       const cont = answersContainer.getBoundingClientRect();
-      return rect.left + rect.width/2 - cont.left;
+      return r.left + r.width/2 - cont.left;
     });
-    if(shipIdx < 0) shipIdx = 0;
-    if(shipIdx >= bubbleCenters.length) shipIdx = bubbleCenters.length -1;
-    const x = bubbleCenters[shipIdx] - ship.offsetWidth/2;
+    if (shipIdx < 0) shipIdx = 0;
+    if (shipIdx >= bubbleCenters.length) shipIdx = bubbleCenters.length -1;
+    const x = bubbleCenters[shipIdx] - ship.clientWidth/2;
     ship.style.left = x + 'px';
   }
 
@@ -280,69 +293,47 @@
     positionShip();
   }
 
-  function fire() {
-    if(projectile) return;
-    const proj = document.createElement('div');
-    proj.className = 'projectile';
-    answersContainer.appendChild(proj);
+  function fireProjectile() {
+    attemptHit(shipIdx);
+  }
 
-    const shipRect = ship.getBoundingClientRect();
+  function attemptHit(idx) {
+    if (projectile) return;
+
+    const bubble = answers[idx];
+    if (!bubble) return;
+
+    const targetEl = bubble.el;
     const contRect = answersContainer.getBoundingClientRect();
-    const startX = shipRect.left + shipRect.width/2 - contRect.left - 20;
-    const startY = answersContainer.clientHeight + 10;
-    proj.style.left = startX + 'px';
-    proj.style.top = startY + 'px';
-    projectile = { el: proj, x: startX, y: startY };
+    const tRect = targetEl.getBoundingClientRect();
 
-    const targetBubble = answers[shipIdx].el;
-    const tRect = targetBubble.getBoundingClientRect();
     const targetX = tRect.left + tRect.width/2 - contRect.left - 20;
     const targetY = tRect.top + tRect.height/2 - contRect.top - 20;
 
-    const dx = targetX - startX;
-    const dy = targetY - startY;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    const stepCount = dist / (speed * 2 + 2);
-    const sx = dx / stepCount;
-    const sy = dy / stepCount;
-    let step = 0;
+    // Burst effect if correct
+    if (bubble.val === currentAnswer) {
+      // Show burst
+      const burst = document.createElement('div');
+      burst.className = 'burstEffect';
+      answersContainer.appendChild(burst);
+      burst.style.left = `${targetX}px`;
+      burst.style.top = `${targetY}px`;
 
-    function anim() {
-      if(!projectile) return;
-      projectile.x += sx;
-      projectile.y += sy;
-      projectile.el.style.left = projectile.x + 'px';
-      projectile.el.style.top = projectile.y + 'px';
+      // Remove burst after animation
+      burst.addEventListener('animationend', () => {
+        burst.remove();
+      });
 
-      step++;
-      const d2 = Math.sqrt((projectile.x - targetX)**2 + (projectile.y - targetY)**2);
-      if(d2 < 10 || step >= stepCount) {
-        checkAnswer(answers[shipIdx].val);
-        projectile.el.remove();
-        projectile = null;
-        return;
-      }
-      requestAnimationFrame(anim);
-    }
-    requestAnimationFrame(anim);
-  }
-
-  function checkAnswer(val) {
-    if(Number(val) === currentAnswer) {
       score += 10 + speed * 2;
-      wrongCount = 0;
       setupAnswers();
+      updateScoreDisplay();
       aiMessage.textContent = tips[randomInt(0, tips.length -1)];
     } else {
       wrongCount++;
       score = Math.max(0, score - 5);
-      aiMessage.textContent = "Not quite — try again!";
-      if(wrongCount >= 3) {
-        aiMessage.textContent = "Hint: focus on the question above!";
-        wrongCount = 0;
-      }
+      aiMessage.textContent = "❌ Oops, try again!";
+      updateScoreDisplay();
     }
-    updateScoreDisplay();
   }
 
   function startTimer() {
@@ -352,10 +343,9 @@
     timerInterval = setInterval(() => {
       timeLeft--;
       updateTimerDisplay();
-      if(timeLeft <= 0) {
+      if (timeLeft <= 0) {
         clearInterval(timerInterval);
-        aiMessage.textContent = `Time's up! Final score: ${score}`;
-        // disable further play
+        aiMessage.textContent = `Time’s up! Final score: ${score}`;
         window.removeEventListener('keydown', onKeyDown);
         window.removeEventListener('touchstart', onTouch);
       }
@@ -363,29 +353,29 @@
   }
 
   function onKeyDown(e) {
-    if(e.key === 'ArrowLeft') moveShip(-1);
-    else if(e.key === 'ArrowRight') moveShip(1);
-    else if(e.key === ' ') fire();
+    if (e.key === 'ArrowLeft') moveShip(-1);
+    else if (e.key === 'ArrowRight') moveShip(1);
+    else if (e.key === ' ') {
+      fireProjectile();
+      e.preventDefault();
+    }
   }
 
   function onTouch(e) {
     const touch = e.touches[0];
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    if(touch.clientY > height * 0.6) {
-      // bottom area: decide left or right
-      if(touch.clientX < width/2) moveShip(-1);
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    if (touch.clientY > h * 0.6) {
+      if (touch.clientX < w / 2) moveShip(-1);
       else moveShip(1);
     } else {
-      // top half: fire
-      fire();
+      fireProjectile();
     }
   }
 
-  // Initialize
-  setupAnswers();
   updateScoreDisplay();
   startTimer();
+  setupAnswers();
   requestAnimationFrame(function loop(){
     animateBubbles();
     requestAnimationFrame(loop);
