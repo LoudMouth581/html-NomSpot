@@ -1,323 +1,268 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Math Star Battle with AI Tutor</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-    body {
-      margin: 0;
-      background: radial-gradient(circle at center, #000010, #000000);
-      font-family: 'Orbitron', monospace;
-      color: #0ff;
-      overflow-x: hidden;
-      user-select: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100vh;
-      padding: 0 10px 20px;
-    }
-    #game {
-      position: relative;
-      width: 100%;
-      max-width: 700px;
-      height: 100%;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-sizing: border-box;
-      padding: 10px 0;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Math Star Battle</title>
+<style>
+  body {
+    margin:0; padding:0;
+    background: linear-gradient(135deg, #0b0c1a, #1a2140);
+    color:#0ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+  }
+  #game {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 10px 20px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  #questionBillboard {
+    font-size: 2rem;
+    font-weight: 700;
+    background: rgba(0,255,255,0.15);
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+    min-height: 3.5rem;
+    user-select:none;
+  }
+  #answersContainer {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    border: 2px solid #0ff;
+    border-radius: 16px;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #07111d 0%, #00081f 90%);
+    margin-bottom: 30px;
+  }
+  .answerBubble {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #7ef9ff, #00fff7);
+    clip-path: polygon(
+      50% 0%, 61% 35%, 98% 35%, 68% 57%,
+      79% 91%, 50% 70%, 21% 91%, 32% 57%,
+      2% 35%, 39% 35%
+    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: #00444d;
+    text-shadow: 0 0 6px #00fff7;
+    cursor: pointer;
+    user-select:none;
+    transition: transform 0.2s ease;
+  }
+  .answerBubble:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 12px #00fff7;
+  }
+  #ship {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin-bottom: 20px;
+  }
+  #ship svg polygon {
+    fill: #ffd700;
+    filter: drop-shadow(0 0 6px #ffdd55);
+  }
+  #shipContainer {
+    width: 100%;
+    height: 80px;
+    position: relative;
+    margin-bottom: 30px;
+    border-top: 2px solid #0ff;
+    background: linear-gradient(90deg, #002a33, #001c26);
+  }
+  #ship {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    transition: left 0.3s ease;
+  }
+  #controls {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .btn {
+    font-size: 1.5rem;
+    background: #00fff7;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    user-select:none;
+    color: #00363b;
+    font-weight: 700;
+    box-shadow: 0 0 10px #00fff7;
+    transition: background-color 0.3s ease;
+  }
+  .btn:hover {
+    background: #00c8b9;
+  }
+  #speedControl {
+    width: 180px;
+    -webkit-appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  #speedControl:focus {
+    outline: none;
+  }
+  /* Slider track */
+  #speedControl::-webkit-slider-runnable-track {
+    height: 12px;
+    background: #00fff7;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #00fff7;
+  }
+  #speedControl::-moz-range-track {
+    height: 12px;
+    background: #00fff7;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #00fff7;
+  }
+  /* Slider thumb (star shape) */
+  #speedControl::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 40px;
+    height: 40px;
+    background: #ffd700;
+    clip-path: polygon(
+      50% 0%, 61% 35%, 98% 35%, 68% 57%,
+      79% 91%, 50% 70%, 21% 91%, 32% 57%,
+      2% 35%, 39% 35%
+    );
+    box-shadow: 0 0 10px #ffdd55;
+    margin-top: -14px;
+    transition: background 0.3s ease;
+  }
+  #speedControl::-webkit-slider-thumb:hover {
+    background: #ffdd00;
+  }
+  #speedControl::-moz-range-thumb {
+    width: 40px;
+    height: 40px;
+    background: #ffd700;
+    clip-path: polygon(
+      50% 0%, 61% 35%, 98% 35%, 68% 57%,
+      79% 91%, 50% 70%, 21% 91%, 32% 57%,
+      2% 35%, 39% 35%
+    );
+    box-shadow: 0 0 10px #ffdd55;
+    transition: background 0.3s ease;
+    border: none;
+  }
 
-    /* Header with scoreboard and timer */
-    #header {
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 15px;
-      border: 2px solid #0ff;
-      border-radius: 20px;
-      background: #001122;
-      box-shadow: 0 0 30px #0ff;
-      font-size: 1.3rem;
-      font-weight: 700;
-      user-select: none;
-      margin-bottom: 10px;
-    }
-    #scoreboard, #timer {
-      flex: 1;
-      text-align: center;
-    }
+  #modeSelector {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    font-weight: 600;
+  }
+  #modeSelector label {
+    cursor: pointer;
+  }
 
-    /* Question Billboard */
-    #questionBillboard {
-      margin: 0 auto 20px;
-      background: #001122;
-      border: 3px solid #0ff;
-      border-radius: 30px;
-      box-shadow: 0 0 35px #0ff;
-      font-size: 2rem;
-      font-weight: 700;
-      padding: 15px 30px;
-      max-width: 600px;
-      text-align: center;
-      min-height: 4rem;
-      user-select: none;
-    }
+  /* Projectile star */
+  .projectile {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #fffc33, #f7d64e);
+    clip-path: polygon(
+      50% 0%, 61% 35%, 98% 35%, 68% 57%,
+      79% 91%, 50% 70%, 21% 91%, 32% 57%,
+      2% 35%, 39% 35%
+    );
+    box-shadow: 0 0 15px #fff850;
+    filter: drop-shadow(0 0 8px #fff850);
+    pointer-events: none;
+    user-select:none;
+    z-index: 100;
+  }
 
-    /* Answers container — relative for floating stars */
+  /* AI Tutor */
+  #aiTutor {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 255, 255, 0.15);
+    padding: 12px 18px 12px 60px;
+    border-radius: 20px;
+    color: #00ffff;
+    font-weight: 600;
+    max-width: 320px;
+    user-select:none;
+    box-shadow: 0 0 15px #0ff;
+  }
+  #aiTutor .starOrb {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #7ef9ff, #00fff7);
+    clip-path: polygon(
+      50% 0%, 61% 35%, 98% 35%, 68% 57%,
+      79% 91%, 50% 70%, 21% 91%, 32% 57%,
+      2% 35%, 39% 35%
+    );
+    box-shadow: 0 0 20px #00fff7;
+    filter: drop-shadow(0 0 10px #00fff7);
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
     #answersContainer {
-      position: relative;
-      height: 250px;
-      max-width: 600px;
-      margin: 0 auto 30px;
-      background: transparent;
-      border-radius: 20px;
-      overflow: visible;
-      user-select: none;
+      height: 180px;
     }
-
-    /* Star bubble shape for answers */
     .answerBubble {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(45deg, #00ffff, #006666);
-      clip-path: polygon(
-        50% 0%, 61% 35%, 98% 35%, 68% 57%,
-        79% 91%, 50% 70%, 21% 91%, 32% 57%,
-        2% 35%, 39% 35%
-      );
-      box-shadow: 0 0 18px #0ff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #002222;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.3s ease;
-      z-index: 10;
-      filter: drop-shadow(0 0 6px #00ffff);
+      width: 50px;
+      height: 50px;
+      font-size: 1.2rem;
     }
-    .answerBubble:hover {
-      transform: scale(1.3);
-      box-shadow: 0 0 30px #0ff, 0 0 45px #0ff;
-      color: #00ffff;
-      z-index: 20;
-    }
-
-    /* Ship */
     #ship {
-      position: relative;
-      margin: 0 auto 25px;
-      width: 60px;
-      height: 60px;
-      filter: drop-shadow(0 0 12px #0ff);
-      cursor: pointer;
-      user-select: none;
-      transition: left 0.3s ease;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 15;
-    }
-    #ship svg {
-      fill: #0ff;
-      stroke: #0cc;
-      stroke-width: 2;
-    }
-
-    /* Projectile star */
-    .projectile {
-      position: absolute;
       width: 40px;
       height: 40px;
-      pointer-events: none;
-      filter: drop-shadow(0 0 8px #ff0);
-      animation: glowStar 1s infinite alternate;
-      z-index: 30;
-      user-select: none;
     }
-    @keyframes glowStar {
-      from { filter: drop-shadow(0 0 8px #ff0);}
-      to { filter: drop-shadow(0 0 20px #ff0);}
-    }
-
-    /* Controls container */
-    #controls {
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-    .btn {
-      background: #001122;
-      border: 2px solid #0ff;
-      border-radius: 14px;
-      color: #0ff;
-      font-weight: 700;
-      font-size: 22px;
-      padding: 12px 22px;
-      cursor: pointer;
-      transition: background 0.3s, color 0.3s;
-      user-select: none;
-      min-width: 58px;
-      text-align: center;
-      user-select:none;
-    }
-    .btn:hover {
-      background: #0ff;
-      color: #001122;
-    }
-
-    /* Speed slider as star */
     #speedControl {
-      width: 160px;
-      -webkit-appearance: none;
-      background: transparent;
-      margin: 0 15px;
-      cursor: pointer;
-      user-select:none;
+      width: 130px;
     }
-    #speedControl::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 40px;
-      height: 40px;
-      background: gold;
-      clip-path: polygon(
-        50% 0%, 61% 35%, 98% 35%, 68% 57%,
-        79% 91%, 50% 70%, 21% 91%, 32% 57%,
-        2% 35%, 39% 35%
-      );
-      cursor: pointer;
-      box-shadow: 0 0 24px gold;
-      transition: background 0.3s ease;
-      user-select:none;
-    }
-    #speedControl::-webkit-slider-thumb:hover {
-      background: #ffaa00;
-    }
-    #speedControl:focus {
-      outline: none;
-    }
-    #speedControl::-moz-range-thumb {
-      width: 40px;
-      height: 40px;
-      background: gold;
-      clip-path: polygon(
-        50% 0%, 61% 35%, 98% 35%, 68% 57%,
-        79% 91%, 50% 70%, 21% 91%, 32% 57%,
-        2% 35%, 39% 35%
-      );
-      cursor: pointer;
-      box-shadow: 0 0 24px gold;
-      user-select:none;
-    }
-
-    /* Mode selector */
-    #modeSelector {
-      margin: 15px auto 0;
-      max-width: 600px;
-      text-align: center;
-      user-select:none;
-    }
-    #modeSelector label {
-      margin: 0 18px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 1.3rem;
-      user-select:none;
-    }
-    #modeSelector input {
-      margin-right: 8px;
-      cursor: pointer;
-      user-select:none;
-    }
-
-    /* AI Tutor */
     #aiTutor {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #003344dd;
-      border: 2px solid #0ff;
-      border-radius: 40px;
-      width: 280px;
-      padding: 12px 20px 14px 80px;
-      box-shadow: 0 0 30px #0ffcc;
-      color: #0ff;
-      font-weight: 700;
-      font-size: 1rem;
-      user-select:none;
-      display: flex;
-      align-items: center;
-      z-index: 50;
-      animation: fadeIn 1s ease forwards;
+      max-width: 220px;
+      font-size: 0.9rem;
+      padding-left: 50px;
     }
     #aiTutor .starOrb {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 60px;
-      height: 60px;
-      background: radial-gradient(circle at center, #00ffff, #004466);
-      clip-path: polygon(
-        50% 0%, 61% 35%, 98% 35%, 68% 57%,
-        79% 91%, 50% 70%, 21% 91%, 32% 57%,
-        2% 35%, 39% 35%
-      );
-      box-shadow: 0 0 30px #0ff;
-      filter: drop-shadow(0 0 15px #0ff);
-      animation: pulseOrb 3s infinite ease-in-out;
-      user-select:none;
+      width: 28px;
+      height: 28px;
+      top: 8px;
+      left: 10px;
     }
-    @keyframes pulseOrb {
-      0%, 100% { box-shadow: 0 0 30px #0ff; }
-      50% { box-shadow: 0 0 50px #0ff; }
-    }
-    @keyframes fadeIn {
-      from {opacity:0; transform: translateY(20px);}
-      to {opacity:1; transform: translateY(0);}
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 480px) {
-      #answersContainer {
-        height: 200px;
-      }
-      .answerBubble {
-        width: 60px;
-        height: 60px;
-        font-size: 1.4rem;
-      }
-      #ship {
-        width: 45px;
-        height: 45px;
-      }
-      .btn {
-        font-size: 18px;
-        padding: 10px 16px;
-      }
-      #aiTutor {
-        width: 90vw;
-        bottom: 10px;
-        right: 5vw;
-        padding-left: 70px;
-        font-size: 0.9rem;
-      }
-      #aiTutor .starOrb {
-        width: 45px;
-        height: 45px;
-        left: 8px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
   <div id="game" role="main" aria-label="Math Star Battle game">
@@ -330,10 +275,12 @@
 
     <section id="answersContainer" aria-label="Answer options" role="list" tabindex="0"></section>
 
-    <div id="ship" role="img" aria-label="Your star shooter" tabindex="0" >
-      <svg viewBox="0 0 64 64" width="60" height="60" aria-hidden="true" focusable="false">
-        <polygon points="32 2 39 22 62 24 43 37 49 60 32 48 15 60 21 37 2 24 25 22" />
-      </svg>
+    <div id="shipContainer" aria-label="Ship movement area">
+      <div id="ship" role="img" aria-label="Your star shooter" tabindex="0" >
+        <svg viewBox="0 0 64 64" width="60" height="60" aria-hidden="true" focusable="false">
+          <polygon points="32 2 39 22 62 24 43 37 49 60 32 48 15 60 21 37 2 24 25 22" />
+        </svg>
+      </div>
     </div>
 
     <div id="controls" aria-label="Game controls">
@@ -352,7 +299,7 @@
 
   <aside id="aiTutor" role="complementary" aria-live="polite" aria-atomic="true">
     <div class="starOrb" aria-hidden="true"></div>
-    <div id="aiMessage">Let's warm up with some addition! Shoot the right star.</div>
+    <div id="aiMessage">Get ready for a starry math battle!</div>
   </aside>
 
 <script>
@@ -366,199 +313,167 @@
   const btnRight = document.getElementById('btnRight');
   const btnFire = document.getElementById('btnFire');
   const speedControl = document.getElementById('speedControl');
-  const modeRadios = document.querySelectorAll('#modeSelector input[name="mode"]');
   const aiMessage = document.getElementById('aiMessage');
-
-  const modes = {
-    addition: '+',
-    subtraction: '-',
-    opponent: 'opponent'
-  };
+  const modeRadios = document.querySelectorAll('input[name="mode"]');
 
   let currentMode = 'addition';
-  let speed = Number(speedControl.value);
   let score = 0;
   let timeLeft = 60;
   let timerInterval = null;
   let wrongCount = 0;
 
-  let shipPosIndex = 0;
-  let projectile = null;
-  const projectileSpeedBase = 6;
-
+  // Store answer elements and their float data
   let answers = [];
-  let currentAnswer = null;
-  let currentQuestion = '';
-
-  // Animation offsets and movement data for floating stars
   let floatDirections = [];
   let floatPositions = [];
 
-  // For AI Tutor tips
+  let shipPosIndex = 0;
+  let projectile = null;
+  let speed = Number(speedControl.value);
+
+  const maxAnswers = 5;
+
+  // AI Tutor tips for encouragement/hints
   const tutorTips = {
     addition: [
-      "Great start! Addition is the foundation.",
-      "Try to shoot quickly for bonus points!",
-      "Remember: adding zero doesn't change the number.",
-      "Watch the stars and trust your instincts!"
+      "Great job adding stars! Keep it up!",
+      "Remember, adding means putting numbers together.",
+      "Try to answer quickly for bonus points!",
+      "Keep your eyes on the stars!"
     ],
     subtraction: [
-      "Subtraction sharpens your math skills!",
-      "Keep an eye on the smaller stars.",
-      "Negative answers are tricky, but here we keep it positive.",
-      "You’re doing great! Stay focused."
+      "Nice work subtracting stars!",
+      "Think of taking stars away.",
+      "You can do it, keep practicing!",
+      "Subtracting gets easier with practice!"
     ],
     opponent: [
-      "This is tough — multiple operations coming your way!",
-      "Use your math powers to outscore your opponent!",
-      "Think fast! Time's ticking!",
-      "Remember, every star counts!"
+      "Math is fun! Show them your skills!",
+      "Focus and aim carefully!",
+      "Choose the right star quickly!",
+      "You're a math star!"
     ]
   };
 
-  // Sounds - simple beeps using Web Audio API (no files)
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-  function playBeep(freq = 440, duration = 150) {
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    osc.type = 'triangle';
-    osc.frequency.value = freq;
-    osc.start();
-    gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + duration / 1000);
+  function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  // Timer management
-  function startTimer() {
-    if(timerInterval) clearInterval(timerInterval);
-    timeLeft = 60;
-    updateTimerDisplay();
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      updateTimerDisplay();
-      if(timeLeft <= 0) {
-        clearInterval(timerInterval);
-        gameOver();
-      }
-    }, 1000);
-  }
+  // Generate question and answers based on mode and level of difficulty (scale with score)
+  function generateQuestionAndAnswers() {
+    let a, b, question, correctAns;
+    const difficulty = Math.min(10, Math.floor(score / 20) + 2);
 
-  function updateTimerDisplay() {
-    timerEl.textContent = `Time: ${timeLeft}`;
-  }
-
-  // Score update
-  function updateScore() {
-    scoreboard.textContent = `Score: ${score}`;
-  }
-
-  // Generate math question
-  function generateQuestion() {
-    let op = modes[currentMode];
-    if(currentMode === 'opponent') {
+    if(currentMode === 'addition') {
+      a = randomInt(1, difficulty * 10);
+      b = randomInt(1, difficulty * 10);
+      correctAns = a + b;
+      question = `${a} + ${b} = ?`;
+    } else if(currentMode === 'subtraction') {
+      a = randomInt(difficulty * 5, difficulty * 10 + 10);
+      b = randomInt(1, a);
+      correctAns = a - b;
+      question = `${a} - ${b} = ?`;
+    } else { // opponent mode with mixed operators
       const ops = ['+', '-', '*', '/'];
-      op = ops[Math.floor(Math.random() * ops.length)];
-    }
-    // Difficulty scaling based on score
-    let difficulty = Math.min(10 + Math.floor(score / 5) * 5, 100);
-    let a, b;
+      const op = ops[randomInt(0, ops.length -1)];
 
-    if(op === '+' || op === '-') {
-      a = Math.floor(Math.random() * difficulty) + 1;
-      b = Math.floor(Math.random() * difficulty) + 1;
-    } else if(op === '*') {
-      a = Math.floor(Math.random() * (difficulty / 5)) + 1;
-      b = Math.floor(Math.random() * (difficulty / 5)) + 1;
-    } else if(op === '/') {
-      b = Math.floor(Math.random() * (difficulty / 5)) + 1;
-      a = b * (Math.floor(Math.random() * (difficulty / 5)) + 1);
-    }
-
-    let questionText = `${a} ${op} ${b}`;
-    let answerVal = eval(questionText);
-    if(op === '/') answerVal = Math.round(answerVal * 100) / 100; // max 2 decimals
-
-    return { questionText, answerVal };
-  }
-
-  // Generate 5 answer options including correct answer and distractors
-  function generateAnswers(correctVal) {
-    const choices = new Set();
-    choices.add(correctVal);
-
-    while(choices.size < 5) {
-      let delta = (Math.random() * 10) - 5;
-      let distractor = correctVal + delta;
-      if(typeof correctVal === 'number' && !Number.isInteger(correctVal)) {
-        distractor = Math.round(distractor * 100) / 100;
+      if(op === '+') {
+        a = randomInt(1, difficulty * 10);
+        b = randomInt(1, difficulty * 10);
+        correctAns = a + b;
+        question = `${a} + ${b} = ?`;
+      } else if(op === '-') {
+        a = randomInt(difficulty * 5, difficulty * 10 + 10);
+        b = randomInt(1, a);
+        correctAns = a - b;
+        question = `${a} - ${b} = ?`;
+      } else if(op === '*') {
+        a = randomInt(1, difficulty + 3);
+        b = randomInt(1, difficulty + 3);
+        correctAns = a * b;
+        question = `${a} × ${b} = ?`;
       } else {
-        distractor = Math.round(distractor);
-      }
-      if(distractor !== correctVal && distractor >= 0) {
-        choices.add(distractor);
+        // Division with integer results only
+        b = randomInt(1, difficulty + 3);
+        correctAns = randomInt(1, difficulty + 3);
+        a = b * correctAns;
+        question = `${a} ÷ ${b} = ?`;
       }
     }
 
-    return [...choices].sort(() => Math.random() - 0.5);
+    // Generate answers array with one correct and others as nearby randoms
+    const answersArr = [correctAns];
+    while(answersArr.length < maxAnswers) {
+      let randAns = correctAns + randomInt(-difficulty * 3, difficulty * 3);
+      if(randAns < 0) randAns = 0;
+      if(!answersArr.includes(randAns)) answersArr.push(randAns);
+    }
+
+    // Shuffle answers
+    for(let i = answersArr.length -1; i > 0; i--) {
+      const j = randomInt(0, i);
+      [answersArr[i], answersArr[j]] = [answersArr[j], answersArr[i]];
+    }
+
+    return { question, answers: answersArr, correctAns };
   }
 
-  // Clear answers container and data
-  function clearAnswers() {
+  let currentAnswer = null;
+
+  // Clear old answers and create new bubbles, position randomly inside container
+  function setupAnswers() {
     answersContainer.innerHTML = '';
     answers = [];
     floatDirections = [];
     floatPositions = [];
-  }
 
-  // Setup answers as moving star bubbles with random positions and float directions
-  function setupAnswers() {
-    clearAnswers();
-    let generated = generateQuestion();
-    currentQuestion = generated.questionText;
-    currentAnswer = generated.answerVal;
+    const { question, answers: ansArr, correctAns } = generateQuestionAndAnswers();
 
-    questionBillboard.textContent = currentQuestion;
+    currentAnswer = correctAns;
+    questionBillboard.textContent = question;
 
-    let answerVals = generateAnswers(currentAnswer);
-
-    // Calculate container boundaries
+    const containerRect = answersContainer.getBoundingClientRect();
     const containerWidth = answersContainer.clientWidth;
     const containerHeight = answersContainer.clientHeight;
 
-    answerVals.forEach((val, i) => {
+    for(let i = 0; i < ansArr.length; i++) {
       const bubble = document.createElement('div');
       bubble.className = 'answerBubble';
-      bubble.textContent = val;
       bubble.setAttribute('role', 'listitem');
-      bubble.setAttribute('aria-label', `Answer option ${val}`);
+      bubble.setAttribute('tabindex', '0');
+      bubble.textContent = ansArr[i];
+      bubble.dataset.value = ansArr[i];
 
-      // Random start position inside container
-      let posX = Math.random() * (containerWidth - 80);
-      let posY = Math.random() * (containerHeight - 80);
-
-      // Save float data
-      floatPositions.push({ x: posX, y: posY });
-      // Random float direction and speed for x and y, small values
-      floatDirections.push({
-        x: (Math.random() * 0.6 - 0.3),
-        y: (Math.random() * 0.6 - 0.3)
-      });
-
-      bubble.style.left = posX + 'px';
-      bubble.style.top = posY + 'px';
+      // Random position inside container with margin to avoid clipping
+      const margin = 80;
+      const x = randomInt(margin, containerWidth - margin);
+      const y = randomInt(margin, containerHeight - margin);
+      bubble.style.left = x + 'px';
+      bubble.style.top = y + 'px';
 
       answersContainer.appendChild(bubble);
-      answers.push({ el: bubble, val });
-    });
+
+      // Save position and random float direction
+      floatPositions.push({x, y});
+      floatDirections.push({x: (Math.random() - 0.5) * 0.6, y: (Math.random() - 0.5) * 0.6});
+
+      answers.push({el: bubble, val: ansArr[i]});
+
+      // Clicking bubble selects it (optional shortcut)
+      bubble.addEventListener('click', () => {
+        const idx = answers.findIndex(a => a.el === bubble);
+        shipPosIndex = idx;
+        updateShipPosition();
+        fireProjectile();
+      });
+    }
 
     shipPosIndex = 0;
     updateShipPosition();
   }
 
-  // Animate floating stars inside container
+  // Animate floating stars gently bouncing inside container
   function animateStars() {
     const containerWidth = answersContainer.clientWidth;
     const containerHeight = answersContainer.clientHeight;
@@ -567,41 +482,65 @@
       let pos = floatPositions[i];
       let dir = floatDirections[i];
 
-      // Update positions
       pos.x += dir.x;
       pos.y += dir.y;
 
-      // Bounce off edges
-      if(pos.x < 0 || pos.x > containerWidth - 80) dir.x = -dir.x;
-      if(pos.y < 0 || pos.y > containerHeight - 80) dir.y = -dir.y;
+      // Bounce at edges (keep margin 70 for star size)
+      if(pos.x < 20) {
+        pos.x = 20;
+        dir.x = -dir.x;
+      }
+      if(pos.x > containerWidth - 90) {
+        pos.x = containerWidth - 90;
+        dir.x = -dir.x;
+      }
+      if(pos.y < 20) {
+        pos.y = 20;
+        dir.y = -dir.y;
+      }
+      if(pos.y > containerHeight - 90) {
+        pos.y = containerHeight - 90;
+        dir.y = -dir.y;
+      }
 
-      floatDirections[i] = dir;
       floatPositions[i] = pos;
+      floatDirections[i] = dir;
 
       answer.el.style.left = pos.x + 'px';
       answer.el.style.top = pos.y + 'px';
     });
   }
 
-  // Ship positioning: moves horizontally under answersContainer area
-  // We'll move ship on a 5 position grid (matching answers)
+  // Move ship horizontally to answer bubbles index
   function updateShipPosition() {
+    if(answers.length === 0) return;
     const containerWidth = answersContainer.clientWidth;
-    const step = (containerWidth - 60) / (answers.length - 1);
-    let x = step * shipPosIndex;
 
-    ship.style.left = `${x + 10}px`; // small left margin
+    // Ship moves to align under bubble horizontally; we calculate center positions of bubbles:
+    const bubbleCenters = answers.map(a => {
+      const rect = a.el.getBoundingClientRect();
+      const parentRect = answersContainer.getBoundingClientRect();
+      return rect.left + rect.width/2 - parentRect.left;
+    });
+
+    // Clamp shipPosIndex to valid range
+    if(shipPosIndex < 0) shipPosIndex = 0;
+    if(shipPosIndex >= bubbleCenters.length) shipPosIndex = bubbleCenters.length -1;
+
+    const shipX = bubbleCenters[shipPosIndex] - ship.clientWidth / 2;
+
+    ship.style.left = shipX + 'px';
   }
 
-  // Move ship left or right
+  // Move ship left/right by one bubble
   function moveShip(dir) {
     shipPosIndex += dir;
     if(shipPosIndex < 0) shipPosIndex = 0;
-    if(shipPosIndex >= answers.length) shipPosIndex = answers.length - 1;
+    if(shipPosIndex >= answers.length) shipPosIndex = answers.length -1;
     updateShipPosition();
   }
 
-  // Fire projectile (a star) from ship position moving upward to answer bubble
+  // Fire projectile star toward current selected answer bubble
   function fireProjectile() {
     if(projectile) return; // only one at a time
 
@@ -609,11 +548,10 @@
     projectileEl.className = 'projectile';
     projectileEl.setAttribute('aria-hidden', 'true');
 
-    // Initial position: ship center top
     const shipRect = ship.getBoundingClientRect();
     const containerRect = answersContainer.getBoundingClientRect();
 
-    const startX = shipRect.left + shipRect.width / 2 - containerRect.left - 20; // offset for projectile width/2
+    const startX = shipRect.left + shipRect.width / 2 - containerRect.left - 20; // center offset
     const startY = answersContainer.clientHeight + 10;
 
     projectileEl.style.left = `${startX}px`;
@@ -622,24 +560,21 @@
     answersContainer.appendChild(projectileEl);
     projectile = { el: projectileEl, x: startX, y: startY };
 
-    // Target answer position
     const targetBubble = answers[shipPosIndex].el;
     const targetRect = targetBubble.getBoundingClientRect();
 
-    // Target center relative to container
     const targetX = targetRect.left + targetRect.width / 2 - containerRect.left - 20;
     const targetY = targetRect.top + targetRect.height / 2 - containerRect.top - 20;
 
     const dx = targetX - startX;
     const dy = targetY - startY;
+    const distance = Math.sqrt(dx*dx + dy*dy);
 
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const speedPxPerFrame = projectileSpeedBase * speed; // speed scaled by slider
+    const speedPxPerFrame = speed * 2; // Adjust speed multiplier here
 
     let stepCount = distance / speedPxPerFrame;
     let stepX = dx / stepCount;
     let stepY = dy / stepCount;
-
     let step = 0;
 
     function animate() {
@@ -652,10 +587,9 @@
       projectile.el.style.left = projectile.x + 'px';
       projectile.el.style.top = projectile.y + 'px';
 
-      // Collision detection (simple distance check)
+      // Simple collision: close enough or max steps
       let distToTarget = Math.sqrt((projectile.x - targetX) ** 2 + (projectile.y - targetY) ** 2);
       if(distToTarget < 10 || step >= stepCount) {
-        // Check answer correctness
         checkAnswer(answers[shipPosIndex].val);
 
         // Remove projectile
@@ -665,125 +599,103 @@
       }
       requestAnimationFrame(animate);
     }
-
     requestAnimationFrame(animate);
   }
 
-  // Check if the selected answer is correct
+  // Check if chosen answer is correct
   function checkAnswer(val) {
-    if(val === currentAnswer) {
+    if(Number(val) === currentAnswer) {
       score += Math.floor(10 + speed * 2 + (60 - timeLeft) * 0.5);
-      updateScore();
-      updateAIMessage(true);
-      setupAnswers();
+      aiSay("Correct! You're shining bright! ⭐");
+      resetRound();
     } else {
+      score = Math.max(0, score - 5);
       wrongCount++;
+      aiSay("Oops! Try again, you've got this!");
       if(wrongCount >= 3) {
-        updateAIMessage(false, true);
+        aiSay("Hint: Remember to focus on the math problem!");
         wrongCount = 0;
-      } else {
-        updateAIMessage(false, false);
       }
     }
+    updateScoreboard();
   }
 
-  // AI Tutor motivational and hint messages
-  function updateAIMessage(correct = true, frustrated = false) {
-    let messages;
-    if(frustrated) {
-      messages = [
-        "Oops! Don't worry, keep trying!",
-        "Math stars can be tricky. Take your time!",
-        "Let's slow down and try again!",
-        "Remember: Practice makes perfect!"
-      ];
-    } else if(correct) {
-      messages = tutorTips[currentMode] || ["You're doing awesome! Keep it up!"];
-    } else {
-      messages = [
-        "Not quite, try aiming for the right star!",
-        "Keep trying, you got this!",
-        "The right star shines brighter!",
-        "Almost there! You can do it!"
-      ];
+  // Update scoreboard and timer display
+  function updateScoreboard() {
+    scoreboard.textContent = `Score: ${score}`;
+  }
+  function updateTimer() {
+    timerEl.textContent = `Time: ${timeLeft}`;
+  }
+
+  // Reset game round with new question and answers
+  function resetRound() {
+    setupAnswers();
+  }
+
+  // AI Tutor message with some randomness from current mode tips
+  function aiSay(message) {
+    if(message) {
+      aiMessage.textContent = message;
+      return;
     }
-    const msg = messages[Math.floor(Math.random() * messages.length)];
-    aiMessage.textContent = msg;
+    const tips = tutorTips[currentMode];
+    aiMessage.textContent = tips[randomInt(0, tips.length -1)];
   }
 
-  // Main game loop for animations
+  // Timer countdown and game end
+  function startTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 60;
+    updateTimer();
+
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimer();
+      if(timeLeft <= 0) {
+        clearInterval(timerInterval);
+        aiSay(`Time's up! Your final score is ${score}. Refresh to play again!`);
+        // Disable buttons
+        btnFire.disabled = true;
+        btnLeft.disabled = true;
+        btnRight.disabled = true;
+        speedControl.disabled = true;
+      }
+    }, 1000);
+  }
+
+  // Event listeners for controls
+  btnLeft.addEventListener('click', () => moveShip(-1));
+  btnRight.addEventListener('click', () => moveShip(1));
+  btnFire.addEventListener('click', fireProjectile);
+  speedControl.addEventListener('input', () => {
+    speed = Number(speedControl.value);
+  });
+
+  modeRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      currentMode = radio.value;
+      score = 0;
+      updateScoreboard();
+      startTimer();
+      resetRound();
+      aiSay();
+    });
+  });
+
+  // Initial setup
   function gameLoop() {
     animateStars();
     requestAnimationFrame(gameLoop);
   }
 
-  // Restart game
-  function restartGame() {
-    score = 0;
-    timeLeft = 60;
-    wrongCount = 0;
-    updateScore();
-    updateTimerDisplay();
-    updateAIMessage(true);
-    setupAnswers();
-    startTimer();
-  }
-
-  // Handle mode change
-  function changeMode(newMode) {
-    currentMode = newMode;
-    restartGame();
-  }
-
-  // Keyboard controls for accessibility
-  function handleKeyDown(e) {
-    if(e.repeat) return;
-    switch(e.key) {
-      case 'ArrowLeft':
-        moveShip(-1);
-        e.preventDefault();
-        break;
-      case 'ArrowRight':
-        moveShip(1);
-        e.preventDefault();
-        break;
-      case 'Enter':
-      case ' ':
-        fireProjectile();
-        e.preventDefault();
-        break;
-    }
-  }
-
-  // Setup event listeners
-  btnLeft.addEventListener('click', () => moveShip(-1));
-  btnRight.addEventListener('click', () => moveShip(1));
-  btnFire.addEventListener('click', fireProjectile);
-  speedControl.addEventListener('input', (e) => {
-    speed = Number(e.target.value);
-  });
-  modeRadios.forEach(radio => {
-    radio.addEventListener('change', () => {
-      if(radio.checked) changeMode(radio.value);
-    });
-  });
-  window.addEventListener('keydown', handleKeyDown);
-
-  // Initialize game
-  setupAnswers();
-  updateScore();
+  updateScoreboard();
   startTimer();
+  resetRound();
+  aiSay();
+
   gameLoop();
 
-  // Ask player if they want to restart on game over
-  function gameOver() {
-    alert(`Game Over! Your final score: ${score}`);
-    if(confirm('Do you want to restart the game?')) {
-      restartGame();
-    } else {
-      aiMessage.textContent = 'Thanks for playing! Refresh to play again.';
-    }
-  }
 })();
 </script>
 </body>
