@@ -3,186 +3,265 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Addition Game - Level 1</title>
+  <title>Math Mastery Quest</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Comic Sans MS', sans-serif;
-      background: linear-gradient(to bottom right, #d0f0ff, #fff7cc);
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(#f0f9ff, #cbebff);
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px;
+      text-align: center;
     }
 
     h1 {
-      margin: 10px 0;
-      color: #333;
+      font-size: 2.5rem;
+      margin-bottom: 5px;
+    }
+
+    #titleBadge {
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 15px;
     }
 
     #mascot {
       font-size: 3rem;
-      animation: bounce 2s infinite ease-in-out;
     }
 
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+    #mascotMsg {
+      font-style: italic;
+      margin: 5px 0 15px;
+      min-height: 20px;
     }
 
     #question {
       font-size: 1.8rem;
-      background: #fff6cc;
-      padding: 15px 25px;
-      border-radius: 12px;
-      margin: 20px 0;
+      margin-bottom: 10px;
+    }
+
+    input[type="number"] {
+      font-size: 1.4rem;
+      padding: 8px;
+      width: 100px;
       text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
-    #choices {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .choice-btn {
-      padding: 15px 20px;
-      font-size: 1.2rem;
+    button {
+      padding: 10px 20px;
+      font-size: 1.1rem;
+      margin-top: 10px;
+      background: #4caf50;
+      color: white;
       border: none;
-      border-radius: 10px;
-      background-color: #ffd966;
-      box-shadow: 2px 4px 6px rgba(0,0,0,0.2);
+      border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .choice-btn:hover {
-      transform: scale(1.05);
-      background-color: #ffe291;
     }
 
     #feedback {
-      font-size: 1.4rem;
-      font-weight: bold;
-      margin-top: 10px;
-      min-height: 30px;
-      transition: opacity 0.3s ease;
-    }
-
-    #feedback.correct {
-      color: green;
-      animation: pop 0.4s ease;
-    }
-
-    #feedback.wrong {
-      color: red;
-      animation: shake 0.4s ease;
-    }
-
-    @keyframes pop {
-      0% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      50% { transform: translateX(5px); }
-      75% { transform: translateX(-5px); }
-      100% { transform: translateX(0); }
-    }
-
-    #score {
       margin-top: 15px;
+      font-weight: bold;
       font-size: 1.2rem;
-      color: #555;
+      min-height: 24px;
     }
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .correct { color: green; }
+    .wrong { color: red; }
+
+    #scoreboard {
+      margin-top: 20px;
+      font-size: 1rem;
+    }
+
+    #progressBar {
+      width: 100%;
+      background: #ccc;
+      height: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    #progress {
+      height: 10px;
+      width: 0%;
+      background: #4caf50;
+      border-radius: 5px;
+    }
+
+    #confetti {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+      display: none;
+    }
+
+    .confetti-piece {
+      width: 10px;
+      height: 10px;
+      background: gold;
+      position: absolute;
+      animation: fall 1s linear forwards;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
     }
   </style>
 </head>
 <body>
 
-  <div id="mascot">🧠✨</div>
-  <h1>Level 1: Addition Quest</h1>
+  <h1>Math Mastery Quest</h1>
+  <div id="titleBadge">🧑‍🎓 Math Novice</div>
+  <div id="mascot">😃</div>
+  <div id="mascotMsg">Ready to begin?</div>
   <div id="question">Loading...</div>
-  <div id="choices"></div>
+  <input type="number" id="answerInput" placeholder="Your answer" />
+  <br>
+  <button onclick="submitAnswer()">Submit</button>
   <div id="feedback"></div>
-  <div id="score">Score: 0</div>
+  <div id="progressBar"><div id="progress"></div></div>
+  <div id="scoreboard">Score: 0 | Streak: 0 | Level: 1 | Strikes: 0</div>
+  <div id="confetti"></div>
 
   <script>
-    const questionEl = document.getElementById('question');
-    const choicesEl = document.getElementById('choices');
-    const feedbackEl = document.getElementById('feedback');
-    const scoreEl = document.getElementById('score');
+    const questionEl = document.getElementById("question");
+    const answerInput = document.getElementById("answerInput");
+    const feedbackEl = document.getElementById("feedback");
+    const mascot = document.getElementById("mascot");
+    const mascotMsg = document.getElementById("mascotMsg");
+    const titleBadge = document.getElementById("titleBadge");
+    const progressEl = document.getElementById("progress");
+    const scoreboard = document.getElementById("scoreboard");
+    const confettiContainer = document.getElementById("confetti");
 
+    const correctSound = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
+    const wrongSound = new Audio("https://www.soundjay.com/buttons/sounds/button-16.mp3");
+    const levelUpSound = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
+
+    let correctAnswer = 0;
     let score = 0;
+    let streak = 0;
+    let level = 1;
+    let strikes = 0;
+    let timer;
+    let timerStart;
+
+    const titles = [
+      "🧑‍🎓 Math Novice", "🧠 Brain Booster", "🧙 Wizard of Numbers",
+      "🥷 Number Ninja", "🎓 Equation Master", "👑 Alge-boss"
+    ];
+
+    function speak(text) {
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = "en-US";
+      speechSynthesis.speak(msg);
+    }
 
     function randomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    function generateWordProblem() {
-      const difficulty = 10 + Math.floor(score / 5) * 5;
-      const a = randomInt(1, difficulty);
-      const b = randomInt(1, difficulty);
-      const correct = a + b;
-      const question = `You found ${a} gold coins and then ${b} more. How many coins do you have now?`;
+    function updateUI() {
+      scoreboard.textContent = `Score: ${score} | Streak: ${streak} | Level: ${level} | Strikes: ${strikes}`;
+      titleBadge.textContent = titles[Math.min(level - 1, titles.length - 1)];
+      progressEl.style.width = `${(streak % 3) * 33.33}%`;
+    }
 
-      const choices = new Set([correct]);
-      while (choices.size < 4) {
-        let wrong = correct + randomInt(-5, 5);
-        if (wrong !== correct && wrong > 0) choices.add(wrong);
+    function generateQuestion() {
+      clearTimeout(timer);
+      const a = randomInt(1, 10 + level * 3);
+      const b = randomInt(1, 10 + level * 3);
+      correctAnswer = a + b;
+      questionEl.textContent = `What is ${a} + ${b}?`;
+      mascotMsg.textContent = `"Hmm... ${a} + ${b} is...?"`;
+      answerInput.value = "";
+      answerInput.focus();
+      speak(questionEl.textContent);
+
+      timerStart = Date.now();
+      timer = setTimeout(() => {
+        handleWrong("⏱️ Too slow!");
+      }, 10000);
+    }
+
+    function handleCorrect() {
+      clearTimeout(timer);
+      correctSound.play();
+      const timeTaken = (Date.now() - timerStart) / 1000;
+      let bonus = timeTaken <= 5 ? 10 : 5;
+      score += bonus;
+      streak++;
+      mascot.textContent = "😄";
+      mascotMsg.textContent = `"Correct! +${bonus} points"`;
+      feedbackEl.textContent = "✅ Great job!";
+      feedbackEl.className = "correct";
+
+      if (streak % 3 === 0) {
+        level++;
+        levelUpSound.play();
+        mascot.textContent = "🎉";
+        mascotMsg.textContent = `"Level Up! Welcome to Level ${level}!"`;
+        showConfetti();
       }
 
-      const choiceArray = Array.from(choices).sort(() => Math.random() - 0.5);
-
-      return { question, correct, choices: choiceArray };
+      updateUI();
+      setTimeout(generateQuestion, 1500);
     }
 
-    function renderQuestion() {
-      const { question, correct, choices } = generateWordProblem();
-      questionEl.textContent = question;
-      feedbackEl.textContent = '';
-      feedbackEl.className = '';
-      choicesEl.innerHTML = '';
+    function handleWrong(message = "❌ Oops, try again!") {
+      clearTimeout(timer);
+      wrongSound.play();
+      strikes++;
+      streak = Math.max(0, streak - 1);
+      mascot.textContent = "😢";
+      mascotMsg.textContent = `"${message}"`;
+      feedbackEl.textContent = message;
+      feedbackEl.className = "wrong";
 
-      choices.forEach(choice => {
-        const btn = document.createElement('button');
-        btn.className = 'choice-btn';
-        btn.textContent = choice;
-        btn.onclick = () => handleAnswer(btn, choice === correct);
-        choicesEl.appendChild(btn);
-      });
+      if (strikes >= 3) {
+        level = Math.max(1, level - 1);
+        strikes = 0;
+        mascot.textContent = "😞";
+        mascotMsg.textContent = `"Too many mistakes. Dropping to level ${level}"`;
+      }
+
+      updateUI();
+      setTimeout(generateQuestion, 1500);
     }
 
-    function handleAnswer(button, isCorrect) {
-      const allButtons = document.querySelectorAll('.choice-btn');
-      allButtons.forEach(btn => btn.disabled = true);
-
-      if (isCorrect) {
-        feedbackEl.textContent = '✅ Correct!';
-        feedbackEl.className = 'correct';
-        score += 1;
-        scoreEl.textContent = `Score: ${score}`;
+    function submitAnswer() {
+      const val = parseInt(answerInput.value);
+      if (isNaN(val)) {
+        feedbackEl.textContent = "⛔ Please enter a number!";
+        return;
+      }
+      if (val === correctAnswer) {
+        handleCorrect();
       } else {
-        feedbackEl.textContent = '❌ Try again!';
-        feedbackEl.className = 'wrong';
+        handleWrong();
       }
+    }
 
-      setTimeout(renderQuestion, 1500);
+    function showConfetti() {
+      confettiContainer.innerHTML = "";
+      confettiContainer.style.display = "block";
+      for (let i = 0; i < 50; i++) {
+        const c = document.createElement("div");
+        c.className = "confetti-piece";
+        c.style.left = Math.random() * 100 + "%";
+        c.style.animationDuration = (0.5 + Math.random()).toFixed(2) + "s";
+        confettiContainer.appendChild(c);
+      }
+      setTimeout(() => confettiContainer.style.display = "none", 1200);
     }
 
     // Start game
-    renderQuestion();
+    updateUI();
+    generateQuestion();
   </script>
-
 </body>
 </html>
