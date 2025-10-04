@@ -1,668 +1,520 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Carnival Accounting Teeth Shooting Game</title>
-  <style>
-    body, html {
-      margin: 0; padding: 0; height: 100%;
-      background: radial-gradient(circle at center, #191919, #000);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #0ff;
-      overflow: hidden;
-      user-select: none;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Clown Teeth Math Shooter</title>
+<style>
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; padding: 0;
+    background: #020c1a;
+    color: #0ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+    overflow-x: hidden;
+  }
+  #game {
+    max-width: 480px;
+    margin: auto;
+    padding: 10px 15px 30px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background: radial-gradient(circle at center, #001622, #000a0f);
+    border: 2px solid #0ff;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #0ff88aa;
+  }
+  /* Header with score/time */
+  #header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: 1.2rem;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #0ff3;
+  }
+
+  /* Question and answers top row */
+  #question-container {
+    margin: 12px 0;
+    background: #002233cc;
+    border-radius: 12px;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 0 10px #0ff8;
+  }
+  #question {
+    font-size: 1.6rem;
+    font-weight: 700;
+    min-width: 110px;
+    text-align: center;
+  }
+  #answers-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+  .answer-pill {
+    background: linear-gradient(135deg, #00ffffbb, #0099aaee);
+    border-radius: 12px 12px 4px 4px;
+    padding: 6px 14px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 0 6px #0ff;
+    user-select: none;
+    min-width: 40px;
+    text-align: center;
+    color: #003333;
+    cursor: default;
+  }
+
+  /* Clown container */
+  #clown-container {
+    margin-top: 40px;
+    position: relative;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  /* Clown face */
+  #clown-face {
+    background: radial-gradient(circle at center, #ff0aa8, #aa0055);
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 0 25px #ff11aaaa;
+  }
+  /* Clown eyes */
+  .eye {
+    background: white;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    position: absolute;
+    top: 45px;
+  }
+  .eye::before {
+    content: '';
+    background: black;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: absolute;
+    top: 7px;
+    left: 7px;
+  }
+  #eye-left {
+    left: 50px;
+  }
+  #eye-right {
+    right: 50px;
+  }
+
+  /* Teeth holder below face */
+  #teeth-holder {
+    margin-top: 25px;
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  /* Teeth */
+  .tooth {
+    width: 38px;
+    height: 70px;
+    background: linear-gradient(135deg, #ffffffdd, #ccccccbb);
+    border-radius: 10px 10px 4px 4px;
+    box-shadow: inset 0 3px 6px #8888, 0 0 10px #0ff8;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #004040;
+    position: relative;
+    transition: box-shadow 0.3s ease;
+  }
+  .tooth:hover, .tooth.selected {
+    box-shadow: 0 0 20px #0ff, inset 0 3px 6px #8888;
+  }
+
+  /* Shooter - a cannon shape below teeth */
+  #shooter {
+    position: absolute;
+    bottom: -55px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #0088ff, #004488);
+    border-radius: 12px 12px 6px 6px;
+    left: 0;
+    transform: translateX(0);
+    box-shadow: 0 0 18px #00aaffaa;
+    cursor: pointer;
+    transition: left 0.15s ease;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #shooter::before {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background: #00ddff;
+    clip-path: polygon(0% 100%, 100% 50%, 0% 0%);
+    filter: drop-shadow(0 0 6px #00aaff);
+  }
+
+  /* Info text below */
+  #info-text {
+    margin-top: 80px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-align: center;
+    color: #0ff;
+    text-shadow: 0 0 6px #0ff;
+    min-height: 28px;
+    user-select: none;
+  }
+  /* Disabled button style */
+  #start-button {
+    margin: 30px auto 0;
+    display: block;
+    padding: 10px 22px;
+    background: #004466;
+    border: none;
+    border-radius: 12px;
+    color: #0ff;
+    font-weight: 700;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 0 15px #00bbffaa;
+    transition: background-color 0.3s ease;
+  }
+  #start-button:hover:not(:disabled) {
+    background-color: #0077ff;
+  }
+  #start-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Responsive for smaller devices */
+  @media (max-width: 400px) {
     #game {
-      width: 100vw;
-      max-width: 480px;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: #101622;
-      box-shadow: 0 0 30px #0ff inset;
-      position: relative;
+      max-width: 100vw;
+      border-radius: 0;
+      padding: 8px 10px 20px;
     }
-    /* Score and Timer bar */
-    #header {
-      display: flex;
-      justify-content: space-between;
-      padding: 14px 20px;
-      font-weight: 700;
-      font-size: 1.2rem;
-      border-bottom: 2px solid #0ff;
-      user-select: none;
-    }
-    #score, #timer {
-      color: #0ff;
-    }
-
-    /* Family Feud style question and answers container */
     #question-container {
-      margin: 12px 16px;
-      background: #022;
-      border-radius: 10px;
-      box-shadow: 0 0 15px #0ff inset;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      user-select: none;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
     }
-    #question-text {
-      font-weight: 900;
-      font-size: 1.8rem;
-      margin-bottom: 14px;
-      color: #0ff;
-      text-align: center;
-      text-shadow: 0 0 12px #0ff;
-    }
-
-    /* Teeth answers flex row */
     #answers-row {
-      display: flex;
-      justify-content: space-around;
-      width: 100%;
-      max-width: 440px;
-      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      max-width: 100%;
+    }
+    .answer-pill {
+      min-width: 32px;
+      font-size: 1rem;
+      padding: 5px 10px;
+    }
+    #clown-face {
+      width: 140px;
+      height: 140px;
+    }
+    #eye-left {
+      left: 40px;
+    }
+    #eye-right {
+      right: 40px;
+    }
+    #teeth-holder {
+      max-width: 260px;
+      gap: 6px;
     }
     .tooth {
-      background: linear-gradient(135deg, #7ef9ff, #00fff7);
-      width: 60px;
-      height: 80px;
-      border-radius: 0 0 30px 30px;
-      position: relative;
-      box-shadow: 0 0 15px #00fff7;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: 800;
-      font-size: 1.3rem;
-      color: #00444d;
-      text-shadow: 0 0 8px #00fff7;
-      cursor: default;
-      user-select: none;
-      /* Teeth top “root” shape */
-      clip-path: polygon(
-        0% 20%, 15% 0%, 85% 0%, 100% 20%, 100% 100%, 0% 100%
-      );
-      transition: transform 0.2s ease;
+      width: 30px;
+      height: 55px;
+      font-size: 0.9rem;
     }
-    .tooth.pop-correct {
-      background: #0f0;
-      box-shadow: 0 0 20px #0f0;
-      transform: scale(1.3) translateY(-10px);
-      transition: transform 0.3s ease, background 0.3s ease;
-    }
-    .tooth.pop-wrong {
-      background: #f33;
-      box-shadow: 0 0 20px #f33;
-      transform: scale(1.1) translateY(-5px);
-      transition: transform 0.3s ease, background 0.3s ease;
-    }
-
-    /* Clown face container */
-    #clown-container {
-      position: relative;
-      height: 300px;
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      user-select: none;
-    }
-
-    /* Clown face base */
-    #clown-face {
-      width: 240px;
-      height: 240px;
-      background: radial-gradient(circle at center, #f0c, #a00);
-      border-radius: 50%;
-      position: relative;
-      box-shadow: 0 0 40px #f0c inset;
-    }
-
-    /* Clown eyes */
-    .eye {
-      position: absolute;
-      top: 80px;
-      width: 40px;
-      height: 40px;
-      background: #fff;
-      border-radius: 50%;
-      box-shadow: inset 0 0 8px #000;
-    }
-    .eye.left {
-      left: 55px;
-    }
-    .eye.right {
-      right: 55px;
-    }
-    .pupil {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      width: 16px;
-      height: 16px;
-      background: #000;
-      border-radius: 50%;
-    }
-
-    /* Clown nose */
-    #nose {
-      position: absolute;
-      top: 130px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40px;
-      height: 40px;
-      background: #ff3c3c;
-      border-radius: 50%;
-      box-shadow: 0 0 15px #f33 inset;
-    }
-
-    /* Teeth holder above clown mouth */
-    #teeth-holder {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 260px;
-      height: 90px;
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      pointer-events: none;
-    }
-    /* Each tooth on clown */
-    .clown-tooth {
-      width: 40px;
-      height: 70px;
-      background: linear-gradient(135deg, #fff, #ccc);
-      border-radius: 0 0 20px 20px;
-      clip-path: polygon(
-        0% 20%, 20% 0%, 80% 0%, 100% 20%, 100% 100%, 0% 100%
-      );
-      box-shadow: 0 0 8px #999 inset;
-      position: relative;
-      pointer-events: auto;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.3s ease;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #222;
-      user-select: none;
-      text-shadow: none;
-    }
-    .clown-tooth:hover {
-      background: #fefefe;
-      transform: translateY(-6px);
-      box-shadow: 0 0 20px #0ff;
-    }
-    .clown-tooth.pop-correct {
-      background: #0f0;
-      box-shadow: 0 0 25px #0f0;
-      transform: scale(1.3) translateY(-10px);
-    }
-    .clown-tooth.pop-wrong {
-      background: #f33;
-      box-shadow: 0 0 25px #f33;
-      transform: scale(1.1) translateY(-5px);
-    }
-
-    /* Shooter at bottom center */
     #shooter {
-      position: absolute;
-      bottom: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 90px;
-      background: linear-gradient(135deg, #0ff, #00bbcc);
-      clip-path: polygon(50% 0%, 80% 100%, 20% 100%);
-      box-shadow: 0 0 14px #0ff;
-      user-select: none;
+      width: 40px;
+      height: 40px;
+      bottom: -42px;
     }
-
-    /* Dart */
-    .dart {
-      position: absolute;
-      width: 6px;
-      height: 30px;
-      background: #0ff;
-      border-radius: 3px;
-      box-shadow: 0 0 12px #0ff;
-      pointer-events: none;
-      user-select: none;
-      z-index: 10;
+    #start-button {
+      font-size: 1rem;
+      padding: 8px 18px;
     }
-
-    /* Feedback text */
-    #feedback {
-      margin: 10px auto 8px;
-      font-weight: 700;
-      font-size: 1.3rem;
-      height: 32px;
-      text-align: center;
-      user-select: none;
-      color: #0ff;
-      text-shadow: 0 0 12px #0ff;
-      min-height: 32px;
-    }
-
-    /* Start button */
-    #startBtn {
-      margin: 8px auto 16px;
-      padding: 14px 26px;
-      font-weight: 700;
-      font-size: 1.2rem;
-      background: #0ff;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
-      color: #00444d;
-      box-shadow: 0 0 20px #0ff inset;
-      transition: background 0.3s ease;
-      user-select: none;
-      max-width: 220px;
-      display: block;
-    }
-    #startBtn:hover:not(:disabled) {
-      background: #00ccc7;
-    }
-    #startBtn:disabled {
-      background: #006666;
-      cursor: not-allowed;
-    }
-
-    /* Responsive tweaks */
-    @media (max-width: 400px) {
-      #game {
-        max-width: 100vw;
-      }
-      #question-text {
-        font-size: 1.5rem;
-      }
-      #answers-row {
-        gap: 8px;
-      }
-      .tooth {
-        width: 50px;
-        height: 70px;
-        font-size: 1rem;
-      }
-      #clown-face {
-        width: 200px;
-        height: 200px;
-      }
-      #teeth-holder {
-        width: 220px;
-        gap: 10px;
-      }
-      .clown-tooth {
-        width: 35px;
-        height: 60px;
-        font-size: 0.9rem;
-      }
-      #shooter {
-        width: 50px;
-        height: 75px;
-      }
-      .dart {
-        width: 5px;
-        height: 25px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <div id="game">
-    <div id="header">
-      <div id="score">Score: 0</div>
-      <div id="timer">Time: 60</div>
-    </div>
-    <div id="question-container" aria-live="polite">
-      <div id="question-text">Press Start to Play!</div>
-      <div id="answers-row"></div>
-    </div>
-    <div id="clown-container" aria-label="Carnival clown face with teeth targets">
-      <div id="clown-face" aria-hidden="true">
-        <div class="eye left"><div class="pupil"></div></div>
-        <div class="eye right"><div class="pupil"></div></div>
-        <div id="nose"></div>
-      </div>
-      <div id="teeth-holder" aria-live="polite" aria-atomic="true">
-        <!-- Teeth will be dynamically inserted here -->
-      </div>
-    </div>
-    <div id="feedback" aria-live="assertive" aria-atomic="true"></div>
-    <button id="startBtn" aria-label="Start Game Button">Start Game</button>
-    <div id="shooter" aria-label="Shooter, move left and right"></div>
+
+<div id="game">
+  <div id="header">
+    <div id="score">Score: 0</div>
+    <div id="timer">Time: 60</div>
   </div>
 
-  <script>
-    (() => {
-      const scoreEl = document.getElementById('score');
-      const timerEl = document.getElementById('timer');
-      const questionText = document.getElementById('question-text');
-      const answersRow = document.getElementById('answers-row');
-      const teethHolder = document.getElementById('teeth-holder');
-      const feedbackEl = document.getElementById('feedback');
-      const startBtn = document.getElementById('startBtn');
-      const shooter = document.getElementById('shooter');
-      const game = document.getElementById('game');
+  <div id="question-container" aria-live="polite" aria-atomic="true" aria-relevant="additions">
+    <div id="question">Loading...</div>
+    <div id="answers-row" aria-label="Answer choices"></div>
+  </div>
 
-      let score = 0;
-      let timeLeft = 60;
-      let timerInterval = null;
-      let gameActive = false;
+  <div id="clown-container" aria-label="Clown face with teeth answer targets" role="region">
+    <div id="clown-face" aria-hidden="true">
+      <div class="eye" id="eye-left"></div>
+      <div class="eye" id="eye-right"></div>
+    </div>
+    <div id="teeth-holder" role="list"></div>
+    <div id="shooter" aria-label="Shooter" role="button" tabindex="0" title="Use left/right arrows to move, space to shoot"></div>
+  </div>
 
-      let currentQuestion = null;
-      let currentAnswer = null;
+  <div id="info-text" aria-live="polite"></div>
 
-      let darts = [];
+  <button id="start-button" aria-pressed="false">Start Game</button>
+</div>
 
-      // Utilities
-      const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+<script>
+(() => {
+  const scoreEl = document.getElementById('score');
+  const timerEl = document.getElementById('timer');
+  const questionEl = document.getElementById('question');
+  const answersRow = document.getElementById('answers-row');
+  const teethHolder = document.getElementById('teeth-holder');
+  const shooter = document.getElementById('shooter');
+  const infoText = document.getElementById('info-text');
+  const startButton = document.getElementById('start-button');
 
-      // Generate accounting addition question & answers
-      function generateQA() {
-        const maxNum = Math.min(15 + Math.floor(score / 3), 99);
-        const a = randomInt(1, maxNum);
-        const b = randomInt(1, maxNum);
-        const correct = a + b;
-        const question = `${a} + ${b} = ?`;
-        const answersSet = new Set([correct]);
+  let score = 0;
+  let timeLeft = 60;
+  let timerInterval = null;
+  let currentAnswer = null;
+  let answers = [];
+  let shooterIndex = 0;
+  let gameRunning = false;
 
-        while (answersSet.size < 6) {  // 6 answers total
-          let candidate = correct + randomInt(-maxNum, maxNum);
-          if (candidate < 0) candidate = 0;
-          answersSet.add(candidate);
+  function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // Generate addition question and answer choices
+  function generateQA() {
+    const difficulty = Math.min(10 + Math.floor(score / 10), 30);
+    const a = randomInt(1, difficulty);
+    const b = randomInt(1, difficulty);
+    const answer = a + b;
+    const question = `${a} + ${b} = ?`;
+
+    const choicesSet = new Set([answer]);
+    while (choicesSet.size < 6) {
+      let choice = answer + randomInt(-difficulty, difficulty);
+      if (choice < 0) choice = 0;
+      choicesSet.add(choice);
+    }
+    let choices = Array.from(choicesSet);
+
+    // Shuffle choices
+    for (let i = choices.length -1; i > 0; i--) {
+      const j = randomInt(0, i);
+      [choices[i], choices[j]] = [choices[j], choices[i]];
+    }
+
+    return { question, choices, answer };
+  }
+
+  // Render question and answer pills (top)
+  function renderQuestionAndAnswers(qa) {
+    questionEl.textContent = qa.question;
+    answersRow.innerHTML = '';
+    qa.choices.forEach(choice => {
+      const pill = document.createElement('div');
+      pill.className = 'answer-pill';
+      pill.textContent = choice;
+      answersRow.appendChild(pill);
+    });
+  }
+
+  // Render clown teeth (bottom) - clickable targets
+  function renderTeeth(choices) {
+    teethHolder.innerHTML = '';
+    choices.forEach((choice, i) => {
+      const tooth = document.createElement('div');
+      tooth.className = 'tooth';
+      tooth.textContent = choice;
+      tooth.setAttribute('role', 'listitem');
+      tooth.dataset.index = i;
+      tooth.tabIndex = 0;
+      teethHolder.appendChild(tooth);
+
+      tooth.addEventListener('click', () => {
+        if (gameRunning) shootAt(i);
+      });
+      tooth.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (gameRunning) shootAt(i);
         }
+      });
+    });
+  }
 
-        const answersArr = Array.from(answersSet);
-        // Shuffle answers
-        for (let i = answersArr.length - 1; i > 0; i--) {
-          const j = randomInt(0, i);
-          [answersArr[i], answersArr[j]] = [answersArr[j], answersArr[i]];
-        }
+  // Position shooter under a tooth by index
+  function updateShooterPosition() {
+    const teeth = teethHolder.querySelectorAll('.tooth');
+    if (!teeth.length) return;
+    if (shooterIndex < 0) shooterIndex = 0;
+    if (shooterIndex >= teeth.length) shooterIndex = teeth.length - 1;
 
-        return { question, correct, answers: answersArr };
-      }
+    const tooth = teeth[shooterIndex];
+    const containerRect = teethHolder.getBoundingClientRect();
+    const toothRect = tooth.getBoundingClientRect();
 
-      // Update score display
-      function updateScore() {
-        scoreEl.textContent = `Score: ${score}`;
-      }
+    // Calculate relative position inside teethHolder
+    const leftPos = tooth.offsetLeft + tooth.offsetWidth / 2 - shooter.offsetWidth / 2;
+    shooter.style.transform = `translateX(${leftPos}px)`;
+  }
 
-      // Start timer countdown
-      function startTimer() {
-        timeLeft = 60;
-        timerEl.textContent = `Time: ${timeLeft}`;
-        timerInterval = setInterval(() => {
-          timeLeft--;
-          timerEl.textContent = `Time: ${timeLeft}`;
-          if (timeLeft <= 0) {
-            endGame();
-          }
-        }, 1000);
-      }
+  // Shoot at a tooth index
+  function shootAt(index) {
+    if (!gameRunning) return;
+    const teeth = teethHolder.querySelectorAll('.tooth');
+    if (index < 0 || index >= teeth.length) return;
 
-      // End game state
-      function endGame() {
-        gameActive = false;
+    const tooth = teeth[index];
+    // Highlight shooting tooth briefly
+    tooth.classList.add('selected');
+
+    if (answers[index] === currentAnswer) {
+      // Correct
+      score++;
+      infoText.textContent = "Correct! 🎉";
+      scoreEl.textContent = `Score: ${score}`;
+      setTimeout(() => {
+        tooth.classList.remove('selected');
+        nextQuestion();
+      }, 800);
+    } else {
+      // Wrong
+      infoText.textContent = "Wrong! Try again!";
+      setTimeout(() => {
+        tooth.classList.remove('selected');
+        infoText.textContent = "";
+      }, 800);
+    }
+  }
+
+  // Next question
+  function nextQuestion() {
+    infoText.textContent = "";
+    const qa = generateQA();
+    currentAnswer = qa.answer;
+    answers = qa.choices;
+    renderQuestionAndAnswers(qa);
+    renderTeeth(answers);
+    shooterIndex = 0;
+    updateShooterPosition();
+  }
+
+  // Timer countdown
+  function startTimer() {
+    timeLeft = 60;
+    timerEl.textContent = `Time: ${timeLeft}`;
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      timerEl.textContent = `Time: ${timeLeft}`;
+      if (timeLeft <= 0) {
         clearInterval(timerInterval);
-        questionText.textContent = 'Game Over!';
-        feedbackEl.textContent = `Your final score: ${score}`;
-        clearTeeth();
-        clearAnswersRow();
-        darts.forEach(d => d.el.remove());
-        darts = [];
-        startBtn.disabled = false;
-        startBtn.textContent = 'Restart Game';
+        endGame();
       }
+    }, 1000);
+  }
 
-      // Clear teeth from clown mouth
-      function clearTeeth() {
-        while (teethHolder.firstChild) {
-          teethHolder.removeChild(teethHolder.firstChild);
-        }
-      }
-      // Clear answers from top row
-      function clearAnswersRow() {
-        while (answersRow.firstChild) {
-          answersRow.removeChild(answersRow.firstChild);
-        }
-      }
+  // End game
+  function endGame() {
+    gameRunning = false;
+    infoText.textContent = `Game Over! Final Score: ${score}`;
+    startButton.disabled = false;
+    startButton.textContent = "Restart Game";
+  }
 
-      // Setup question and teeth answers
-      function setupQuestion() {
-        clearTeeth();
-        clearAnswersRow();
+  // Start game
+  function startGame() {
+    score = 0;
+    scoreEl.textContent = `Score: ${score}`;
+    infoText.textContent = "";
+    startButton.disabled = true;
+    startButton.textContent = "Game Running...";
+    gameRunning = true;
+    nextQuestion();
+    startTimer();
+  }
 
-        const qa = generateQA();
-        currentQuestion = qa.question;
-        currentAnswer = qa.correct;
+  // Handle keyboard left/right and space for shooting
+  function handleKeydown(e) {
+    if (!gameRunning) return;
 
-        questionText.textContent = currentQuestion;
+    const teethCount = answers.length;
+    if (e.key === 'ArrowLeft') {
+      shooterIndex = (shooterIndex - 1 + teethCount) % teethCount;
+      updateShooterPosition();
+      e.preventDefault();
+    }
+    else if (e.key === 'ArrowRight') {
+      shooterIndex = (shooterIndex + 1) % teethCount;
+      updateShooterPosition();
+      e.preventDefault();
+    }
+    else if (e.key === ' ' || e.key === 'Enter') {
+      shootAt(shooterIndex);
+      e.preventDefault();
+    }
+  }
 
-        // Top row answers (Family Feud style)
-        qa.answers.forEach(answer => {
-          const tooth = document.createElement('div');
-          tooth.className = 'tooth';
-          tooth.textContent = answer;
-          answersRow.appendChild(tooth);
-        });
+  // Handle click on shooter to shoot current tooth
+  shooter.addEventListener('click', () => {
+    if (gameRunning) shootAt(shooterIndex);
+  });
+  // Make shooter keyboard accessible
+  shooter.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      if (gameRunning) shootAt(shooterIndex);
+    }
+  });
 
-        // Teeth on clown mouth
-        qa.answers.forEach((answer, i) => {
-          const tooth = document.createElement('div');
-          tooth.className = 'clown-tooth';
-          tooth.textContent = answer;
-          tooth.dataset.value = answer;
-          teethHolder.appendChild(tooth);
-        });
+  startButton.addEventListener('click', startGame);
+  window.addEventListener('keydown', handleKeydown);
+  window.addEventListener('resize', updateShooterPosition);
 
-        feedbackEl.textContent = 'Shoot the correct tooth!';
+  // Initial layout
+  questionEl.textContent = "Press Start to Play!";
+  answersRow.innerHTML = '';
+  teethHolder.innerHTML = '';
+  shooter.style.transform = `translateX(0px)`;
+})();
+</script>
 
-      }
-
-      // Move shooter horizontally with arrow keys (or A/D)
-      let shooterPos = 50; // percent left of game width
-      const shooterSpeed = 5; // percent per keypress
-      function updateShooter() {
-        shooter.style.left = `${shooterPos}%`;
-      }
-
-      function moveShooterLeft() {
-        shooterPos = Math.max(5, shooterPos - shooterSpeed);
-        updateShooter();
-      }
-      function moveShooterRight() {
-        shooterPos = Math.min(95, shooterPos + shooterSpeed);
-        updateShooter();
-      }
-
-      // Shoot a dart
-      function shootDart() {
-        if (!gameActive) return;
-
-        const dart = document.createElement('div');
-        dart.className = 'dart';
-        game.appendChild(dart);
-
-        // Initial dart position
-        // Calculate pixel left relative to game container
-        const gameRect = game.getBoundingClientRect();
-        const leftPx = (shooterPos / 100) * gameRect.width;
-        const bottomPx = 110; // just above shooter approx
-
-        dart.style.left = `${leftPx - 3}px`; // center dart (6px width)
-        dart.style.bottom = `${bottomPx}px`;
-
-        // Dart object with position and element
-        const dartObj = {
-          el: dart,
-          x: leftPx,
-          y: bottomPx,
-          speed: 12, // px per frame approx
-          active: true,
-        };
-        darts.push(dartObj);
-      }
-
-      // Detect collision between dart and teeth
-      function detectCollision(dartObj) {
-        const teeth = document.querySelectorAll('.clown-tooth');
-        for (const tooth of teeth) {
-          const rect = tooth.getBoundingClientRect();
-          const gameRect = game.getBoundingClientRect();
-
-          // Calculate tooth bounds relative to game container (dart is positioned absolute to game)
-          const toothLeft = rect.left - gameRect.left;
-          const toothRight = rect.right - gameRect.left;
-          const toothTop = gameRect.height - (rect.bottom - gameRect.top);
-          const toothBottom = gameRect.height - (rect.top - gameRect.top);
-
-          // Dart bounds (dart.x is horizontal px pos, dart.y is vertical px pos from bottom)
-          const dartLeft = dartObj.x - 3; // dart width 6px, center -3
-          const dartRight = dartObj.x + 3;
-          const dartTop = dartObj.y + 30; // dart height 30 px
-          const dartBottom = dartObj.y;
-
-          // Check overlapping horizontally and vertically (y axis is bottom-up)
-          const horizontalOverlap = (dartRight > toothLeft) && (dartLeft < toothRight);
-          const verticalOverlap = (dartTop > toothBottom) && (dartBottom < toothTop);
-
-          if (horizontalOverlap && verticalOverlap) {
-            return tooth;
-          }
-        }
-        return null;
-      }
-
-      // Process hit tooth
-      function processHit(tooth) {
-        if (!gameActive) return;
-
-        const val = parseInt(tooth.dataset.value);
-        if (val === currentAnswer) {
-          score += 10;
-          updateScore();
-          feedbackEl.textContent = 'Correct! 🎉';
-
-          tooth.classList.add('pop-correct');
-
-          // Remove tooth after animation
-          setTimeout(() => {
-            tooth.remove();
-            setupQuestion();
-          }, 1000);
-        } else {
-          feedbackEl.textContent = `Wrong! That was ${val}. Try again!`;
-          tooth.classList.add('pop-wrong');
-          setTimeout(() => {
-            tooth.classList.remove('pop-wrong');
-            feedbackEl.textContent = 'Shoot the correct tooth!';
-          }, 800);
-        }
-      }
-
-      // Game loop to animate darts and check collisions
-      function gameLoop() {
-        if (!gameActive) return;
-
-        const gameRect = game.getBoundingClientRect();
-
-        for (let i = darts.length - 1; i >= 0; i--) {
-          const dartObj = darts[i];
-          if (!dartObj.active) continue;
-
-          dartObj.y += dartObj.speed;
-
-          // Move dart element visually (bottom up)
-          dartObj.el.style.bottom = `${dartObj.y}px`;
-
-          // Remove dart if offscreen
-          if (dartObj.y > gameRect.height) {
-            dartObj.el.remove();
-            darts.splice(i, 1);
-            continue;
-          }
-
-          // Check collision with teeth
-          const hitTooth = detectCollision(dartObj);
-          if (hitTooth) {
-            dartObj.active = false;
-            dartObj.el.remove();
-            darts.splice(i, 1);
-            processHit(hitTooth);
-          }
-        }
-
-        requestAnimationFrame(gameLoop);
-      }
-
-      // Keyboard controls
-      window.addEventListener('keydown', e => {
-        if (!gameActive) return;
-
-        if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') {
-          e.preventDefault();
-          moveShooterLeft();
-        }
-        else if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') {
-          e.preventDefault();
-          moveShooterRight();
-        }
-        else if (e.key === ' ' || e.key === 'Enter') {
-          e.preventDefault();
-          shootDart();
-        }
-      });
-
-      // Touch controls: tap left/right of screen to move shooter
-      game.addEventListener('click', e => {
-        if (!gameActive) return;
-
-        const rect = game.getBoundingClientRect();
-        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
-
-        if (xPercent < shooterPos) {
-          moveShooterLeft();
-        } else {
-          moveShooterRight();
-        }
-      });
-
-      // Start game
-      startBtn.addEventListener('click', () => {
-        if (gameActive) return;
-
-        score = 0;
-        updateScore();
-        feedbackEl.textContent = '';
-        startBtn.disabled = true;
-        startBtn.textContent = 'Game Running...';
-        gameActive = true;
-        shooterPos = 50;
-        updateShooter();
-
-        setupQuestion();
-        startTimer();
-        requestAnimationFrame(gameLoop);
-      });
-
-      // Initial setup
-      updateShooter();
-
-    })();
-  </script>
 </body>
 </html>
