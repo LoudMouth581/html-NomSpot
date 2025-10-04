@@ -1,446 +1,692 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Geometry Tutor</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      background: white;
-      color: #2E7D32;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-    h1 {
-      color: #1B5E20;
-      margin-bottom: 5px;
-    }
-    #mascot {
-      font-size: 3rem;
-      margin: 10px;
-    }
-    #mascot-message {
-      background: #F0F4C3;
-      border: 2px solid #81C784;
-      padding: 10px 15px;
-      border-radius: 12px;
-      min-height: 50px;
-      text-align: center;
-      margin-bottom: 20px;
-      font-weight: bold;
-      user-select: none;
-    }
-    #question-box {
-      background: #ffffff;
-      border: 3px solid #66BB6A;
-      border-radius: 12px;
-      padding: 20px;
-      font-size: 1.4em;
-      margin-bottom: 20px;
-      max-width: 700px;
-      text-align: center;
-      user-select: none;
-    }
-    .diagram {
-      margin: 15px 0;
-      width: 240px;
-      height: 240px;
-      border: 2px solid #66BB6A;
-      border-radius: 12px;
-      position: relative;
-      user-select: none;
-    }
-    svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-      border-radius: 12px;
-    }
-    text {
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      font-weight: bold;
-      font-size: 14px;
-      pointer-events: none;
-      user-select: none;
-    }
-    .label-length { fill: #e91e63; }
-    .label-width { fill: #ff9800; }
-    .label-radius { fill: #2196f3; }
-    .label-height { fill: #8bc34a; }
-    .label-angle { fill: #673ab7; font-size: 16px; }
-    .answers {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-      max-width: 700px;
-      margin-bottom: 10px;
-    }
-    .answer {
-      background: #A5D6A7;
-      border: 2px solid #66BB6A;
-      border-radius: 10px;
-      padding: 12px 20px;
-      cursor: pointer;
-      transition: transform 0.2s, background-color 0.3s;
-      font-weight: bold;
-      min-width: 100px;
-      text-align: center;
-      user-select: none;
-    }
-    .answer:hover {
-      background-color: #81C784;
-      transform: scale(1.05);
-    }
-    .answer.correct {
-      background-color: #C5E1A5;
-      border-color: #558B2F;
-    }
-    .answer.wrong {
-      background-color: #FFCDD2;
-      border-color: #E53935;
-    }
-    #feedback {
-      margin-top: 15px;
-      font-size: 1.2em;
-      height: 24px;
-      min-height: 24px;
-      user-select: none;
-    }
-    #explanation {
-      margin-top: 10px;
-      background: #FFF9C4;
-      border: 2px dashed #FBC02D;
-      padding: 12px;
-      border-radius: 10px;
-      max-width: 700px;
-      display: none;
-      font-size: 1.1em;
-      user-select: none;
-    }
-    #score-bar {
-      margin-top: 20px;
-      width: 80%;
-      background: #C8E6C9;
-      border: 2px solid #66BB6A;
-      border-radius: 12px;
-      height: 20px;
-      overflow: hidden;
-    }
-    #score-fill {
-      height: 100%;
-      width: 0%;
-      background-color: #66BB6A;
-      transition: width 0.5s ease;
-    }
-    #score {
-      margin-top: 10px;
-      font-size: 1.2em;
-      user-select: none;
-    }
-    #badges {
-      margin-top: 15px;
-      font-size: 1.4em;
-      user-select: none;
-    }
-    @media (max-width: 480px) {
-      .answer {
-        font-size: 1rem;
-        padding: 10px 14px;
-      }
-      .diagram {
-        width: 160px;
-        height: 160px;
-      }
-      text {
-        font-size: 12px;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Geometry</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 1rem;
+    max-width: 600px;
+  }
+  svg {
+    border: 1px solid #ccc;
+    margin-top: 1rem;
+    touch-action: none; /* For pointer events */
+  }
+  circle, rect, polygon {
+    fill: #4a90e2;
+    stroke: #2c3e50;
+    stroke-width: 3;
+  }
+  line {
+    stroke: #2c3e50;
+    stroke-width: 2;
+    stroke-dasharray: 5 3;
+  }
+  .dimensionLabel, .rectLabel, .triLabel {
+    font-size: 14px;
+    fill: #2c3e50;
+    user-select: none;
+  }
+  circle#radiusHandle, .rectHandle, .triHandle {
+    fill: #e67e22;
+    stroke: #d35400;
+    stroke-width: 2;
+    cursor: grab;
+  }
+  circle#centerPoint {
+    fill: #27ae60;
+    stroke: #1e8449;
+  }
+  button {
+    margin: 5px 5px 15px 0;
+    padding: 8px 15px;
+    font-size: 16px;
+  }
+  #mascot {
+    font-size: 48px;
+    margin-bottom: 5px;
+  }
+  #quiz {
+    margin-top: 30px;
+    border-top: 2px solid #ccc;
+    padding-top: 15px;
+  }
+  #quiz h2 {
+    margin-bottom: 10px;
+  }
+  #quiz button {
+    margin: 8px 5px;
+  }
+  #quizResult {
+    margin-top: 15px;
+    font-weight: 700;
+    font-size: 18px;
+  }
+</style>
 </head>
 <body>
 
-  <h1>🎯 Geometry Tutor</h1>
+<h1>Geometry</h1>
+<div id="mascot">🟠</div>
 
-  <div id="mascot">😊</div>
-  <div id="mascot-message">Hi! I'm Geo 🤗 — your geometry guide!</div>
+<button onclick="loadCircleLesson()">Circle Lesson</button>
+<button onclick="loadRectangleLesson()">Rectangle Lesson</button>
+<button onclick="loadTriangleLesson()">Triangle Lesson</button>
+<button onclick="startQuiz()">Start Quiz</button>
 
-  <div id="question-box">Loading question...</div>
-  <div class="diagram" id="diagram"></div>
+<svg id="svgCanvas" width="320" height="320" aria-label="Interactive shape illustration"></svg>
 
-  <div class="answers" id="answers"></div>
+<div id="quiz" style="display:none;">
+  <h2>Quiz</h2>
+  <div id="quizQuestion"></div>
+  <div id="quizChoices"></div>
+  <button id="nextQuestionBtn" onclick="nextQuestion()" style="display:none;">Next</button>
+  <div id="quizResult"></div>
+</div>
 
-  <div id="feedback"></div>
-  <div id="explanation"></div>
+<script>
+  const svg = document.getElementById('svgCanvas');
+  const mascot = document.getElementById('mascot');
 
-  <div id="score-bar"><div id="score-fill"></div></div>
-  <div id="score">Score: 0</div>
-  <div id="badges">Badges: ★0</div>
+  const PI = Math.PI;
 
-  <script>
-    (() => {
-      const mascotEl = document.getElementById('mascot');
-      const mascotMsg = document.getElementById('mascot-message');
-      const questionBox = document.getElementById('question-box');
-      const diagramDiv = document.getElementById('diagram');
-      const answersDiv = document.getElementById('answers');
-      const feedbackEl = document.getElementById('feedback');
-      const explanationEl = document.getElementById('explanation');
-      const scoreBarFill = document.getElementById('score-fill');
-      const scoreEl = document.getElementById('score');
-      const badgesEl = document.getElementById('badges');
+  // Data holders for shapes
+  const circleData = { radius: 80 };
+  const rectData = { width: 150, height: 100 };
+  const triData = { base: 150, height: 100 };
 
-      let score = 0;
-      let badges = 0;
+  // Helper: clear SVG children
+  function clearSvg() {
+    while(svg.firstChild) {
+      svg.removeChild(svg.firstChild);
+    }
+  }
 
-      const PI = 3.14;
+  // --- CIRCLE LESSON ---
+  function loadCircleLesson() {
+    clearSvg();
+    mascot.textContent = "🟠";
 
-      function randomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+    const cx = 160, cy = 160;
+
+    // Draw circle
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", cx);
+    circle.setAttribute("cy", cy);
+    circle.setAttribute("r", circleData.radius);
+    svg.appendChild(circle);
+
+    // Radius line
+    const radiusLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    radiusLine.setAttribute("x1", cx);
+    radiusLine.setAttribute("y1", cy);
+    radiusLine.setAttribute("x2", cx + circleData.radius);
+    radiusLine.setAttribute("y2", cy);
+    radiusLine.setAttribute("stroke-dasharray", "5 3");
+    svg.appendChild(radiusLine);
+
+    // Radius handle
+    const radiusHandle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    radiusHandle.setAttribute("cx", cx + circleData.radius);
+    radiusHandle.setAttribute("cy", cy);
+    radiusHandle.setAttribute("r", 12);
+    radiusHandle.setAttribute("id", "radiusHandle");
+    radiusHandle.setAttribute("tabindex", "0");
+    radiusHandle.style.cursor = "grab";
+    svg.appendChild(radiusHandle);
+
+    // Center point
+    const centerPoint = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    centerPoint.setAttribute("cx", cx);
+    centerPoint.setAttribute("cy", cy);
+    centerPoint.setAttribute("r", 6);
+    centerPoint.setAttribute("fill", "#27ae60");
+    svg.appendChild(centerPoint);
+
+    // Radius label
+    const radiusLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    radiusLabel.setAttribute("x", cx + circleData.radius / 2);
+    radiusLabel.setAttribute("y", cy - 10);
+    radiusLabel.setAttribute("class", "dimensionLabel");
+    radiusLabel.textContent = `r = ${circleData.radius}`;
+    svg.appendChild(radiusLabel);
+
+    // Area label
+    const areaLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    areaLabel.setAttribute("x", cx);
+    areaLabel.setAttribute("y", cy + circleData.radius + 30);
+    areaLabel.setAttribute("class", "dimensionLabel");
+    areaLabel.setAttribute("text-anchor", "middle");
+    const area = Math.round(PI * circleData.radius * circleData.radius);
+    areaLabel.textContent = `Area ≈ ${area}`;
+    svg.appendChild(areaLabel);
+
+    // Dragging logic
+    let dragging = false;
+
+    function updateRadius(newRadius) {
+      if(newRadius < 10) newRadius = 10;
+      if(newRadius > 140) newRadius = 140;
+
+      circleData.radius = newRadius;
+      circle.setAttribute("r", newRadius);
+      radiusLine.setAttribute("x2", cx + newRadius);
+      radiusLabel.setAttribute("x", cx + newRadius / 2);
+      radiusLabel.textContent = `r = ${Math.round(newRadius)}`;
+      areaLabel.setAttribute("y", cy + newRadius + 30);
+      areaLabel.textContent = `Area ≈ ${Math.round(PI * newRadius * newRadius)}`;
+      radiusHandle.setAttribute("cx", cx + newRadius);
+    }
+
+    radiusHandle.addEventListener("pointerdown", e => {
+      dragging = true;
+      radiusHandle.setPointerCapture(e.pointerId);
+      radiusHandle.style.cursor = "grabbing";
+    });
+    window.addEventListener("pointerup", e => {
+      dragging = false;
+      radiusHandle.style.cursor = "grab";
+    });
+    window.addEventListener("pointermove", e => {
+      if(!dragging) return;
+      const rect = svg.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      if(x < cx + 10) x = cx + 10;
+      if(x > cx + 140) x = cx + 140;
+      updateRadius(x - cx);
+    });
+
+    radiusHandle.addEventListener("keydown", e => {
+      if(e.key === "ArrowRight" || e.key === "ArrowUp") {
+        updateRadius(circleData.radius + 5);
+        e.preventDefault();
+      } else if(e.key === "ArrowLeft" || e.key === "ArrowDown") {
+        updateRadius(circleData.radius - 5);
+        e.preventDefault();
       }
+    });
+  }
 
-      // Create arrow marker defs for SVG once
-      function createSvgDefs(svg) {
-        if (svg.querySelector('defs')) return;
-        const svgNS = "http://www.w3.org/2000/svg";
-        const defs = document.createElementNS(svgNS, "defs");
-        defs.innerHTML = `
-          <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-            <path d="M0,0 L0,6 L9,3 z" fill="#e91e63" />
-          </marker>
-        `;
-        svg.appendChild(defs);
+  // --- RECTANGLE LESSON ---
+  function loadRectangleLesson() {
+    clearSvg();
+    mascot.textContent = "🟦";
+
+    const startX = 80, startY = 110;
+
+    // Rectangle
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", startX);
+    rect.setAttribute("y", startY);
+    rect.setAttribute("width", rectData.width);
+    rect.setAttribute("height", rectData.height);
+    svg.appendChild(rect);
+
+    // Width handle
+    const widthHandle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    widthHandle.setAttribute("cx", startX + rectData.width);
+    widthHandle.setAttribute("cy", startY + rectData.height / 2);
+    widthHandle.setAttribute("r", 12);
+    widthHandle.setAttribute("tabindex", "0");
+    widthHandle.style.cursor = "grab";
+    svg.appendChild(widthHandle);
+
+    // Height handle
+    const heightHandle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    heightHandle.setAttribute("cx", startX + rectData.width / 2);
+    heightHandle.setAttribute("cy", startY + rectData.height);
+    heightHandle.setAttribute("r", 12);
+    heightHandle.setAttribute("tabindex", "0");
+    heightHandle.style.cursor = "grab";
+    svg.appendChild(heightHandle);
+
+    // Width line
+    const widthLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    widthLine.setAttribute("x1", startX);
+    widthLine.setAttribute("y1", startY + rectData.height + 20);
+    widthLine.setAttribute("x2", startX + rectData.width);
+    widthLine.setAttribute("y2", startY + rectData.height + 20);
+    widthLine.setAttribute("stroke-dasharray", "5 3");
+    svg.appendChild(widthLine);
+
+    // Width label
+    const widthLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    widthLabel.setAttribute("x", startX + rectData.width / 2);
+    widthLabel.setAttribute("y", startY + rectData.height + 15);
+    widthLabel.setAttribute("class", "rectLabel");
+    widthLabel.setAttribute("text-anchor", "middle");
+    widthLabel.textContent = `Width = ${rectData.width}`;
+    svg.appendChild(widthLabel);
+
+    // Height line
+    const heightLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    heightLine.setAttribute("x1", startX - 20);
+    heightLine.setAttribute("y1", startY);
+    heightLine.setAttribute("x2", startX - 20);
+    heightLine.setAttribute("y2", startY + rectData.height);
+    heightLine.setAttribute("stroke-dasharray", "5 3");
+    svg.appendChild(heightLine);
+
+    // Height label
+    const heightLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    heightLabel.setAttribute("x", startX - 25);
+    heightLabel.setAttribute("y", startY + rectData.height / 2);
+    heightLabel.setAttribute("class", "rectLabel");
+    heightLabel.setAttribute("text-anchor", "end");
+    heightLabel.textContent = `Height = ${rectData.height}`;
+    svg.appendChild(heightLabel);
+
+    // Area label inside rectangle
+    const areaLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    areaLabel.setAttribute("x", startX + rectData.width / 3);
+    areaLabel.setAttribute("y", startY + rectData.height / 2);
+    areaLabel.setAttribute("class", "rectLabel");
+    areaLabel.setAttribute("font-weight", "700");
+    areaLabel.setAttribute("font-size", "20px");
+    areaLabel.textContent = `Area = ${rectData.width * rectData.height}`;
+    svg.appendChild(areaLabel);
+
+    // Dragging flags
+    let draggingWidth = false;
+    let draggingHeight = false;
+
+    function updateWidth(newWidth) {
+      if(newWidth < 30) newWidth = 30;
+      if(newWidth > 250) newWidth = 250;
+      rectData.width = newWidth;
+      rect.setAttribute("width", newWidth);
+      widthLine.setAttribute("x2", startX + newWidth);
+      widthLabel.setAttribute("x", startX + newWidth / 2);
+      widthLabel.textContent = `Width = ${Math.round(newWidth)}`;
+      widthHandle.setAttribute("cx", startX + newWidth);
+      areaLabel.textContent = `Area = ${Math.round(rectData.width * rectData.height)}`;
+    }
+
+    function updateHeight(newHeight) {
+      if(newHeight < 30) newHeight = 30;
+      if(newHeight > 180) newHeight = 180;
+      rectData.height = newHeight;
+      rect.setAttribute("height", newHeight);
+      heightLine.setAttribute("y2", startY + newHeight);
+      heightLabel.setAttribute("y", startY + newHeight / 2);
+      heightLabel.textContent = `Height = ${Math.round(newHeight)}`;
+      heightHandle.setAttribute("cy", startY + newHeight);
+      areaLabel.textContent = `Area = ${Math.round(rectData.width * rectData.height)}`;
+    }
+
+    // Width handle drag
+    widthHandle.addEventListener("pointerdown", e => {
+      draggingWidth = true;
+      widthHandle.setPointerCapture(e.pointerId);
+      widthHandle.style.cursor = "grabbing";
+    });
+    window.addEventListener("pointerup", e => {
+      draggingWidth = false;
+      widthHandle.style.cursor = "grab";
+    });
+    window.addEventListener("pointermove", e => {
+      if(!draggingWidth) return;
+      const rectSvg = svg.getBoundingClientRect();
+      let x = e.clientX - rectSvg.left;
+      if(x < startX + 30) x = startX + 30;
+      if(x > startX + 250) x = startX + 250;
+      updateWidth(x - startX);
+    });
+    widthHandle.addEventListener("keydown", e => {
+      if(e.key === "ArrowRight" || e.key === "ArrowUp") {
+        updateWidth(rectData.width + 5);
+        e.preventDefault();
+      } else if(e.key === "ArrowLeft" || e.key === "ArrowDown") {
+        updateWidth(rectData.width - 5);
+        e.preventDefault();
       }
+    });
 
-      // Question types with working drawDiagram functions
-      const questionTypes = [
+    // Height handle drag
+    heightHandle.addEventListener("pointerdown", e => {
+      draggingHeight = true;
+      heightHandle.setPointerCapture(e.pointerId);
+      heightHandle.style.cursor = "grabbing";
+    });
+    window.addEventListener("pointerup", e => {
+      draggingHeight = false;
+      heightHandle.style.cursor = "grab";
+    });
+    window.addEventListener("pointermove", e => {
+      if(!draggingHeight) return;
+      const rectSvg = svg.getBoundingClientRect();
+      let y = e.clientY - rectSvg.top;
+      if(y < startY + 30) y = startY + 30;
+      if(y > startY + 180) y = startY + 180;
+      updateHeight(y - startY);
+    });
+    heightHandle.addEventListener("keydown", e => {
+      if(e.key === "ArrowRight" || e.key === "ArrowUp") {
+        updateHeight(rectData.height + 5);
+        e.preventDefault();
+      } else if(e.key === "ArrowLeft" || e.key === "ArrowDown") {
+        updateHeight(rectData.height - 5);
+        e.preventDefault();
+      }
+    });
+  }
+
+  // --- TRIANGLE LESSON ---
+  function loadTriangleLesson() {
+    clearSvg();
+    mascot.textContent = "🔺";
+
+    const startX = 80, startY = 220;
+
+    // Triangle polygon
+    const triPolygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    svg.appendChild(triPolygon);
+
+    // Base line
+    const baseLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    baseLine.setAttribute("class", "triLine");
+    baseLine.setAttribute("y1", startY + 20);
+    baseLine.setAttribute("y2", startY + 20);
+    svg.appendChild(baseLine);
+
+    // Base label
+    const baseLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    baseLabel.setAttribute("class", "triLabel");
+    baseLabel.setAttribute("text-anchor", "middle");
+    baseLabel.setAttribute("y", startY + 15);
+    svg.appendChild(baseLabel);
+
+    // Height line
+    const heightLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    heightLine.setAttribute("class", "triLine");
+    heightLine.setAttribute("x1", startX - 20);
+    svg.appendChild(heightLine);
+
+    // Height label
+    const heightLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    heightLabel.setAttribute("class", "triLabel");
+    heightLabel.setAttribute("text-anchor", "end");
+    heightLabel.setAttribute("x", startX - 25);
+    svg.appendChild(heightLabel);
+
+    // Area label inside triangle
+    const areaLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    areaLabel.setAttribute("class", "triLabel");
+    areaLabel.setAttribute("font-size", "20px");
+    areaLabel.setAttribute("font-weight", "700");
+    svg.appendChild(areaLabel);
+
+    // Base handle
+    const baseHandle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    baseHandle.setAttribute("class", "triHandle");
+    baseHandle.setAttribute("tabindex", "0");
+    baseHandle.style.cursor = "grab";
+    svg.appendChild(baseHandle);
+
+    // Height handle
+    const heightHandle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    heightHandle.setAttribute("class", "triHandle");
+    heightHandle.setAttribute("tabindex", "0");
+    heightHandle.style.cursor = "grab";
+    svg.appendChild(heightHandle);
+
+    // Calculate points for polygon
+    function calcPoints(base, height) {
+      return `${startX},${startY} ${startX + base},${startY} ${startX},${startY - height}`;
+    }
+
+    function updateTriangle() {
+      triPolygon.setAttribute("points", calcPoints(triData.base, triData.height));
+      baseLine.setAttribute("x1", startX);
+      baseLine.setAttribute("x2", startX + triData.base);
+      baseLine.setAttribute("y1", startY + 20);
+      baseLine.setAttribute("y2", startY + 20);
+
+      baseLabel.setAttribute("x", startX + triData.base / 2);
+      baseLabel.textContent = `Base = ${Math.round(triData.base)}`;
+      baseLabel.setAttribute("y", startY + 15);
+
+      heightLine.setAttribute("x1", startX - 20);
+      heightLine.setAttribute("x2", startX - 20);
+      heightLine.setAttribute("y1", startY);
+      heightLine.setAttribute("y2", startY - triData.height);
+
+      heightLabel.setAttribute("y", startY - triData.height / 2);
+      heightLabel.textContent = `Height = ${Math.round(triData.height)}`;
+
+      baseHandle.setAttribute("cx", startX + triData.base);
+      baseHandle.setAttribute("cy", startY);
+      baseHandle.setAttribute("r", 12);
+
+      heightHandle.setAttribute("cx", startX);
+      heightHandle.setAttribute("cy", startY - triData.height);
+      heightHandle.setAttribute("r", 12);
+
+      areaLabel.setAttribute("x", startX + triData.base / 3);
+      areaLabel.setAttribute("y", startY - triData.height / 3);
+      areaLabel.textContent = `Area = ${Math.round((triData.base * triData.height) / 2)}`;
+    }
+
+    let draggingBase = false;
+    let draggingHeight = false;
+
+    function updateBase(newBase) {
+      if(newBase < 30) newBase = 30;
+      if(newBase > 220) newBase = 220;
+      triData.base = newBase;
+      updateTriangle();
+    }
+
+    function updateHeight(newHeight) {
+      if(newHeight < 30) newHeight = 30;
+      if(newHeight > 180) newHeight = 180;
+      triData.height = newHeight;
+      updateTriangle();
+    }
+
+    // Base handle drag
+    baseHandle.addEventListener("pointerdown", e => {
+      draggingBase = true;
+      baseHandle.setPointerCapture(e.pointerId);
+      baseHandle.style.cursor = "grabbing";
+    });
+    window.addEventListener("pointerup", e => {
+      draggingBase = false;
+      baseHandle.style.cursor = "grab";
+    });
+    window.addEventListener("pointermove", e => {
+      if(!draggingBase) return;
+      const rect = svg.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      if(x < startX + 30) x = startX + 30;
+      if(x > startX + 220) x = startX + 220;
+      updateBase(x - startX);
+    });
+    baseHandle.addEventListener("keydown", e => {
+      if(e.key === "ArrowRight" || e.key === "ArrowUp") {
+        updateBase(triData.base + 5);
+        e.preventDefault();
+      } else if(e.key === "ArrowLeft" || e.key === "ArrowDown") {
+        updateBase(triData.base - 5);
+        e.preventDefault();
+      }
+    });
+
+    // Height handle drag
+    heightHandle.addEventListener("pointerdown", e => {
+      draggingHeight = true;
+      heightHandle.setPointerCapture(e.pointerId);
+      heightHandle.style.cursor = "grabbing";
+    });
+    window.addEventListener("pointerup", e => {
+      draggingHeight = false;
+      heightHandle.style.cursor = "grab";
+    });
+    window.addEventListener("pointermove", e => {
+      if(!draggingHeight) return;
+      const rect = svg.getBoundingClientRect();
+      let y = e.clientY - rect.top;
+      if(y > startY - 30) y = startY - 30;
+      if(y < startY - 180) y = startY - 180;
+      updateHeight(startY - y);
+    });
+    heightHandle.addEventListener("keydown", e => {
+      if(e.key === "ArrowRight" || e.key === "ArrowUp") {
+        updateHeight(triData.height + 5);
+        e.preventDefault();
+      } else if(e.key === "ArrowLeft" || e.key === "ArrowDown") {
+        updateHeight(triData.height - 5);
+        e.preventDefault();
+      }
+    });
+
+    updateTriangle();
+  }
+
+  // --- QUIZ SECTION ---
+
+  const quizzes = [
+    // Circle
+    {
+      shape: "Circle",
+      questions: [
         {
-          type: 'Area of Square',
-          generateQuestion: () => {
-            const side = randomInt(3, 15);
-            return {
-              questionText: `Calculate the area of a square with side length <span style="color:#e91e63">${side}</span> units.`,
-              correctAnswer: side * side,
-              diagramData: { side },
-              explanation: `Area of a square = side × side = ${side} × ${side} = ${side*side} square units.`,
-              drawDiagram(svg, data) {
-                const { side } = data;
-                svg.innerHTML = `
-                  <rect x="30" y="30" width="140" height="140" fill="#C8E6C9" stroke="#2E7D32" stroke-width="3" />
-                  <line x1="30" y1="170" x2="170" y2="170" stroke="#e91e63" stroke-width="4" marker-end="url(#arrow)" />
-                  <line x1="170" y1="170" x2="170" y2="30" stroke="#e91e63" stroke-width="4" marker-end="url(#arrow)" />
-                  <text x="100" y="20" class="label-length" fill="#e91e63">Side = ${side}</text>
-                  <text x="95" y="185" class="label-length" fill="#e91e63">${side}</text>
-                  <text x="180" y="100" class="label-length" fill="#e91e63" transform="rotate(90 180,100)"> ${side} </text>
-                `;
-              }
-            };
-          }
+          question: "What is the formula to calculate the area of a circle?",
+          choices: ["Area = π × r²", "Area = 2 × π × r", "Area = r × r", "Area = π × d"],
+          answer: 0
         },
         {
-          type: 'Perimeter of Rectangle',
-          generateQuestion: () => {
-            const length = randomInt(5, 20);
-            const width = randomInt(3, 15);
-            return {
-              questionText: `Calculate the perimeter of a rectangle with length <span style="color:#e91e63">${length}</span> units and width <span style="color:#ff9800">${width}</span> units.`,
-              correctAnswer: 2 * (length + width),
-              diagramData: { length, width },
-              explanation: `Perimeter = 2 × (length + width) = 2 × (${length} + ${width}) = ${2*(length+width)} units.`,
-              drawDiagram(svg, data) {
-                const { length, width } = data;
-                svg.innerHTML = `
-                  <rect x="40" y="50" width="${length*6}" height="${width*6}" fill="#FFF3E0" stroke="#F57C00" stroke-width="3" />
-                  <line x1="40" y1="${50+width*6}" x2="${40+length*6}" y2="${50+width*6}" stroke="#e91e63" stroke-width="3" marker-end="url(#arrow)" />
-                  <line x1="${40+length*6}" y1="${50+width*6}" x2="${40+length*6}" y2="50" stroke="#ff9800" stroke-width="3" marker-end="url(#arrow)" />
-                  <text x="${40 + (length*6)/2 - 10}" y="${50 + width*6 + 20}" class="label-length">Length = ${length}</text>
-                  <text x="${40 + length*6 + 5}" y="${50 + (width*6)/2 + 5}" class="label-width" transform="rotate(90, ${40 + length*6 + 5}, ${50 + (width*6)/2 + 5})">Width = ${width}</text>
-                `;
-              }
-            };
-          }
+          question: "If the radius is 7 units, what is the approximate area?",
+          choices: ["44", "154", "21", "28"],
+          answer: 1
+        }
+      ]
+    },
+    // Rectangle
+    {
+      shape: "Rectangle",
+      questions: [
+        {
+          question: "What is the formula to calculate the area of a rectangle?",
+          choices: ["Area = width + height", "Area = width × height", "Area = 2 × (width + height)", "Area = width - height"],
+          answer: 1
         },
         {
-          type: 'Area of Circle',
-          generateQuestion: () => {
-            const radius = randomInt(2, 12);
-            const area = Math.round(PI * radius * radius * 100) / 100; // 2 decimals
-            return {
-              questionText: `Calculate the area of a circle with radius <span style="color:#2196f3">${radius}</span> units. Use π ≈ 3.14.`,
-              correctAnswer: area,
-              diagramData: { radius },
-              explanation: `Area = π × radius² = 3.14 × ${radius}² = ${area} square units.`,
-              drawDiagram(svg, data) {
-                const { radius } = data;
-                const rPixels = radius * 10;
-                svg.innerHTML = `
-                  <circle cx="120" cy="120" r="${rPixels}" fill="#BBDEFB" stroke="#1976D2" stroke-width="3"/>
-                  <line x1="120" y1="120" x2="${120 + rPixels}" y2="120" stroke="#2196f3" stroke-width="3" marker-end="url(#arrow)" />
-                  <text x="${120 + rPixels/2}" y="110" class="label-radius">Radius = ${radius}</text>
-                `;
-              }
-            };
-          }
+          question: "A rectangle has width 10 units and height 5 units. What is its area?",
+          choices: ["15", "50", "30", "25"],
+          answer: 1
+        }
+      ]
+    },
+    // Triangle
+    {
+      shape: "Triangle",
+      questions: [
+        {
+          question: "What is the formula to calculate the area of a triangle?",
+          choices: ["Area = base × height", "Area = 2 × (base + height)", "Area = (base × height) ÷ 2", "Area = base + height"],
+          answer: 2
         },
         {
-          type: 'Missing angle in triangle',
-          generateQuestion: () => {
-            // angles a,b known, find c = 180-(a+b)
-            const a = randomInt(30, 80);
-            const b = randomInt(30, 80);
-            const c = 180 - (a + b);
-            if(c <= 0) return questionTypes[3].generateQuestion(); // regenerate if invalid
-            return {
-              questionText: `A triangle has angles <span style="color:#673ab7">${a}°</span> and <span style="color:#673ab7">${b}°</span>. Find the missing angle <span style="color:#673ab7">c</span>.`,
-              correctAnswer: c,
-              diagramData: { a, b, c },
-              explanation: `Sum of angles in a triangle = 180°. So, missing angle c = 180° - (${a}° + ${b}°) = ${c}°.`,
-              drawDiagram(svg, data) {
-                const { a, b, c } = data;
-                svg.innerHTML = `
-                  <polygon points="60,180 180,180 100,60" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="3"/>
-                  <text x="55" y="185" class="label-angle">a = ${a}°</text>
-                  <text x="185" y="185" class="label-angle">b = ${b}°</text>
-                  <text x="90" y="50" class="label-angle">c = ?</text>
-                `;
-              }
-            };
-          }
+          question: "A triangle has base 8 units and height 5 units. What is its area?",
+          choices: ["40", "20", "13", "10"],
+          answer: 1
         }
-      ];
-
-      let currentQuestion = null;
-      let allowAnswer = true;
-
-      function setMascotMessage(msg, emoji = '😊') {
-        mascotMsg.textContent = msg;
-        mascotEl.textContent = emoji;
-      }
-
-      function speak(text) {
-  if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();  // STOP any ongoing speech immediately
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'en-US';
-  window.speechSynthesis.speak(utterance);
-}
-
-
-      function updateScore(delta) {
-        score += delta;
-        if(score < 0) score = 0;
-        scoreEl.textContent = `Score: ${score}`;
-        // update progress bar (max 200 for scaling)
-        const widthPercent = Math.min(100, (score / 200) * 100);
-        scoreBarFill.style.width = widthPercent + '%';
-
-        // badges every 50 points
-        const newBadges = Math.floor(score / 50);
-        if(newBadges > badges){
-          badges = newBadges;
-          badgesEl.textContent = `Badges: ${'★'.repeat(badges)}${badges}`;
-          setMascotMessage(`You earned a badge! ${'★'.repeat(badges)}`, '🏅');
-          speak(`Congratulations! You earned a badge!`);
+      ]
+    },
+    // Math Genius Level
+    {
+      shape: "Math Genius",
+      questions: [
+        {
+          question: "What is the exact value of the area of a circle with radius 3 units?",
+          choices: ["9π", "6π", "18π", "3π"],
+          answer: 0
+        },
+        {
+          question: "If a rectangle's length is tripled and width is halved, how does the area change?",
+          choices: [
+            "Area remains the same",
+            "Area doubles",
+            "Area is halved",
+            "Area triples"
+          ],
+          answer: 0
+        },
+        {
+          question: "A triangle has sides 3, 4, and 5 units. What is its area?",
+          choices: ["6", "12", "7", "9"],
+          answer: 0
         }
-      }
+      ]
+    }
+  ];
 
-      // Shuffle array
-      function shuffleArray(arr) {
-        for(let i = arr.length - 1; i > 0; i--){
-          const j = Math.floor(Math.random() * (i +1));
-          [arr[i], arr[j]] = [arr[j], arr[i]];
+  let currentQuiz = null;
+  let currentQIndex = 0;
+  let score = 0;
+
+  const quizDiv = document.getElementById("quiz");
+  const quizQuestion = document.getElementById("quizQuestion");
+  const quizChoices = document.getElementById("quizChoices");
+  const nextQuestionBtn = document.getElementById("nextQuestionBtn");
+  const quizResult = document.getElementById("quizResult");
+
+  function startQuiz() {
+    clearSvg();
+    mascot.textContent = "❓";
+    quizDiv.style.display = "block";
+    currentQuiz = [...quizzes].flatMap(q => q.questions); // flatten all questions into one big list
+    currentQIndex = 0;
+    score = 0;
+    quizResult.textContent = "";
+    nextQuestionBtn.style.display = "none";
+    showQuestion();
+  }
+
+  function showQuestion() {
+    quizChoices.innerHTML = "";
+    nextQuestionBtn.style.display = "none";
+
+    if(currentQIndex >= currentQuiz.length) {
+      quizQuestion.textContent = `Quiz complete! Your score: ${score} / ${currentQuiz.length}`;
+      quizResult.textContent = score >= currentQuiz.length * 0.8 ? "Awesome! You're a math genius!" : "Good try! Keep practicing.";
+      return;
+    }
+
+    const q = currentQuiz[currentQIndex];
+    quizQuestion.textContent = `Q${currentQIndex + 1}: ${q.question}`;
+
+    q.choices.forEach((choice, i) => {
+      const btn = document.createElement("button");
+      btn.textContent = choice;
+      btn.onclick = () => {
+        if(i === q.answer) {
+          score++;
+          quizResult.textContent = "Correct! 🎉";
+        } else {
+          quizResult.textContent = `Wrong! The correct answer was: "${q.choices[q.answer]}"`;
         }
-        return arr;
-      }
+        Array.from(quizChoices.children).forEach(b => b.disabled = true);
+        nextQuestionBtn.style.display = "inline-block";
+      };
+      quizChoices.appendChild(btn);
+    });
+  }
 
-      function createAnswerButtons(correct, allAnswers) {
-        answersDiv.innerHTML = '';
-        allAnswers.forEach(ans => {
-          const btn = document.createElement('button');
-          btn.className = 'answer';
-          btn.textContent = ans;
-          btn.onclick = () => {
-            if(!allowAnswer) return;
-            allowAnswer = false;
-            if(ans === correct){
-              btn.classList.add('correct');
-              feedbackEl.textContent = 'Correct! 🎉';
-              feedbackEl.style.color = '#388E3C';
-              explanationEl.style.display = 'block';
-              explanationEl.textContent = currentQuestion.explanation;
-              setMascotMessage('Great job! You got it right! 🎉', '😄');
-              speak('Correct! ' + currentQuestion.explanation);
-              updateScore(10);
-              setTimeout(loadNextQuestion, 3500);
-            } else {
-              btn.classList.add('wrong');
-              feedbackEl.textContent = 'Oops! Try again. ❌';
-              feedbackEl.style.color = '#D32F2F';
-              setMascotMessage('Keep trying! You can do it! 💪', '🤔');
-              updateScore(-5);
-              speak('Incorrect. Try again.');
-              allowAnswer = true;
-            }
-          };
-          answersDiv.appendChild(btn);
-        });
-      }
+  function nextQuestion() {
+    quizResult.textContent = "";
+    currentQIndex++;
+    showQuestion();
+  }
 
-      function generateOptions(correct) {
-        // Generate close wrong answers near correct
-        let options = [correct];
-        while(options.length < 4){
-          let offset = randomInt(-5,5);
-          if(offset === 0) continue;
-          let val = Math.round(correct + offset);
-          if(val < 0) val = Math.abs(val) + 2;
-          if(!options.includes(val)){
-            options.push(val);
-          }
-        }
-        return shuffleArray(options);
-      }
+  // Load circle lesson on page load by default
+  loadCircleLesson();
 
-      function loadNextQuestion() {
-        feedbackEl.textContent = '';
-        explanationEl.style.display = 'none';
-
-        // Pick random question type
-        let qType = questionTypes[randomInt(0, questionTypes.length -1)];
-        currentQuestion = qType.generateQuestion();
-
-        questionBox.innerHTML = currentQuestion.questionText;
-
-        // Create SVG diagram
-        diagramDiv.innerHTML = '';
-        const svgNS = "http://www.w3.org/2000/svg";
-        const svg = document.createElementNS(svgNS, 'svg');
-        svg.setAttribute('viewBox', '0 0 240 240');
-        createSvgDefs(svg);
-        diagramDiv.appendChild(svg);
-
-        currentQuestion.drawDiagram(svg, currentQuestion.diagramData);
-
-        // Create answers buttons
-        let options = generateOptions(currentQuestion.correctAnswer);
-        createAnswerButtons(currentQuestion.correctAnswer, options);
-
-        allowAnswer = true;
-        setMascotMessage('Try to answer!');
-      }
-
-      // Start game
-      updateScore(0);
-      loadNextQuestion();
-
-    })();
-  </script>
+</script>
 
 </body>
 </html>
-
