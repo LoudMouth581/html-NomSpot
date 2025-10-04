@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Clown Teeth Math Shooter</title>
+<title>Clown Teeth Shooter</title>
 <style>
   /* Reset and base */
   * {
@@ -30,7 +30,6 @@
     border-radius: 12px;
     box-shadow: 0 0 20px #0ff88aa;
   }
-  /* Header with score/time */
   #header {
     display: flex;
     justify-content: space-between;
@@ -39,8 +38,6 @@
     padding-bottom: 8px;
     border-bottom: 1px solid #0ff3;
   }
-
-  /* Question and answers top row */
   #question-container {
     margin: 12px 0;
     background: #002233cc;
@@ -53,7 +50,7 @@
     box-shadow: 0 0 10px #0ff8;
   }
   #question {
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     font-weight: 700;
     min-width: 110px;
     text-align: center;
@@ -67,17 +64,15 @@
     background: linear-gradient(135deg, #00ffffbb, #0099aaee);
     border-radius: 12px 12px 4px 4px;
     padding: 6px 14px;
-    font-weight: 700;
-    font-size: 1.1rem;
+    font-weight: 600;
+    font-size: 1rem;
     box-shadow: 0 0 6px #0ff;
     user-select: none;
-    min-width: 40px;
+    min-width: 70px;
     text-align: center;
     color: #003333;
     cursor: default;
   }
-
-  /* Clown container */
   #clown-container {
     margin-top: 40px;
     position: relative;
@@ -86,7 +81,6 @@
     flex-direction: column;
     align-items: center;
   }
-  /* Clown face */
   #clown-face {
     background: radial-gradient(circle at center, #ff0aa8, #aa0055);
     width: 180px;
@@ -95,7 +89,6 @@
     position: relative;
     box-shadow: 0 0 25px #ff11aaaa;
   }
-  /* Clown eyes */
   .eye {
     background: white;
     border-radius: 50%;
@@ -120,8 +113,6 @@
   #eye-right {
     right: 50px;
   }
-
-  /* Teeth holder below face */
   #teeth-holder {
     margin-top: 25px;
     width: 100%;
@@ -130,8 +121,6 @@
     justify-content: space-between;
     position: relative;
   }
-
-  /* Teeth */
   .tooth {
     width: 38px;
     height: 70px;
@@ -143,17 +132,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 1.1rem;
+    font-weight: 600;
+    font-size: 0.75rem;
     color: #004040;
     position: relative;
     transition: box-shadow 0.3s ease;
+    text-align: center;
+    padding: 4px 2px;
   }
   .tooth:hover, .tooth.selected {
     box-shadow: 0 0 20px #0ff, inset 0 3px 6px #8888;
   }
-
-  /* Shooter - a cannon shape below teeth */
   #shooter {
     position: absolute;
     bottom: -55px;
@@ -179,8 +168,6 @@
     clip-path: polygon(0% 100%, 100% 50%, 0% 0%);
     filter: drop-shadow(0 0 6px #00aaff);
   }
-
-  /* Info text below */
   #info-text {
     margin-top: 80px;
     font-weight: 600;
@@ -188,10 +175,10 @@
     text-align: center;
     color: #0ff;
     text-shadow: 0 0 6px #0ff;
-    min-height: 28px;
+    min-height: 40px;
     user-select: none;
+    padding: 0 10px;
   }
-  /* Disabled button style */
   #start-button {
     margin: 30px auto 0;
     display: block;
@@ -213,8 +200,6 @@
     opacity: 0.5;
     cursor: not-allowed;
   }
-
-  /* Responsive for smaller devices */
   @media (max-width: 400px) {
     #game {
       height: 100vh;
@@ -234,9 +219,9 @@
       max-width: 100%;
     }
     .answer-pill {
-      min-width: 32px;
-      font-size: 1rem;
-      padding: 5px 10px;
+      min-width: 60px;
+      font-size: 0.9rem;
+      padding: 5px 8px;
     }
     #clown-face {
       width: 140px;
@@ -255,7 +240,8 @@
     .tooth {
       width: 30px;
       height: 55px;
-      font-size: 0.9rem;
+      font-size: 0.65rem;
+      padding: 3px 2px;
     }
     #shooter {
       width: 40px;
@@ -278,7 +264,7 @@
   </div>
 
   <div id="question-container" aria-live="polite" aria-atomic="true" aria-relevant="additions">
-    <div id="question">Loading...</div>
+    <div id="question">Press Start to Play!</div>
     <div id="answers-row" aria-label="Answer choices"></div>
   </div>
 
@@ -315,36 +301,80 @@
   let shooterIndex = 0;
   let gameRunning = false;
 
-  function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  // Accounting training questions
+  const accountingQuestions = [
+    {
+      question: "Which financial statement shows assets, liabilities, and equity?",
+      choices: ["Income Statement", "Balance Sheet", "Cash Flow Statement", "Statement of Retained Earnings", "Trial Balance", "Ledger"],
+      answer: "Balance Sheet"
+    },
+    {
+      question: "What does GAAP stand for?",
+      choices: ["General Accounting Auditing Principles", "Generally Accepted Accounting Principles", "General Annual Accounting Procedures", "Generally Accepted Auditing Practices", "Global Accounting and Auditing Policies", "Governmental Accounting Accepted Policies"],
+      answer: "Generally Accepted Accounting Principles"
+    },
+    {
+      question: "Which account increases with a debit?",
+      choices: ["Revenue", "Liability", "Expense", "Equity", "Accounts Payable", "Capital"],
+      answer: "Expense"
+    },
+    {
+      question: "Depreciation expense is classified as a:",
+      choices: ["Liability", "Asset", "Expense", "Revenue", "Equity", "Cash Flow"],
+      answer: "Expense"
+    },
+    {
+      question: "The matching principle requires:",
+      choices: ["Expenses matched with revenues", "Assets matched with liabilities", "Revenues matched with cash", "Equity matched with expenses", "Dividends matched with assets", "Expenses matched with equity"],
+      answer: "Expenses matched with revenues"
+    },
+    {
+      question: "Which document is used to record all financial transactions?",
+      choices: ["Ledger", "Journal", "Balance Sheet", "Income Statement", "Trial Balance", "Cash Flow Statement"],
+      answer: "Journal"
+    },
+    {
+      question: "What is accrued revenue?",
+      choices: ["Revenue earned but not yet received", "Revenue received in advance", "Revenue that has been paid", "Revenue recognized in cash", "Revenue that is estimated", "Revenue not earned yet"],
+      answer: "Revenue earned but not yet received"
+    },
+    {
+      question: "What is the normal balance of accounts payable?",
+      choices: ["Debit", "Credit", "Zero", "Asset", "Expense", "Equity"],
+      answer: "Credit"
+    },
+    {
+      question: "Which accounting concept assumes business continuity?",
+      choices: ["Going Concern", "Matching Principle", "Conservatism", "Monetary Unit", "Cost Principle", "Revenue Recognition"],
+      answer: "Going Concern"
+    },
+    {
+      question: "The trial balance is used to:",
+      choices: ["Check equality of debits and credits", "Report net income", "Calculate assets", "Determine cash flow", "List shareholders", "Record expenses"],
+      answer: "Check equality of debits and credits"
+    }
+  ];
+
+  // Shuffle array helper
+  function shuffleArray(arr) {
+    for (let i = arr.length -1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i+1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
   }
 
-  // Generate addition question and answer choices
+  // Generate question from accounting set randomly with shuffled answers
   function generateQA() {
-    const difficulty = Math.min(10 + Math.floor(score / 10), 30);
-    const a = randomInt(1, difficulty);
-    const b = randomInt(1, difficulty);
-    const answer = a + b;
-    const question = `${a} + ${b} = ?`;
+    // Pick random question
+    const q = accountingQuestions[Math.floor(Math.random() * accountingQuestions.length)];
 
-    const choicesSet = new Set([answer]);
-    while (choicesSet.size < 6) {
-      let choice = answer + randomInt(-difficulty, difficulty);
-      if (choice < 0) choice = 0;
-      choicesSet.add(choice);
-    }
-    let choices = Array.from(choicesSet);
+    // Copy and shuffle choices
+    const choices = [...q.choices];
+    shuffleArray(choices);
 
-    // Shuffle choices
-    for (let i = choices.length -1; i > 0; i--) {
-      const j = randomInt(0, i);
-      [choices[i], choices[j]] = [choices[j], choices[i]];
-    }
-
-    return { question, choices, answer };
+    return { question: q.question, choices, answer: q.answer };
   }
 
-  // Render question and answer pills (top)
   function renderQuestionAndAnswers(qa) {
     questionEl.textContent = qa.question;
     answersRow.innerHTML = '';
@@ -356,7 +386,6 @@
     });
   }
 
-  // Render clown teeth (bottom) - clickable targets
   function renderTeeth(choices) {
     teethHolder.innerHTML = '';
     choices.forEach((choice, i) => {
@@ -364,19 +393,21 @@
       tooth.className = 'tooth';
       tooth.textContent = choice;
       tooth.setAttribute('role', 'listitem');
-      tooth.dataset.index = i;
-      tooth.tabIndex = 0;
-      teethHolder.appendChild(tooth);
+      tooth.setAttribute('tabindex', 0);
+      tooth.title = `Shoot this tooth: ${choice}`;
 
+      // Shoot tooth on click or enter/space
       tooth.addEventListener('click', () => {
-        if (gameRunning) shootAt(i);
+        shootAt(i);
       });
-      tooth.addEventListener('keydown', (e) => {
+      tooth.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          if (gameRunning) shootAt(i);
+          shootAt(i);
         }
       });
+
+      teethHolder.appendChild(tooth);
     });
   }
 
@@ -388,10 +419,6 @@
     if (shooterIndex >= teeth.length) shooterIndex = teeth.length - 1;
 
     const tooth = teeth[shooterIndex];
-    const containerRect = teethHolder.getBoundingClientRect();
-    const toothRect = tooth.getBoundingClientRect();
-
-    // Calculate relative position inside teethHolder
     const leftPos = tooth.offsetLeft + tooth.offsetWidth / 2 - shooter.offsetWidth / 2;
     shooter.style.transform = `translateX(${leftPos}px)`;
   }
@@ -403,14 +430,13 @@
     if (index < 0 || index >= teeth.length) return;
 
     const tooth = teeth[index];
-    // Highlight shooting tooth briefly
     tooth.classList.add('selected');
 
     if (answers[index] === currentAnswer) {
       // Correct
       score++;
-      infoText.textContent = "Correct! 🎉";
       scoreEl.textContent = `Score: ${score}`;
+      infoText.textContent = "Correct! 🎉";
       setTimeout(() => {
         tooth.classList.remove('selected');
         nextQuestion();
@@ -454,9 +480,10 @@
   // End game
   function endGame() {
     gameRunning = false;
-    infoText.textContent = `Game Over! Final Score: ${score}`;
+    infoText.textContent = `Game Over! Your Score: ${score}`;
     startButton.disabled = false;
     startButton.textContent = "Restart Game";
+    startButton.setAttribute('aria-pressed', 'false');
   }
 
   // Start game
@@ -466,6 +493,7 @@
     infoText.textContent = "";
     startButton.disabled = true;
     startButton.textContent = "Game Running...";
+    startButton.setAttribute('aria-pressed', 'true');
     gameRunning = true;
     nextQuestion();
     startTimer();
@@ -496,7 +524,6 @@
   shooter.addEventListener('click', () => {
     if (gameRunning) shootAt(shooterIndex);
   });
-  // Make shooter keyboard accessible
   shooter.addEventListener('keydown', e => {
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
@@ -508,7 +535,7 @@
   window.addEventListener('keydown', handleKeydown);
   window.addEventListener('resize', updateShooterPosition);
 
-  // Initial layout
+  // Initial layout setup
   questionEl.textContent = "Press Start to Play!";
   answersRow.innerHTML = '';
   teethHolder.innerHTML = '';
