@@ -1,366 +1,526 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trigonometry</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #fff;
-      color: #333;
-      margin: 0;
-      padding: 20px;
-      max-width: 720px;
-      margin-left: auto;
-      margin-right: auto;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trigonometry</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  h1 {
+    color: #2c3e50;
+    margin-bottom: 5px;
+  }
+  .section {
+    margin: 25px 0;
+  }
+  .topic-list button {
+    margin: 6px 8px 6px 0;
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.25s ease;
+  }
+  .topic-list button:hover {
+    background: #2980b9;
+  }
+  .explanation {
+    border-left: 5px solid #3498db;
+    padding: 15px 20px;
+    margin-top: 15px;
+    background: #ecf0f1;
+    display: none;
+    line-height: 1.5;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    user-select: none;
+  }
+  svg {
+    max-width: 300px;
+    margin: 20px auto;
+    display: block;
+  }
+  .quiz {
+    border: 2px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    background: #f7f7f7;
+  }
+  .question {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    min-height: 50px;
+  }
+  .choices button {
+    margin: 8px 0;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: #bdc3c7;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  .choices button.correct {
+    background: #2ecc71 !important;
+    color: white;
+    font-weight: bold;
+  }
+  .choices button.wrong {
+    background: #e74c3c !important;
+    color: white;
+    font-weight: bold;
+  }
+  .result {
+    font-weight: bold;
+    margin-top: 12px;
+    min-height: 28px;
+    font-size: 1.1rem;
+    user-select: none;
+  }
+  .badge {
+    display: inline-block;
+    margin: 15px 10px 0 0;
+    padding: 10px 15px;
+    background: gold;
+    border-radius: 10px;
+    font-weight: 700;
+    color: #333;
+    box-shadow: 0 0 6px gold;
+    user-select: none;
+    font-size: 1.1rem;
+  }
+  .quiz-end {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-top: 20px;
+    color: #27ae60;
+    user-select: none;
+    text-align: center;
+  }
+  /* Mini game styles */
+  #mini-game {
+    text-align: center;
+    margin-top: 40px;
+  }
+  #circle-game svg {
+    max-width: 320px;
+    margin: 0 auto;
+    user-select: none;
+  }
+  .angle-target {
+    cursor: pointer;
+    fill: #e74c3c;
+    transition: fill 0.3s ease;
+  }
+  .angle-target:hover {
+    fill: #c0392b;
+  }
+  .angle-target.correct {
+    fill: #2ecc71 !important;
+    cursor: default;
+  }
+  .angle-target.wrong {
+    fill: #e74c3c !important;
+    cursor: default;
+  }
+  #game-result {
+    font-weight: bold;
+    margin-top: 15px;
+    min-height: 30px;
+    font-size: 1.1rem;
+  }
+  #next-game-btn {
+    margin-top: 15px;
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: none;
+  }
+  #next-game-btn:hover {
+    background: #2980b9;
+  }
+  @media (max-width: 480px) {
+    .topic-list button, .choices button {
+      font-size: 0.9rem;
+      padding: 10px 12px;
     }
-    header {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-    h1 {
-      color: #2c3e50;
-      margin-bottom: 5px;
-    }
-    .section {
-      margin: 25px 0;
-    }
-    .topic-list button {
-      margin: 6px 8px 6px 0;
-      padding: 10px 20px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.25s ease;
-    }
-    .topic-list button:hover {
-      background: #2980b9;
-    }
-    .explanation {
-      border-left: 5px solid #3498db;
-      padding: 15px 20px;
-      margin-top: 15px;
-      background: #ecf0f1;
-      display: none;
-      line-height: 1.5;
-      font-size: 1.1rem;
-      border-radius: 4px;
-      user-select: none;
-    }
-    svg {
-      max-width: 300px;
-      margin: 20px auto;
-      display: block;
-    }
-    .quiz {
-      border: 2px solid #ccc;
-      padding: 20px;
-      border-radius: 10px;
-      background: #f7f7f7;
-    }
-    .question {
-      font-weight: 700;
-      font-size: 1.2rem;
-      margin-bottom: 12px;
-      min-height: 50px;
-    }
-    .choices button {
-      margin: 8px 0;
-      width: 100%;
-      padding: 12px;
-      border: none;
-      background: #bdc3c7;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s ease;
-      user-select: none;
-    }
-    .choices button.correct {
-      background: #2ecc71 !important;
-      color: white;
-      font-weight: bold;
-    }
-    .choices button.wrong {
-      background: #e74c3c !important;
-      color: white;
-      font-weight: bold;
-    }
-    .result {
-      font-weight: bold;
-      margin-top: 12px;
-      min-height: 28px;
-      font-size: 1.1rem;
-      user-select: none;
-    }
-    .badge {
-      display: inline-block;
-      margin: 15px 10px 0 0;
-      padding: 10px 15px;
-      background: gold;
-      border-radius: 10px;
-      font-weight: 700;
-      color: #333;
-      box-shadow: 0 0 6px gold;
-      user-select: none;
-      font-size: 1.1rem;
-    }
-    .quiz-end {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-top: 20px;
-      color: #27ae60;
-      user-select: none;
-      text-align: center;
-    }
-    @media (max-width: 480px) {
-      .topic-list button, .choices button {
-        font-size: 0.9rem;
-        padding: 10px 12px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <header>
-    <h1>📐 Trigonometry</h1>
-    <p>Learn trigonometry </p>
-  </header>
+<header>
+  <h1>📐 Trigonometry</h1>
+  <p>Learn Trigonometry!</p>
+</header>
 
-  <section class="section topic-list">
-    <h2>🎯 Choose a Topic</h2>
-    <button onclick="showExplanation('unit')">Unit Circle</button>
-    <button onclick="showExplanation('inverse')">Inverse Trig</button>
-    <button onclick="showExplanation('identities')">Trig Identities</button>
-  </section>
+<section class="section topic-list" aria-label="Choose topic">
+  <h2>🎯 Choose a Topic</h2>
+  <button onclick="showExplanation('unit')">Unit Circle</button>
+  <button onclick="showExplanation('inverse')">Inverse Trig</button>
+  <button onclick="showExplanation('identities')">Trig Identities</button>
+</section>
 
-  <div id="unit" class="explanation">
-    <h3>🌀 Unit Circle</h3>
-    <p>The unit circle is a circle with a radius of 1. It helps you understand sine, cosine, and tangent values at key angles like 0°, 30°, 45°, 60°, and 90°.</p>
-    <svg viewBox="0 0 200 200" aria-label="Unit circle diagram">
-      <circle cx="100" cy="100" r="90" fill="none" stroke="#3498db" stroke-width="4" />
-      <!-- X and Y axes -->
-      <line x1="10" y1="100" x2="190" y2="100" stroke="#7f8c8d" stroke-width="1" />
-      <line x1="100" y1="10" x2="100" y2="190" stroke="#7f8c8d" stroke-width="1" />
-      <!-- Radius line for 0 degrees -->
-      <line x1="100" y1="100" x2="190" y2="100" stroke="#e74c3c" stroke-width="3" />
-      <text x="170" y="90" font-size="12" fill="#e74c3c">0°</text>
-      <!-- Radius line for 90 degrees -->
-      <line x1="100" y1="100" x2="100" y2="10" stroke="#2ecc71" stroke-width="3" />
-      <text x="105" y="25" font-size="12" fill="#2ecc71">90°</text>
-      <!-- Radius line for 45 degrees -->
-      <line x1="100" y1="100" x2="164" y2="36" stroke="#f39c12" stroke-width="3" />
-      <text x="140" y="60" font-size="12" fill="#f39c12">45°</text>
-    </svg>
+<div id="unit" class="explanation" tabindex="0" aria-live="polite">
+  <h3>🌀 Unit Circle</h3>
+  <p>The unit circle is a circle with a radius of 1. It helps you understand sine, cosine, and tangent values at key angles like 0°, 30°, 45°, 60°, and 90°.</p>
+  <svg viewBox="0 0 200 200" aria-label="Unit circle diagram" role="img" tabindex="0">
+    <circle cx="100" cy="100" r="90" fill="none" stroke="#3498db" stroke-width="4" />
+    <!-- X and Y axes -->
+    <line x1="10" y1="100" x2="190" y2="100" stroke="#7f8c8d" stroke-width="1" />
+    <line x1="100" y1="10" x2="100" y2="190" stroke="#7f8c8d" stroke-width="1" />
+    <!-- Radius line for 0 degrees -->
+    <line x1="100" y1="100" x2="190" y2="100" stroke="#e74c3c" stroke-width="3" />
+    <text x="170" y="90" font-size="12" fill="#e74c3c">0°</text>
+    <!-- Radius line for 90 degrees -->
+    <line x1="100" y1="100" x2="100" y2="10" stroke="#2ecc71" stroke-width="3" />
+    <text x="105" y="25" font-size="12" fill="#2ecc71">90°</text>
+    <!-- Radius line for 45 degrees -->
+    <line x1="100" y1="100" x2="164" y2="36" stroke="#f39c12" stroke-width="3" />
+    <text x="140" y="60" font-size="12" fill="#f39c12">45°</text>
+  </svg>
+</div>
+
+<div id="inverse" class="explanation" tabindex="0" aria-live="polite">
+  <h3>🔁 Inverse Trigonometry</h3>
+  <p>Inverse trig functions let you find angles if you know sine, cosine, or tangent values. For example: sin⁻¹(0.5) = 30°.</p>
+</div>
+
+<div id="identities" class="explanation" tabindex="0" aria-live="polite">
+  <h3>🔢 Trig Identities</h3>
+  <p>Trig identities are formulas like sin²θ + cos²θ = 1. They help simplify expressions and solve equations.</p>
+</div>
+
+<section class="section quiz" aria-live="polite">
+  <h2>🧠 Quiz Yourself</h2>
+  <div id="quiz-area" role="form" aria-labelledby="quiz-title">
+    <div class="question" id="question-text" tabindex="0"></div>
+    <div class="choices" id="choices"></div>
+    <div class="result" id="result" role="alert"></div>
   </div>
+  <div id="quiz-end" class="quiz-end hidden" tabindex="0">🎉 Great job! You've completed the quiz!</div>
+  <div id="badges" aria-live="polite"></div>
+</section>
 
-  <div id="inverse" class="explanation">
-    <h3>🔁 Inverse Trigonometry</h3>
-    <p>Inverse trig functions let you find angles if you know sine, cosine, or tangent values. For example: sin⁻¹(0.5) = 30°.</p>
-  </div>
+<section id="mini-game" aria-label="Mini game: Angle Shooter" tabindex="0">
+  <h2>🎮 Mini Game: Angle Shooter</h2>
+  <p>Click the red marker that matches the target angle!</p>
+  <div id="circle-game" role="img" aria-label="Circle with angle targets"></div>
+  <div id="game-result" aria-live="polite"></div>
+  <button id="next-game-btn" aria-label="Next mini game question">Next</button>
+</section>
 
-  <div id="identities" class="explanation">
-    <h3>🔢 Trig Identities</h3>
-    <p>Trig identities are formulas like sin²θ + cos²θ = 1. They help simplify expressions and solve equations.</p>
-  </div>
-
-  <section class="section quiz" aria-live="polite">
-    <h2>🧠 Quiz Yourself</h2>
-    <div id="quiz-area" role="form" aria-labelledby="quiz-title">
-      <div class="question" id="question-text"></div>
-      <div class="choices" id="choices"></div>
-      <div class="result" id="result" role="alert"></div>
-    </div>
-    <div id="quiz-end" class="quiz-end hidden" tabindex="0">🎉 Great job! You've completed the quiz!</div>
-    <div id="badges" aria-live="polite"></div>
-  </section>
-
-  <script>
-    // Speech synthesis function with cancel on new speak to prevent overlapping
-    const synth = window.speechSynthesis;
-    function speak(text) {
-      if (synth.speaking) {
-        synth.cancel();
-      }
-      if (text && text.length > 0) {
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.rate = 1;
-        synth.speak(utter);
-      }
+<script>
+  // Speech synthesis
+  const synth = window.speechSynthesis;
+  function speak(text) {
+    if (synth.speaking) {
+      synth.cancel();
     }
-
-    // Show explanation & speak text
-    const explanations = document.querySelectorAll('.explanation');
-    function showExplanation(id) {
-      explanations.forEach(el => el.style.display = 'none');
-      const target = document.getElementById(id);
-      target.style.display = 'block';
-      speak(target.textContent);
+    if (text && text.length > 0) {
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1;
+      synth.speak(utter);
     }
+  }
 
-    // Initial: show none
-    explanations.forEach(el => el.style.display = 'none');
+  // Show explanations
+  function showExplanation(id) {
+    // Hide all explanations
+    ['unit', 'inverse', 'identities'].forEach(sectionId => {
+      document.getElementById(sectionId).style.display = 'none';
+    });
+    // Show chosen
+    const el = document.getElementById(id);
+    el.style.display = 'block';
+    el.focus();
+    speak(el.innerText);
+  }
 
-    // Quiz questions with levels: basic, intermediate, expert
-    const quizQuestions = [
-      // Basic
+  // Quiz data
+  const quizLevels = {
+    basic: [
       {
-        q: "What is sin(90°)?",
-        options: ["1", "0", "-1", "0.5"],
-        answer: "1",
-        level: "basic"
+        question: 'What is sin 30°?',
+        choices: ['0.5', '0.87', '1', '0'],
+        answer: '0.5',
       },
       {
-        q: "cos(0°) = ?",
-        options: ["1", "0", "-1", "undefined"],
-        answer: "1",
-        level: "basic"
+        question: 'What is cos 0°?',
+        choices: ['1', '0', '0.5', '-1'],
+        answer: '1',
       },
       {
-        q: "What is tan(45°)?",
-        options: ["0", "1", "√3", "undefined"],
-        answer: "1",
-        level: "basic"
+        question: 'What is tan 45°?',
+        choices: ['1', '0', '√3', 'Undefined'],
+        answer: '1',
       },
-      // Intermediate
+    ],
+    expert: [
       {
-        q: "If sin(x) = 0.5, what is x (in degrees)?",
-        options: ["30°", "45°", "60°", "90°"],
-        answer: "30°",
-        level: "intermediate"
-      },
-      {
-        q: "What identity relates sin²θ + cos²θ?",
-        options: ["1", "2", "tan²θ", "0"],
-        answer: "1",
-        level: "intermediate"
+        question: 'If sin θ = 0.6, what is θ approximately?',
+        choices: ['36.87°', '45°', '30°', '60°'],
+        answer: '36.87°',
       },
       {
-        q: "What is cos(180°)?",
-        options: ["-1", "1", "0", "undefined"],
-        answer: "-1",
-        level: "intermediate"
-      },
-      // Expert
-      {
-        q: "What is sin(270°)?",
-        options: ["-1", "0", "1", "undefined"],
-        answer: "-1",
-        level: "expert"
-      },
-      {
-        q: "Evaluate cos⁻¹(0.5) in degrees.",
-        options: ["60°", "45°", "30°", "90°"],
-        answer: "60°",
-        level: "expert"
-      },
-      {
-        q: "Which of these is a Pythagorean identity?",
-        options: [
-          "sin²θ + cos²θ = 1",
-          "sinθ + cosθ = 1",
-          "tanθ = sinθ / cosθ + 1",
-          "sin²θ - cos²θ = 0"
+        question: 'Which identity is true?',
+        choices: [
+          'sin²θ + cos²θ = 1',
+          'sin θ + cos θ = 1',
+          'tan θ = sin θ + cos θ',
+          'sin θ = cos θ',
         ],
-        answer: "sin²θ + cos²θ = 1",
-        level: "expert"
+        answer: 'sin²θ + cos²θ = 1',
       },
       {
-        q: "What is the exact value of tan(π/4)?",
-        options: ["1", "0", "√3", "-1"],
-        answer: "1",
-        level: "expert"
+        question: 'What is the inverse cosine of 0.5?',
+        choices: ['60°', '30°', '90°', '45°'],
+        answer: '60°',
       },
-      {
-        q: "Simplify: sin(θ) / cos(θ)",
-        options: ["tan(θ)", "cot(θ)", "sec(θ)", "csc(θ)"],
-        answer: "tan(θ)",
-        level: "expert"
-      }
-    ];
+    ],
+  };
 
-    let current = 0;
-    let score = 0;
+  let currentLevel = 'basic';
+  let currentQuizIndex = 0;
+  let correctAnswers = 0;
 
-    function loadQuiz() {
-      if (current >= quizQuestions.length) {
-        document.getElementById('quiz-area').classList.add('hidden');
-        document.getElementById('quiz-end').classList.remove('hidden');
-        showBadges();
-        speak("Congratulations! You have completed the quiz.");
+  const questionText = document.getElementById('question-text');
+  const choicesDiv = document.getElementById('choices');
+  const resultDiv = document.getElementById('result');
+  const quizEndDiv = document.getElementById('quiz-end');
+  const badgesDiv = document.getElementById('badges');
+
+  function loadQuestion() {
+    const quiz = quizLevels[currentLevel];
+    if (currentQuizIndex >= quiz.length) {
+      // Level done, check if can go to next level
+      if (currentLevel === 'basic') {
+        if (correctAnswers >= 2) {
+          // Promote to expert
+          currentLevel = 'expert';
+          currentQuizIndex = 0;
+          correctAnswers = 0;
+          badgesDiv.innerHTML = '<div class="badge" aria-label="Basic level badge">🎖️ Basic Level Complete!</div>';
+          speak('Great! Moving to expert level.');
+          loadQuestion();
+          return;
+        } else {
+          // Retry basic
+          badgesDiv.innerHTML = '<div class="badge" aria-label="Try again badge">⚠️ Try basic level again to proceed.</div>';
+          speak('Try the basic level again to proceed.');
+          currentQuizIndex = 0;
+          correctAnswers = 0;
+          loadQuestion();
+          return;
+        }
+      } else {
+        // Expert level done
+        badgesDiv.innerHTML = '<div class="badge" aria-label="Expert level badge">🏅 Expert Level Complete!</div>';
+        quizEndDiv.style.display = 'block';
+        questionText.textContent = '';
+        choicesDiv.innerHTML = '';
+        resultDiv.textContent = '';
+        speak('Congratulations! You completed all quiz levels.');
         return;
       }
+    }
 
-      const q = quizQuestions[current];
-      const questionEl = document.getElementById('question-text');
-      const choicesEl = document.getElementById('choices');
-      const resultEl = document.getElementById('result');
+    const q = quiz[currentQuizIndex];
+    questionText.textContent = q.question;
+    resultDiv.textContent = '';
+    choicesDiv.innerHTML = '';
+    q.choices.forEach(choice => {
+      const btn = document.createElement('button');
+      btn.textContent = choice;
+      btn.setAttribute('aria-label', 'Answer choice: ' + choice);
+      btn.onclick = () => selectAnswer(choice);
+      choicesDiv.appendChild(btn);
+    });
+    speak(q.question);
+  }
 
-      questionEl.textContent = `${q.level.toUpperCase()} - ${q.q}`;
-      speak(`${q.level} question: ${q.q}`);
-      choicesEl.innerHTML = '';
-      resultEl.textContent = '';
+  function selectAnswer(choice) {
+    const quiz = quizLevels[currentLevel];
+    const correct = quiz[currentQuizIndex].answer;
+    if (choice === correct) {
+      resultDiv.textContent = '✅ Correct!';
+      resultDiv.style.color = '#27ae60';
+      correctAnswers++;
+      speak('Correct');
+    } else {
+      resultDiv.textContent = `❌ Wrong! The correct answer is ${correct}.`;
+      resultDiv.style.color = '#e74c3c';
+      speak('Wrong answer. The correct answer is ' + correct);
+    }
+    // Disable buttons after answer
+    Array.from(choicesDiv.children).forEach(btn => btn.disabled = true);
+    currentQuizIndex++;
+    setTimeout(loadQuestion, 1800);
+  }
 
-      q.options.forEach(option => {
-        const btn = document.createElement('button');
-        btn.textContent = option;
-        btn.setAttribute('aria-pressed', 'false');
-        btn.onclick = () => {
-          if (btn.disabled) return;
-          if (option === q.answer) {
-            btn.classList.add('correct');
-            resultEl.textContent = '✅ Correct!';
-            score += 10;
-            speak("Correct!");
-            // Disable all buttons after answer
-            Array.from(choicesEl.children).forEach(b => b.disabled = true);
-            setTimeout(() => {
-              current++;
-              loadQuiz();
-            }, 1000);
-          } else {
-            btn.classList.add('wrong');
-            resultEl.textContent = '❌ Try again!';
-            speak("Try again.");
-            btn.disabled = true;
-          }
-        };
-        choicesEl.appendChild(btn);
+  // Start quiz automatically
+  loadQuestion();
+
+  // Mini Game: Angle Shooter
+
+  const circleGameDiv = document.getElementById('circle-game');
+  const gameResultDiv = document.getElementById('game-result');
+  const nextGameBtn = document.getElementById('next-game-btn');
+
+  // Angles to use for game (degrees) and their labels
+  const gameAngles = [0, 30, 45, 60, 90, 120, 135, 150, 180];
+
+  let currentTargetAngle = null;
+
+  // Create SVG circle and angle targets
+  function createGameSVG() {
+    const size = 300;
+    const cx = size / 2;
+    const cy = size / 2;
+    const r = 130;
+    // Clear old content
+    circleGameDiv.innerHTML = '';
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('width', size);
+    svg.setAttribute('height', size);
+    svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'Circle with angle targets for mini game');
+
+    // Draw circle
+    const circle = document.createElementNS(svgNS, 'circle');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', r);
+    circle.setAttribute('stroke', '#3498db');
+    circle.setAttribute('stroke-width', '3');
+    circle.setAttribute('fill', 'none');
+    svg.appendChild(circle);
+
+    // Draw center dot
+    const centerDot = document.createElementNS(svgNS, 'circle');
+    centerDot.setAttribute('cx', cx);
+    centerDot.setAttribute('cy', cy);
+    centerDot.setAttribute('r', 5);
+    centerDot.setAttribute('fill', '#34495e');
+    svg.appendChild(centerDot);
+
+    // Add angle targets on circumference
+    gameAngles.forEach(angle => {
+      // Convert degrees to radians
+      const rad = (angle - 90) * (Math.PI / 180);
+      // Position on circumference
+      const x = cx + r * Math.cos(rad);
+      const y = cy + r * Math.sin(rad);
+
+      // Create small target circle
+      const target = document.createElementNS(svgNS, 'circle');
+      target.setAttribute('cx', x);
+      target.setAttribute('cy', y);
+      target.setAttribute('r', 12);
+      target.setAttribute('class', 'angle-target');
+      target.setAttribute('tabindex', '0');
+      target.setAttribute('role', 'button');
+      target.setAttribute('aria-label', `Select angle ${angle} degrees`);
+      target.dataset.angle = angle;
+
+      // Add label next to target
+      const text = document.createElementNS(svgNS, 'text');
+      text.setAttribute('x', x + 18);
+      text.setAttribute('y', y + 5);
+      text.setAttribute('font-size', '14');
+      text.setAttribute('fill', '#2c3e50');
+      text.textContent = `${angle}°`;
+
+      // Click handler
+      target.addEventListener('click', () => selectAngle(angle, target));
+      target.addEventListener('keypress', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectAngle(angle, target);
+        }
+      });
+
+      svg.appendChild(target);
+      svg.appendChild(text);
+    });
+
+    circleGameDiv.appendChild(svg);
+  }
+
+  function selectAngle(angle, targetElement) {
+    if (currentTargetAngle === null) return; // No game running
+
+    // Disable all targets while processing
+    const allTargets = circleGameDiv.querySelectorAll('.angle-target');
+    allTargets.forEach(t => t.style.pointerEvents = 'none');
+
+    if (angle === currentTargetAngle) {
+      targetElement.classList.add('correct');
+      gameResultDiv.textContent = `✅ Correct! You clicked ${angle}°`;
+      speak(`Correct! You clicked ${angle} degrees`);
+    } else {
+      targetElement.classList.add('wrong');
+      gameResultDiv.textContent = `❌ Wrong! Target was ${currentTargetAngle}°`;
+      speak(`Wrong! The target was ${currentTargetAngle} degrees`);
+      // Highlight correct target
+      allTargets.forEach(t => {
+        if (parseInt(t.dataset.angle) === currentTargetAngle) {
+          t.classList.add('correct');
+        }
       });
     }
+    nextGameBtn.style.display = 'inline-block';
+  }
 
-    function showBadges() {
-      const badgeContainer = document.getElementById('badges');
-      badgeContainer.innerHTML = '';
+  function nextGameRound() {
+    // Reset
+    gameResultDiv.textContent = '';
+    nextGameBtn.style.display = 'none';
 
-      if (score >= 30) {
-        const badge = document.createElement('div');
-        badge.className = 'badge';
-        badge.textContent = '🏅 Trig Starter';
-        badgeContainer.appendChild(badge);
-      }
+    // Clear previous classes
+    const allTargets = circleGameDiv.querySelectorAll('.angle-target');
+    allTargets.forEach(t => {
+      t.classList.remove('correct', 'wrong');
+      t.style.pointerEvents = 'auto';
+    });
 
-      if (score >= 70) {
-        const badge = document.createElement('div');
-        badge.className = 'badge';
-        badge.textContent = '🥇 Trig Champion';
-        badgeContainer.appendChild(badge);
-      }
+    // Pick random target angle
+    currentTargetAngle = gameAngles[Math.floor(Math.random() * gameAngles.length)];
+    // Announce
+    speak(`Click the marker for ${currentTargetAngle} degrees`);
+  }
 
-      if (score >= 100) {
-        const badge = document.createElement('div');
-        badge.className = 'badge';
-        badge.textContent = '🌟 Trig Genius';
-        badgeContainer.appendChild(badge);
-      }
-    }
+  nextGameBtn.addEventListener('click', nextGameRound);
 
-    // Start quiz on load
-    loadQuiz();
-  </script>
+  // Initialize
+  createGameSVG();
+  nextGameRound();
+
+</script>
 </body>
 </html>
