@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Calculus Tutor with Mini Game</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff;
+    color: #333;
+    max-width: 720px;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  h1 {
+    color: #1e3d59;
+    margin-bottom: 5px;
+  }
+  .section {
+    margin: 25px 0;
+  }
+  .topic-list button {
+    margin: 6px 8px 6px 0;
+    padding: 10px 20px;
+    background: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.25s ease;
+  }
+  .topic-list button:hover {
+    background: #21867a;
+  }
+  .explanation {
+    border-left: 5px solid #2a9d8f;
+    padding: 15px 20px;
+    margin-top: 15px;
+    background: #e0f2f1;
+    display: none;
+    line-height: 1.5;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    user-select: none;
+  }
+  svg {
+    max-width: 320px;
+    margin: 20px auto;
+    display: block;
+    user-select: none;
+  }
+  .quiz {
+    border: 2px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    background: #f1f1f1;
+  }
+  .question {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    min-height: 50px;
+  }
+  .choices button {
+    margin: 8px 0;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: #b2dfdb;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  .choices button.correct {
+    background: #26a69a !important;
+    color: white;
+    font-weight: bold;
+  }
+  .choices button.wrong {
+    background: #ef5350 !important;
+    color: white;
+    font-weight: bold;
+  }
+  .result {
+    font-weight: bold;
+    margin-top: 12px;
+    min-height: 28px;
+    font-size: 1.1rem;
+    user-select: none;
+  }
+  .badge {
+    display: inline-block;
+    margin: 15px 10px 0 0;
+    padding: 10px 15px;
+    background: #f4a261;
+    border-radius: 10px;
+    font-weight: 700;
+    color: #333;
+    box-shadow: 0 0 6px #f4a261;
+    user-select: none;
+    font-size: 1.1rem;
+  }
+  .quiz-end {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-top: 20px;
+    color: #2a9d8f;
+    user-select: none;
+    text-align: center;
+  }
+  /* Mini game styles */
+  #mini-game {
+    text-align: center;
+    margin-top: 40px;
+  }
+  #graph-game svg {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  #tangent-line {
+    stroke: #e76f51;
+    stroke-width: 3;
+    cursor: grab;
+  }
+  #drag-handle {
+    fill: #e76f51;
+    cursor: grab;
+  }
+  #game-result {
+    font-weight: bold;
+    margin-top: 15px;
+    min-height: 30px;
+    font-size: 1.1rem;
+    user-select: none;
+  }
+  #next-game-btn {
+    margin-top: 15px;
+    background: #2a9d8f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: none;
+  }
+  #next-game-btn:hover {
+    background: #1e3d59;
+  }
+  @media (max-width: 480px) {
+    .topic-list button, .choices button {
+      font-size: 0.9rem;
+      padding: 10px 12px;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>📈 Calculus Tutor with Mini Game</h1>
+  <p>Learn calculus step-by-step — from limits and derivatives to integrals and beyond!</p>
+</header>
+
+<section class="section topic-list" aria-label="Choose calculus topic">
+  <h2>📚 Choose a Topic</h2>
+  <button onclick="showExplanation('limits')">Limits & Continuity</button>
+  <button onclick="showExplanation('derivatives')">Derivatives</button>
+  <button onclick="showExplanation('integrals')">Integrals</button>
+</section>
+
+<div id="limits" class="explanation" tabindex="0" aria-live="polite">
+  <h3>🔍 Limits & Continuity</h3>
+  <p>Limits describe how a function behaves near a point. Continuity means no breaks or jumps in the function.</p>
+  <svg viewBox="0 0 320 220" aria-label="Graph showing limit approaching" role="img" tabindex="0">
+    <path d="M40 180 Q 120 40 200 180" stroke="#2a9d8f" stroke-width="4" fill="none"/>
+    <circle cx="200" cy="180" r="6" fill="#e76f51" />
+    <text x="210" y="175" fill="#e76f51" font-size="16">Limit Point</text>
+  </svg>
+</div>
+
+<div id="derivatives" class="explanation" tabindex="0" aria-live="polite">
+  <h3>🧮 Derivatives</h3>
+  <p>Derivatives measure how fast something changes. The derivative of a function at a point is the slope of the tangent line there.</p>
+  <svg viewBox="0 0 320 220" aria-label="Graph with tangent line" role="img" tabindex="0">
+    <path d="M40 180 Q 120 40 200 180" stroke="#2a9d8f" stroke-width="4" fill="none"/>
+    <line x1="140" y1="100" x2="190" y2="130" stroke="#e76f51" stroke-width="3"/>
+    <circle cx="140" cy="100" r="6" fill="#e76f51"/>
+    <text x="150" y="95" fill="#e76f51" font-size="16">Tangent</text>
+  </svg>
+</div>
+
+<div id="integrals" class="explanation" tabindex="0" aria-live="polite">
+  <h3>➕ Integrals</h3>
+  <p>Integrals calculate the area under a curve. Think of it as adding up tiny slices to find the total.</p>
+  <svg viewBox="0 0 320 220" aria-label="Graph showing integral area" role="img" tabindex="0">
+    <path d="M40 180 Q 120 40 200 180" stroke="#2a9d8f" stroke-width="4" fill="none"/>
+    <path d="M40 180 Q 120 40 200 180 L 200 180 L 40 180 Z" fill="#f4a261" opacity="0.5"/>
+    <text x="100" y="120" fill="#e76f51" font-size="16">Area under curve</text>
+  </svg>
+</div>
+
+<section class="section quiz" aria-live="polite">
+  <h2>🧠 Quiz Yourself</h2>
+  <div id="quiz-area" role="form" aria-labelledby="quiz-title">
+    <div class="question" id="question-text" tabindex="0"></div>
+    <div class="choices" id="choices"></div>
+    <div class="result" id="result" role="alert"></div>
+    <div id="badges" aria-live="polite"></div>
+    <div class="quiz-end" id="quiz-end" style="display:none;">🎉 You finished all levels! Great job!</div>
+  </div>
+</section>
+
+<section id="mini-game" class="section" aria-label="Mini game: Slope Matcher">
+  <h2>🎮 Mini Game: Slope Matcher</h2>
+  <p>Drag the red tangent line on the curve to match the correct slope at the marked point.</p>
+  <div id="graph-game" aria-label="Interactive graph with draggable tangent line" role="application" tabindex="0"></div>
+  <div id="game-result" aria-live="polite"></div>
+  <button id="next-game-btn" aria-label="Next game round">Next Round</button>
+</section>
+
+<script>
+  // Speech helper
+  function speak(text) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 1;
+    window.speechSynthesis.speak(utter);
+  }
+
+  // Show explanations
+  function showExplanation(id) {
+    // Hide all explanations
+    ['limits','derivatives','integrals'].forEach(eid => {
+      document.getElementById(eid).style.display = 'none';
+    });
+    const el = document.getElementById(id);
+    el.style.display = 'block';
+    el.focus();
+    speak(el.innerText);
+  }
+
+  // Load first explanation by default
+  showExplanation('limits');
+
+  // Quiz data
+  const quizLevels = {
+    basic: [
+      {
+        question: 'What is the limit of f(x) = 2x as x approaches 3?',
+        choices: ['6', '3', '0', 'Infinity'],
+        answer: '6',
+      },
+      {
+        question: 'Is the function f(x) = 1/x continuous at x = 0?',
+        choices: ['No', 'Yes', 'Only from the right', 'Only from the left'],
+        answer: 'No',
+      },
+      {
+        question: 'What does a derivative represent?',
+        choices: ['Rate of change', 'Area under curve', 'Maximum value', 'Limit at infinity'],
+        answer: 'Rate of change',
+      },
+    ],
+    expert: [
+      {
+        question: 'What is the derivative of f(x) = x²?',
+        choices: ['2x', 'x', 'x²', '1'],
+        answer: '2x',
+      },
+      {
+        question: 'The integral of f(x) = 3x² dx is?',
+        choices: ['x³ + C', '6x + C', '3x + C', 'x² + C'],
+        answer: 'x³ + C',
+      },
+      {
+        question: 'What is the limit of (sin x)/x as x approaches 0?',
+        choices: ['1', '0', 'Infinity', '-1'],
+        answer: '1',
+      },
+    ],
+  };
+
+  let currentLevel = 'basic';
+  let currentQuizIndex = 0;
+  let correctAnswers = 0;
+
+  const questionText = document.getElementById('question-text');
+  const choicesDiv = document.getElementById('choices');
+  const resultDiv = document.getElementById('result');
+  const quizEndDiv = document.getElementById('quiz-end');
+  const badgesDiv = document.getElementById('badges');
+
+  function loadQuestion() {
+    const quiz = quizLevels[currentLevel];
+    if (currentQuizIndex >= quiz.length) {
+      if (currentLevel === 'basic') {
+        if (correctAnswers >= 2) {
+          currentLevel = 'expert';
+          currentQuizIndex = 0;
+          correctAnswers = 0;
+          badgesDiv.innerHTML = '<div class="badge" aria-label="Basic level badge">🎖️ Basic Level Complete!</div>';
+          speak('Great job! Moving to expert level.');
+          loadQuestion();
+          return;
+        } else {
+          badgesDiv.innerHTML = '<div class="badge" aria-label="Try again badge">⚠️ Try basic level again to proceed.</div>';
+          speak('Please try the basic level again to proceed.');
+          currentQuizIndex = 0;
+          correctAnswers = 0;
+          loadQuestion();
+          return;
+        }
+      } else {
+        badgesDiv.innerHTML = '<div class="badge" aria-label="Expert level badge">🏅 Expert Level Complete!</div>';
+        quizEndDiv.style.display = 'block';
+        questionText.textContent = '';
+        choicesDiv.innerHTML = '';
+        resultDiv.textContent = '';
+        speak('Congratulations! You completed all quiz levels.');
+        return;
+      }
+    }
+
+    const q = quiz[currentQuizIndex];
+    questionText.textContent = q.question;
+    resultDiv.textContent = '';
+    choicesDiv.innerHTML = '';
+    q.choices.forEach(choice => {
+      const btn = document.createElement('button');
+      btn.textContent = choice;
+      btn.setAttribute('aria-label', 'Answer choice: ' + choice);
+      btn.onclick = () => selectAnswer(choice);
+      choicesDiv.appendChild(btn);
+    });
+    speak(q.question);
+  }
+
+  function selectAnswer(choice) {
+    const quiz = quizLevels[currentLevel];
+    const correct = quiz[currentQuizIndex].answer;
+    if (choice === correct) {
+      resultDiv.textContent = '✅ Correct!';
+      resultDiv.style.color = '#27ae60';
+      correctAnswers++;
+      speak('Correct');
+    } else {
+      resultDiv.textContent = `❌ Wrong! The correct answer is ${correct}.`;
+      resultDiv.style.color = '#e74c3c';
+      speak(`Wrong answer. The correct answer is ${correct}`);
+    }
+    // Disable buttons after answer
+    Array.from(choicesDiv.children).forEach(btn => btn.disabled = true);
+    currentQuizIndex++;
+    setTimeout(loadQuestion, 1800);
+  }
+
+  // Start quiz automatically
+  loadQuestion();
+
+  // Mini Game: Slope Matcher
+
+  const graphGameDiv = document.getElementById('graph-game');
+  const gameResultDiv = document.getElementById('game-result');
+  const nextGameBtn = document.getElementById('next-game-btn');
+
+  // Create SVG graph with curve and draggable tangent line
+  function createGraphGame() {
+    graphGameDiv.innerHTML = '';
+    const svgNS = "http://www.w3.org/2000/svg";
+    const width = 320;
+    const height = 220;
+    const padding = 40;
+
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('width', width);
+    svg.setAttribute('height', height);
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'Graph of a quadratic function with draggable tangent line');
+    svg.setAttribute('tabindex', '0');
+
+    // Axes
+    const axisX = document.createElementNS(svgNS, 'line');
+    axisX.setAttribute('x1', padding);
+    axisX.setAttribute('y1', height - padding);
+    axisX.setAttribute('x2', width - padding/2);
+    axisX.setAttribute('y2', height - padding);
+    axisX.setAttribute('stroke', '#333');
+    axisX.setAttribute('stroke-width', '2');
+    svg.appendChild(axisX);
+
+    const axisY = document.createElementNS(svgNS, 'line');
+    axisY.setAttribute('x1', padding);
+    axisY.setAttribute('y1', height - padding);
+    axisY.setAttribute('x2', padding);
+    axisY.setAttribute('y2', padding/2);
+    axisY.setAttribute('stroke', '#333');
+    axisY.setAttribute('stroke-width', '2');
+    svg.appendChild(axisY);
+
+    // Graph of f(x) = 0.02*(x-160)^2 + 20 (parabola)
+    const path = document.createElementNS(svgNS, 'path');
+    let d = 'M ';
+    for (let x = padding; x <= width - padding/2; x += 5) {
+      // Quadratic formula for y: y = 0.02*(x-160)^2 + 20
+      let y = 0.02 * Math.pow(x - 160, 2) + 20;
+      y = height - padding - y;
+      d += `${x.toFixed(1)} ${y.toFixed(1)} `;
+      if (x === padding) d += 'L ';
+    }
+    path.setAttribute('d', d.trim());
+    path.setAttribute('stroke', '#2a9d8f');
+    path.setAttribute('stroke-width', '3');
+    path.setAttribute('fill', 'none');
+    svg.appendChild(path);
+
+    // Tangent line group
+    const tangentGroup = document.createElementNS(svgNS, 'g');
+    tangentGroup.setAttribute('tabindex', '0');
+    tangentGroup.setAttribute('aria-label', 'Draggable tangent line');
+
+    // Tangent line
+    const tangentLine = document.createElementNS(svgNS, 'line');
+    tangentLine.setAttribute('id', 'tangent-line');
+    tangentLine.setAttribute('x1', 160);
+    tangentLine.setAttribute('y1', height - padding - (0.02 * Math.pow(160 - 160, 2) + 20));
+    tangentLine.setAttribute('x2', 210);
+    tangentLine.setAttribute('y2', height - padding - (0.02 * Math.pow(210 - 160, 2) + 20));
+    tangentGroup.appendChild(tangentLine);
+
+    // Drag handle (circle)
+    const dragHandle = document.createElementNS(svgNS, 'circle');
+    dragHandle.setAttribute('id', 'drag-handle');
+    dragHandle.setAttribute('cx', 185);
+    dragHandle.setAttribute('cy', height - padding - (0.02 * Math.pow(185 - 160, 2) + 20));
+    dragHandle.setAttribute('r', 8);
+    tangentGroup.appendChild(dragHandle);
+
+    svg.appendChild(tangentGroup);
+
+    // Marked point (tangent point at x=160)
+    const markedPoint = document.createElementNS(svgNS, 'circle');
+    markedPoint.setAttribute('cx', 160);
+    markedPoint.setAttribute('cy', height - padding - 20);
+    markedPoint.setAttribute('r', 7);
+    markedPoint.setAttribute('fill', '#e76f51');
+    svg.appendChild(markedPoint);
+
+    // Label
+    const label = document.createElementNS(svgNS, 'text');
+    label.setAttribute('x', 165);
+    label.setAttribute('y', height - padding - 25);
+    label.setAttribute('fill', '#e76f51');
+    label.setAttribute('font-size', '14');
+    label.textContent = 'Point';
+    svg.appendChild(label);
+
+    graphGameDiv.appendChild(svg);
+
+    return {svg, tangentLine, dragHandle, height, padding};
+  }
+
+  // Game logic
+  let game = {};
+  let isDragging = false;
+  let startX, startY;
+
+  function initGame() {
+    game = createGraphGame();
+
+    // Tangent point and derivative info:
+    // f(x) = 0.02*(x-160)^2 + 20
+    // derivative f'(x) = 0.04*(x-160)
+    const pointX = 160;
+    const derivativeAtPoint = 0.04 * (pointX - 160); // 0
+
+    // We want user to match slope of tangent line at x=160 → slope = 0
+
+    // Drag handlers
+    game.dragHandle.addEventListener('mousedown', startDrag);
+    game.dragHandle.addEventListener('touchstart', startDrag);
+
+    window.addEventListener('mouseup', stopDrag);
+    window.addEventListener('touchend', stopDrag);
+
+    window.addEventListener('mousemove', onDrag);
+    window.addEventListener('touchmove', onDrag);
+
+    // Store initial line points
+    game.initialLine = {
+      x1: parseFloat(game.tangentLine.getAttribute('x1')),
+      y1: parseFloat(game.tangentLine.getAttribute('y1')),
+      x2: parseFloat(game.tangentLine.getAttribute('x2')),
+      y2: parseFloat(game.tangentLine.getAttribute('y2')),
+    };
+
+    game.pointX = pointX;
+    game.height = game.height;
+    game.padding = game.padding;
+    game.derivativeAtPoint = derivativeAtPoint;
+
+    gameResultDiv.textContent = '';
+    nextGameBtn.style.display = 'none';
+  }
+
+  function startDrag(e) {
+    e.preventDefault();
+    isDragging = true;
+    const touch = e.touches ? e.touches[0] : e;
+    startX = touch.clientX;
+    startY = touch.clientY;
+  }
+
+  function stopDrag(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    checkSlopeMatch();
+  }
+
+  function onDrag(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    const touch = e.touches ? e.touches[0] : e;
+    const dx = touch.clientX - startX;
+
+    // Move the drag handle and tangent line endpoint horizontally only within bounds
+    let newX2 = game.initialLine.x2 + dx;
+    newX2 = Math.min(Math.max(newX2, game.padding + 40), 280);
+
+    // Calculate new y2 on curve:
+    const newY2curve = game.height - game.padding - (0.02 * Math.pow(newX2 - 160, 2) + 20);
+
+    // Update tangent line and drag handle
+    game.tangentLine.setAttribute('x2', newX2);
+    game.tangentLine.setAttribute('y2', newY2curve);
+    game.dragHandle.setAttribute('cx', newX2);
+    game.dragHandle.setAttribute('cy', newY2curve);
+  }
+
+  function checkSlopeMatch() {
+    // Calculate slope of line
+    const x1 = parseFloat(game.tangentLine.getAttribute('x1'));
+    const y1 = parseFloat(game.tangentLine.getAttribute('y1'));
+    const x2 = parseFloat(game.tangentLine.getAttribute('x2'));
+    const y2 = parseFloat(game.tangentLine.getAttribute('y2'));
+
+    const slope = (y2 - y1) / (x2 - x1);
+
+    // Actual slope is 0 at x=160 for this curve
+    const targetSlope = 0;
+
+    const diff = Math.abs(slope - targetSlope);
+
+    if (diff < 0.05) {
+      gameResultDiv.textContent = '🎉 Awesome! You matched the slope correctly!';
+      speak('Awesome! You matched the slope correctly!');
+      nextGameBtn.style.display = 'inline-block';
+    } else {
+      gameResultDiv.textContent = 'Try again! Adjust the line to match the slope better.';
+      speak('Try again! Adjust the line to match the slope better.');
+    }
+  }
+
+  nextGameBtn.onclick = () => {
+    // Reset to initial position
+    game.tangentLine.setAttribute('x2', game.initialLine.x2);
+    game.tangentLine.setAttribute('y2', game.initialLine.y2);
+    game.dragHandle.setAttribute('cx', game.initialLine.x2);
+    game.dragHandle.setAttribute('cy', game.initialLine.y2);
+    gameResultDiv.textContent = '';
+    nextGameBtn.style.display = 'none';
+  };
+
+  initGame();
+
+</script>
+</body>
+</html>
