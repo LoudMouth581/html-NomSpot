@@ -174,27 +174,22 @@
   const bubblesCount = 6;
   let bubbles = [];
 
-  // Generate random integer inclusive
   function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  // Create question and answers bubbles
   function generateQA() {
-    // Increase difficulty as score increases (max 99)
     const difficulty = Math.min(10 + Math.floor(score / 5), 99);
     const a = randomInt(1, difficulty);
     const b = randomInt(1, difficulty);
     currentAnswer = a + b;
     const question = `${a} + ${b}`;
-    // Generate unique answers set including correct one
     const answersSet = new Set([currentAnswer]);
     while (answersSet.size < bubblesCount) {
       let cand = currentAnswer + randomInt(-difficulty, difficulty);
       if (cand < 0) cand = 0;
       answersSet.add(cand);
     }
-    // Shuffle answers array
     const answersArr = Array.from(answersSet);
     for (let i = answersArr.length - 1; i > 0; i--) {
       const j = randomInt(0, i);
@@ -203,31 +198,28 @@
     return { question, answers: answersArr };
   }
 
-  // Create a bubble element with number text
   function createBubble(value) {
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
     bubble.textContent = value;
     bubbleContainer.appendChild(bubble);
 
-    // Initial random horizontal position inside container
     const containerWidth = bubbleContainer.clientWidth;
     const maxX = containerWidth - 70;
-    bubble.style.left = `${randomInt(0, maxX)}px`;
+    const leftPos = randomInt(0, maxX);
+    const topPos = bubbleContainer.clientHeight + randomInt(0, 100);
 
-    // Start below container for smooth float-up effect
-    bubble.style.top = `${bubbleContainer.clientHeight + randomInt(0, 100)}px`;
+    bubble.style.left = `${leftPos}px`;
+    bubble.style.top = `${topPos}px`;
 
     return bubble;
   }
 
-  // Animate bubbles floating upward and drifting horizontally
   function animateBubbles() {
     bubbles.forEach(b => {
       b.y -= b.speedY;
       b.x += b.speedX;
 
-      // Bounce horizontal movement inside container boundaries
       if (b.x < 0) {
         b.x = 0;
         b.speedX = -b.speedX;
@@ -236,12 +228,9 @@
         b.speedX = -b.speedX;
       }
 
-      // Reset bubble if it goes above the container (float up and disappear)
       if (b.y < -80) {
-        // Reset to bottom with new horizontal position
         b.y = bubbleContainer.clientHeight + randomInt(0, 100);
         b.x = randomInt(0, bubbleContainer.clientWidth - 70);
-        // Random speed again
         b.speedX = (Math.random() - 0.5) * 0.8;
         b.speedY = 0.8 + Math.random() * 0.6;
       }
@@ -250,7 +239,6 @@
     });
   }
 
-  // Pop bubble animation and remove
   function popBubble(bubbleObj, correct) {
     bubbleObj.el.classList.add('pop');
     if (correct) {
@@ -268,9 +256,7 @@
     }, 400);
   }
 
-  // Setup bubbles with answers and listeners
   function setupBubbles(answers) {
-    // Clear existing bubbles
     bubbleContainer.innerHTML = '';
     bubbles = [];
 
@@ -279,14 +265,13 @@
       const bubbleObj = {
         el,
         val,
-        x: parseFloat(el.style.left),
-        y: parseFloat(el.style.top),
+        x: parseInt(el.style.left, 10),
+        y: parseInt(el.style.top, 10),
         speedX: (Math.random() - 0.5) * 0.8,
         speedY: 0.8 + Math.random() * 0.6
       };
       bubbles.push(bubbleObj);
 
-      // Click/tap listener for popping
       el.addEventListener('click', () => {
         if (!gameActive) return;
 
@@ -308,19 +293,16 @@
     });
   }
 
-  // Update question text and create bubbles
   function nextQuestion() {
     const qa = generateQA();
     questionEl.textContent = qa.question;
     setupBubbles(qa.answers);
   }
 
-  // Update score display
   function updateScore() {
     scoreEl.textContent = `Score: ${score}`;
   }
 
-  // Game timer countdown
   function startTimer() {
     timeLeft = 60;
     timerEl.textContent = `Time: ${timeLeft}`;
@@ -333,7 +315,6 @@
     }, 1000);
   }
 
-  // End game, disable bubbles and show summary
   function endGame() {
     gameActive = false;
     clearInterval(timerInterval);
@@ -346,7 +327,6 @@
     startBtn.textContent = 'Restart Game';
   }
 
-  // Main game start function
   function startGame() {
     score = 0;
     updateScore();
@@ -359,7 +339,6 @@
     startTimer();
   }
 
-  // Animation loop using requestAnimationFrame
   function gameLoop() {
     if (gameActive) {
       animateBubbles();
@@ -367,19 +346,14 @@
     requestAnimationFrame(gameLoop);
   }
 
-  // Attach start button event
   startBtn.addEventListener('click', startGame);
-
-  // Start the animation loop
   gameLoop();
 
-  // Optional: prevent scrolling on touch devices while playing
   bubbleContainer.addEventListener('touchmove', e => {
     if (gameActive) {
       e.preventDefault();
     }
   }, { passive: false });
-
 })();
 </script>
 
