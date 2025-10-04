@@ -53,13 +53,13 @@
       border: 2px solid #66BB6A;
       border-radius: 12px;
       position: relative;
+      user-select: none;
     }
     svg {
       width: 100%;
       height: 100%;
       display: block;
       border-radius: 12px;
-      user-select: none;
     }
     text {
       font-family: 'Comic Sans MS', cursive, sans-serif;
@@ -198,16 +198,27 @@
       let score = 0;
       let badges = 0;
 
-      // Questions types
-      // Each question type has:
-      // - generateQuestion: returns question object with details
-      // - drawDiagram: draws the relevant SVG diagram with colored labels
-      // - explanationText: explanation for the solution
-
       const PI = 3.14;
 
+      function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      // Create arrow marker defs for SVG once
+      function createSvgDefs(svg) {
+        if (svg.querySelector('defs')) return;
+        const svgNS = "http://www.w3.org/2000/svg";
+        const defs = document.createElementNS(svgNS, "defs");
+        defs.innerHTML = `
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#e91e63" />
+          </marker>
+        `;
+        svg.appendChild(defs);
+      }
+
+      // Question types with working drawDiagram functions
       const questionTypes = [
-        // Area of square
         {
           type: 'Area of Square',
           generateQuestion: () => {
@@ -217,84 +228,85 @@
               correctAnswer: side * side,
               diagramData: { side },
               explanation: `Area of a square = side × side = ${side} × ${side} = ${side*side} square units.`,
-              drawDiagram(svg) {
+              drawDiagram(svg, data) {
+                const { side } = data;
                 svg.innerHTML = `
                   <rect x="30" y="30" width="140" height="140" fill="#C8E6C9" stroke="#2E7D32" stroke-width="3" />
                   <line x1="30" y1="170" x2="170" y2="170" stroke="#e91e63" stroke-width="4" marker-end="url(#arrow)" />
                   <line x1="170" y1="170" x2="170" y2="30" stroke="#e91e63" stroke-width="4" marker-end="url(#arrow)" />
-                  <text x="100" y="20" class="label-length">Side = {side}</text>
+                  <text x="100" y="20" class="label-length" fill="#e91e63">Side = ${side}</text>
                   <text x="95" y="185" class="label-length" fill="#e91e63">${side}</text>
                   <text x="180" y="100" class="label-length" fill="#e91e63" transform="rotate(90 180,100)"> ${side} </text>
-                `.replace(/{side}/g, side);
+                `;
               }
+            };
+          }
         },
-        // Perimeter of rectangle
         {
           type: 'Perimeter of Rectangle',
           generateQuestion: () => {
             const length = randomInt(5, 20);
             const width = randomInt(3, 15);
             return {
-              questionText: `Find the perimeter of a rectangle with length <span style="color:#e91e63">${length}</span> units and width <span style="color:#ff9800">${width}</span> units.`,
+              questionText: `Calculate the perimeter of a rectangle with length <span style="color:#e91e63">${length}</span> units and width <span style="color:#ff9800">${width}</span> units.`,
               correctAnswer: 2 * (length + width),
               diagramData: { length, width },
               explanation: `Perimeter = 2 × (length + width) = 2 × (${length} + ${width}) = ${2*(length+width)} units.`,
-              drawDiagram(svg) {
+              drawDiagram(svg, data) {
+                const { length, width } = data;
                 svg.innerHTML = `
-                <rect x="30" y="50" width="${length * 8}" height="${width * 8}" fill="#C8E6C9" stroke="#2E7D32" stroke-width="3" />
-                <line x1="30" y1="${50 + width * 8}" x2="${30 + length * 8}" y2="${50 + width * 8}" stroke="#e91e63" stroke-width="4" marker-end="url(#arrow)" />
-                <line x1="${30 + length * 8}" y1="${50 + width * 8}" x2="${30 + length * 8}" y2="50" stroke="#ff9800" stroke-width="4" marker-end="url(#arrow)" />
-                <text x="${30 + length * 4}" y="${50 + width * 8 + 20}" class="label-length" fill="#e91e63">${length}</text>
-                <text x="${30 + length * 8 + 10}" y="${50 + width * 4}" class="label-width" fill="#ff9800" transform="rotate(90 ${30 + length * 8 + 10},${50 + width * 4})">${width}</text>
+                  <rect x="40" y="50" width="${length*6}" height="${width*6}" fill="#FFF3E0" stroke="#F57C00" stroke-width="3" />
+                  <line x1="40" y1="${50+width*6}" x2="${40+length*6}" y2="${50+width*6}" stroke="#e91e63" stroke-width="3" marker-end="url(#arrow)" />
+                  <line x1="${40+length*6}" y1="${50+width*6}" x2="${40+length*6}" y2="50" stroke="#ff9800" stroke-width="3" marker-end="url(#arrow)" />
+                  <text x="${40 + (length*6)/2 - 10}" y="${50 + width*6 + 20}" class="label-length">Length = ${length}</text>
+                  <text x="${40 + length*6 + 5}" y="${50 + (width*6)/2 + 5}" class="label-width" transform="rotate(90, ${40 + length*6 + 5}, ${50 + (width*6)/2 + 5})">Width = ${width}</text>
                 `;
               }
             };
           }
         },
-        // Area of circle
         {
           type: 'Area of Circle',
           generateQuestion: () => {
-            const radius = randomInt(3, 10);
-            const area = Math.round(PI * radius * radius * 100) / 100;
+            const radius = randomInt(2, 12);
+            const area = Math.round(PI * radius * radius * 100) / 100; // 2 decimals
             return {
               questionText: `Calculate the area of a circle with radius <span style="color:#2196f3">${radius}</span> units. Use π ≈ 3.14.`,
               correctAnswer: area,
               diagramData: { radius },
-              explanation: `Area of a circle = π × radius² = 3.14 × ${radius}² = ${area} square units.`,
-              drawDiagram(svg) {
-                const r = radius * 10;
+              explanation: `Area = π × radius² = 3.14 × ${radius}² = ${area} square units.`,
+              drawDiagram(svg, data) {
+                const { radius } = data;
+                const rPixels = radius * 10;
                 svg.innerHTML = `
-                  <circle cx="120" cy="120" r="${r}" fill="#C8E6C9" stroke="#2E7D32" stroke-width="3" />
-                  <line x1="120" y1="120" x2="${120 + r}" y2="120" stroke="#2196f3" stroke-width="4" marker-end="url(#arrow)" />
-                  <text x="${120 + r/2}" y="110" class="label-radius" fill="#2196f3">Radius = ${radius}</text>
+                  <circle cx="120" cy="120" r="${rPixels}" fill="#BBDEFB" stroke="#1976D2" stroke-width="3"/>
+                  <line x1="120" y1="120" x2="${120 + rPixels}" y2="120" stroke="#2196f3" stroke-width="3" marker-end="url(#arrow)" />
+                  <text x="${120 + rPixels/2}" y="110" class="label-radius">Radius = ${radius}</text>
                 `;
               }
             };
           }
         },
-        // Missing angle in triangle
         {
-          type: 'Missing Angle in Triangle',
+          type: 'Missing angle in triangle',
           generateQuestion: () => {
-            // two angles given, find third angle
-            const angle1 = randomInt(20, 80);
-            const angle2 = randomInt(20, 80);
-            const missing = 180 - (angle1 + angle2);
+            // angles a,b known, find c = 180-(a+b)
+            const a = randomInt(30, 80);
+            const b = randomInt(30, 80);
+            const c = 180 - (a + b);
+            if(c <= 0) return questionTypes[3].generateQuestion(); // regenerate if invalid
             return {
-              questionText: `A triangle has two angles measuring <span style="color:#673ab7">${angle1}°</span> and <span style="color:#673ab7">${angle2}°</span>. Find the missing angle.`,
-              correctAnswer: missing,
-              diagramData: { angle1, angle2, missing },
-              explanation: `Sum of angles in a triangle is 180°. Missing angle = 180° - (${angle1}° + ${angle2}°) = ${missing}°.`,
-              drawDiagram(svg) {
+              questionText: `A triangle has angles <span style="color:#673ab7">${a}°</span> and <span style="color:#673ab7">${b}°</span>. Find the missing angle <span style="color:#673ab7">c</span>.`,
+              correctAnswer: c,
+              diagramData: { a, b, c },
+              explanation: `Sum of angles in a triangle = 180°. So, missing angle c = 180° - (${a}° + ${b}°) = ${c}°.`,
+              drawDiagram(svg, data) {
+                const { a, b, c } = data;
                 svg.innerHTML = `
-                  <polygon points="40,180 200,180 40,50" fill="#C8E6C9" stroke="#2E7D32" stroke-width="3" />
-                  <text x="35" y="45" class="label-angle">${this.diagramData.angle2}°</text>
-                  <text x="195" y="185" class="label-angle">${this.diagramData.angle1}°</text>
-                  <text x="90" y="140" class="label-angle">${this.diagramData.missing}°</text>
-                  <line x1="40" y1="180" x2="40" y2="50" stroke="#673ab7" stroke-width="3" />
-                  <line x1="40" y1="180" x2="200" y2="180" stroke="#673ab7" stroke-width="3" />
-                  <line x1="200" y1="180" x2="40" y2="50" stroke="#673ab7" stroke-width="3" />
+                  <polygon points="60,180 180,180 100,60" fill="#E1BEE7" stroke="#7B1FA2" stroke-width="3"/>
+                  <text x="55" y="185" class="label-angle">a = ${a}°</text>
+                  <text x="185" y="185" class="label-angle">b = ${b}°</text>
+                  <text x="90" y="50" class="label-angle">c = ?</text>
                 `;
               }
             };
@@ -302,167 +314,131 @@
         }
       ];
 
-      // We'll simplify to pick randomly from these types each question
+      let currentQuestion = null;
+      let allowAnswer = true;
 
-      // Generate multiple choices for answers: one correct and 3 wrong close values
-      function generateChoices(correct) {
-        let choices = new Set();
-        choices.add(correct);
-
-        while (choices.size < 4) {
-          let delta = Math.floor(Math.random() * 10) + 1;
-          let sign = Math.random() > 0.5 ? 1 : -1;
-          let wrong = Math.max(0, Math.round(correct + sign * delta));
-          if (wrong !== correct) choices.add(wrong);
-        }
-        return shuffle(Array.from(choices));
+      function setMascotMessage(msg, emoji = '😊') {
+        mascotMsg.textContent = msg;
+        mascotEl.textContent = emoji;
       }
 
-      // Shuffle helper
-      function shuffle(arr) {
-        for (let i = arr.length -1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i+1));
+      function speak(text) {
+        if (!('speechSynthesis' in window)) return;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        window.speechSynthesis.cancel(); // cancel ongoing
+        window.speechSynthesis.speak(utterance);
+      }
+
+      function updateScore(delta) {
+        score += delta;
+        if(score < 0) score = 0;
+        scoreEl.textContent = `Score: ${score}`;
+        // update progress bar (max 200 for scaling)
+        const widthPercent = Math.min(100, (score / 200) * 100);
+        scoreBarFill.style.width = widthPercent + '%';
+
+        // badges every 50 points
+        const newBadges = Math.floor(score / 50);
+        if(newBadges > badges){
+          badges = newBadges;
+          badgesEl.textContent = `Badges: ${'★'.repeat(badges)}${badges}`;
+          setMascotMessage(`You earned a badge! ${'★'.repeat(badges)}`, '🏅');
+          speak(`Congratulations! You earned a badge!`);
+        }
+      }
+
+      // Shuffle array
+      function shuffleArray(arr) {
+        for(let i = arr.length - 1; i > 0; i--){
+          const j = Math.floor(Math.random() * (i +1));
           [arr[i], arr[j]] = [arr[j], arr[i]];
         }
         return arr;
       }
 
-      // Draw arrow marker defs once for all SVGs
-      function createSvgDefs(svg) {
-        if (svg.querySelector('defs')) return;
-        const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-        defs.innerHTML = `
-          <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-            <path d="M0,0 L0,6 L9,3 z" fill="#e91e63" />
-          </marker>
-        `;
-        svg.appendChild(defs);
-      }
-
-      // Draw the diagram for question
-      function drawDiagram(diagramData, drawFunc) {
-        diagramDiv.innerHTML = '';
-        const svgNS = "http://www.w3.org/2000/svg";
-        const svg = document.createElementNS(svgNS, "svg");
-        svg.setAttribute('viewBox', '0 0 240 240');
-        svg.setAttribute('aria-label', 'Geometry diagram');
-        diagramDiv.appendChild(svg);
-        createSvgDefs(svg);
-        drawFunc(svg, diagramData);
-      }
-
-      // Speak text (simple TTS)
-      function speak(text) {
-        if (!('speechSynthesis' in window)) return;
-        window.speechSynthesis.cancel(); // cancel previous
-        const utterance = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g, '')); // remove html tags
-        utterance.lang = 'en-US';
-        window.speechSynthesis.speak(utterance);
-      }
-
-      // Mascot messages
-      function setMascotMessage(msg, emoji='😊') {
-        mascotEl.textContent = emoji;
-        mascotMsg.innerHTML = msg;
-      }
-
-      // Update score and badges
-      function updateScore(increment) {
-        score += increment;
-        if (score < 0) score = 0;
-        scoreEl.textContent = `Score: ${score}`;
-
-        // Progress bar 0-100, max 100 for visual
-        const progress = Math.min(score, 100);
-        scoreBarFill.style.width = progress + '%';
-
-        // Award badge every 50 points
-        let newBadges = Math.floor(score / 50);
-        if (newBadges > badges) {
-          badges = newBadges;
-          badgesEl.textContent = `Badges: ★${badges}`;
-          setMascotMessage(`Awesome! You earned a badge! ★`, '🏅');
-        }
-      }
-
-      // Question flow
-      let currentQuestion = null;
-      let allowAnswer = true;
-
-      function loadQuestion() {
-        allowAnswer = true;
-        feedbackEl.textContent = '';
-        explanationEl.style.display = 'none';
-        explanationEl.textContent = '';
-
-        // Pick random question type
-        const qType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
-
-        // Generate question object
-        currentQuestion = qType.generateQuestion();
-
-        // Show question text
-        questionBox.innerHTML = currentQuestion.questionText;
-
-        // Draw diagram
-        qType.drawDiagram(diagramDiv.querySelector('svg') || diagramDiv, currentQuestion.diagramData);
-
-        // Speak question
-        speak(currentQuestion.questionText);
-
-        // Generate answer choices
-        const choices = generateChoices(currentQuestion.correctAnswer);
-
-        // Render answer buttons
+      function createAnswerButtons(correct, allAnswers) {
         answersDiv.innerHTML = '';
-        choices.forEach(choice => {
+        allAnswers.forEach(ans => {
           const btn = document.createElement('button');
           btn.className = 'answer';
-          btn.textContent = choice;
+          btn.textContent = ans;
           btn.onclick = () => {
-            if (!allowAnswer) return;
+            if(!allowAnswer) return;
             allowAnswer = false;
-            checkAnswer(choice);
+            if(ans === correct){
+              btn.classList.add('correct');
+              feedbackEl.textContent = 'Correct! 🎉';
+              feedbackEl.style.color = '#388E3C';
+              explanationEl.style.display = 'block';
+              explanationEl.textContent = currentQuestion.explanation;
+              setMascotMessage('Great job! You got it right! 🎉', '😄');
+              speak('Correct! ' + currentQuestion.explanation);
+              updateScore(10);
+              setTimeout(loadNextQuestion, 3500);
+            } else {
+              btn.classList.add('wrong');
+              feedbackEl.textContent = 'Oops! Try again. ❌';
+              feedbackEl.style.color = '#D32F2F';
+              setMascotMessage('Keep trying! You can do it! 💪', '🤔');
+              updateScore(-5);
+              speak('Incorrect. Try again.');
+              allowAnswer = true;
+            }
           };
           answersDiv.appendChild(btn);
         });
-
-        // Reset mascot message
-        setMascotMessage(`Try to answer!`);
       }
 
-      // Check answer
-      function checkAnswer(choice) {
-        if (choice === currentQuestion.correctAnswer) {
-          feedbackEl.textContent = 'Correct! 🎉';
-          feedbackEl.style.color = '#388E3C';
-          setMascotMessage('Great job! You got it right! 🎉', '😄');
-          updateScore(10);
-          explanationEl.style.display = 'block';
-          explanationEl.textContent = currentQuestion.explanation;
-          speak('Correct! ' + currentQuestion.explanation);
-        } else {
-          feedbackEl.textContent = `Oops! Try again. ❌`;
-          feedbackEl.style.color = '#D32F2F';
-          setMascotMessage('Keep trying! You can do it! 💪', '🤔');
-          updateScore(-5);
-          speak('Incorrect. Try again.');
-          allowAnswer = true;
-          return; // allow retry, don't load next question yet
+      function generateOptions(correct) {
+        // Generate close wrong answers near correct
+        let options = [correct];
+        while(options.length < 4){
+          let offset = randomInt(-5,5);
+          if(offset === 0) continue;
+          let val = Math.round(correct + offset);
+          if(val < 0) val = Math.abs(val) + 2;
+          if(!options.includes(val)){
+            options.push(val);
+          }
         }
-        // Load next question after short delay
-        setTimeout(loadQuestion, 4500);
+        return shuffleArray(options);
       }
 
-      // Utils
-      function randomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+      function loadNextQuestion() {
+        feedbackEl.textContent = '';
+        explanationEl.style.display = 'none';
+
+        // Pick random question type
+        let qType = questionTypes[randomInt(0, questionTypes.length -1)];
+        currentQuestion = qType.generateQuestion();
+
+        questionBox.innerHTML = currentQuestion.questionText;
+
+        // Create SVG diagram
+        diagramDiv.innerHTML = '';
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('viewBox', '0 0 240 240');
+        createSvgDefs(svg);
+        diagramDiv.appendChild(svg);
+
+        currentQuestion.drawDiagram(svg, currentQuestion.diagramData);
+
+        // Create answers buttons
+        let options = generateOptions(currentQuestion.correctAnswer);
+        createAnswerButtons(currentQuestion.correctAnswer, options);
+
+        allowAnswer = true;
+        setMascotMessage('Try to answer!');
       }
 
-      // Initialize first question
-      loadQuestion();
+      // Start game
+      updateScore(0);
+      loadNextQuestion();
 
     })();
   </script>
+
 </body>
 </html>
