@@ -323,12 +323,13 @@
       }
 
       function speak(text) {
-        if (!('speechSynthesis' in window)) return;
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        window.speechSynthesis.cancel(); // cancel ongoing
-        window.speechSynthesis.speak(utterance);
-      }
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();  // STOP any ongoing speech immediately
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  window.speechSynthesis.speak(utterance);
+}
+
 
       function updateScore(delta) {
         score += delta;
@@ -442,3 +443,4 @@
 
 </body>
 </html>
+
