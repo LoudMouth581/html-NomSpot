@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Geometry Tutor with Color‑Coded Diagrams</title>
+  <style>
+    body {
+      margin:0; padding:0;
+      font-family: 'Comic Sans MS', sans-serif;
+      background: #E8F5E9;
+      color: #2E7D32;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #1B5E20;
+      margin-bottom: 5px;
+    }
+    #theme-selector {
+      margin: 10px;
+    }
+    #mascot {
+      font-size: 3rem;
+      margin: 10px;
+      transition: transform 0.3s;
+    }
+    #mascot-message {
+      background: #C8E6C9;
+      border: 2px solid #81C784;
+      padding: 10px 15px;
+      border-radius: 12px;
+      min-height: 50px;
+      text-align: center;
+    }
+    #question-box {
+      background: #FFFFFF;
+      border: 3px solid #66BB6A;
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 1.4em;
+      margin-bottom: 20px;
+      max-width: 700px;
+      text-align: center;
+    }
+    .diagram {
+      margin: 15px 0;
+      width: 200px;
+      height: 200px;
+      border: 1px solid #66BB6A;
+      background: #F1F8E9;
+    }
+    .answers {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    .answer {
+      background: #A5D6A7;
+      border: 2px solid #66BB6A;
+      border-radius: 10px;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.3s;
+      font-weight: bold;
+      min-width: 100px;
+      text-align: center;
+    }
+    .answer:hover {
+      background-color: #81C784;
+      transform: scale(1.05);
+    }
+    .answer.correct {
+      background-color: #C5E1A5;
+      border-color: #558B2F;
+    }
+    .answer.wrong {
+      background-color: #FFCDD2;
+      border-color: #E53935;
+    }
+    #feedback {
+      margin-top: 15px;
+      font-size: 1.2em;
+      height: 24px;
+    }
+    #explanation {
+      margin-top: 10px;
+      background: #FFF9C4;
+      border: 2px dashed #FBC02D;
+      padding: 12px;
+      border-radius: 10px;
+      max-width: 700px;
+      display: none;
+      font-size: 1.1em;
+    }
+    #score-bar {
+      margin-top: 20px;
+      width: 80%;
+      background: #C8E6C9;
+      border: 2px solid #66BB6A;
+      border-radius: 12px;
+      height: 20px;
+      overflow: hidden;
+    }
+    #score-fill {
+      height: 100%;
+      width: 0%;
+      background-color: #66BB6A;
+      transition: width 0.5s ease;
+    }
+    #score {
+      margin-top: 10px;
+      font-size: 1.2em;
+    }
+    #badges {
+      margin-top: 15px;
+      font-size: 1.4em;
+    }
+    body.theme-jungle {
+      background: url('https://i.imgur.com/OZQ2y2R.jpg') no-repeat center/cover;
+      color: #003300;
+    }
+    body.theme-space {
+      background: url('https://i.imgur.com/TJvBjI3.jpg') no-repeat center/cover;
+      color: #CAF0F8;
+    }
+    body.theme-underwater {
+      background: url('https://i.imgur.com/n8P7h4J.jpg') no-repeat center/cover;
+      color: #004d66;
+    }
+    .confetti-piece {
+      position: fixed;
+      width:10px; height:10px;
+      background-color: #FFD700;
+      opacity: 0.9;
+      pointer-events: none;
+      animation: confetti-drop 1.2s ease-out forwards;
+      border-radius: 2px;
+    }
+    @keyframes confetti-drop {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+    .scale-up {
+      transform: scale(1.3);
+    }
+    @media (max-width: 480px) {
+      .answer {
+        font-size: 1rem;
+        padding: 10px 14px;
+      }
+      .diagram {
+        width: 140px;
+        height: 140px;
+      }
+    }
+    .label-length { fill: #e91e63; }    /* pink */
+    .label-width { fill: #ff9800; }     /* orange */
+    .label-radius { fill: #2196f3; }    /* blue */
+    .label-height { fill: #8bc34a; }    /* light green */
+  </style>
+</head>
+<body class="theme-jungle">
+
+<h1>🎯 Geometry Tutor (Color‑Coded!)</h1>
+
+<div id="theme-selector">
+  Theme: 
+  <select id="themeSelect">
+    <option value="theme-jungle">Jungle</option>
+    <option value="theme-space">Space</option>
+    <option value="theme-underwater">Underwater</option>
+  </select>
+</div>
+
+<div id="mascot">😊</div>
+<div id="mascot-message">Hi! I'm Geo 🤗 — now with color labels to help you see!</div>
+
+<div id="question-box">Loading question...</div>
+<div class="diagram" id="diagram"></div>
+
+<div class="answers" id="answers"></div>
+
+<div id="feedback"></div>
+<div id="explanation"></div>
+
+<div id="score-bar"><div id="score-fill"></div></div>
+<div id="score">Score: 0</div>
+<div id="badges">Badges: ★0</div>
+
+<script>
+  const themeSelect = document.getElementById('themeSelect');
+  themeSelect.onchange = () => {
+    document.body.className = themeSelect.value;
+  };
+
+  const questionBox = document.getElementById('question-box');
+  const diagramEl = document.getElementById('diagram');
+  const answersEl = document.getElementById('answers');
+  const feedbackEl = document.getElementById('feedback');
+  const explanationEl = document.getElementById('explanation');
+  const scoreEl = document.getElementById('score');
+  const scoreFill = document.getElementById('score-fill');
+  const mascot = document.getElementById('mascot');
+  const mascotMsg = document.getElementById('mascot-message');
+  const badgesEl = document.getElementById('badges');
+
+  let score = 0;
+  let currentAnswer = null;
+  let currentExplanation = "";
+  let badges = 0;
+
+  function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function speak(text) {
+    if ('speechSynthesis' in window) {
+      const ut = new SpeechSynthesisUtterance(text);
+      ut.lang = 'en-US';
+      speechSynthesis.cancel();
+      speechSynthesis.speak(ut);
+    }
+  }
+
+  function clearDiagram() {
+    diagramEl.innerHTML = '';
+  }
+
+  function drawDiagram(type, params) {
+    clearDiagram();
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", "100%");
+    svg.setAttribute("viewBox", "0 0 200 200");
+
+    if (type === 'area_square') {
+      const s = params.side;
+      const rect = document.createElementNS(ns, "rect");
+      rect.setAttribute("x", "20");
+      rect.setAttribute("y", "20");
+      rect.setAttribute("width", "160");
+      rect.setAttribute("height", "160");
+      rect.setAttribute("fill", "#A5D6A7");
+      rect.setAttribute("stroke", "#388E3C");
+      rect.setAttribute("stroke-width", "3");
+      svg.appendChild(rect);
+
+      // color label: length = side (pink)
+      const t = document.createElementNS(ns, "text");
+      t.setAttribute("x", "100");
+      t.setAttribute("y", "190");
+      t.setAttribute("text-anchor", "middle");
+      t.setAttribute("class", "label-length");
+      t.textContent = `side = ${s}`;
+      svg.appendChild(t);
+    }
+    else if (type === 'perimeter_rect') {
+      const { l, w } = params;
+      const rect = document.createElementNS(ns, "rect");
+      rect.setAttribute("x", "20");
+      rect.setAttribute("y", "40");
+      rect.setAttribute("width", "160");
+      rect.setAttribute("height", "100");
+      rect.setAttribute("fill", "#A5D6A7");
+      rect.setAttribute("stroke", "#388E3C");
+      rect.setAttribute("stroke-width", "3");
+      svg.appendChild(rect);
+
+      // label length (pink)
+      const tL = document.createElementNS(ns, "text");
+      tL.setAttribute("x", "100");
+      tL.setAttribute("y", "185");
+      tL.setAttribute("text-anchor", "middle");
+      tL.setAttribute("class", "label-length");
+      tL.textContent = `l = ${l}`;
+      svg.appendChild(tL);
+      // label width (orange)
+      const tW = document.createElementNS(ns, "text");
+      tW.setAttribute("x", "30");
+      tW.setAttribute("y", "110");
+      tW.setAttribute("class", "label-width");
+      tW.textContent = `w = ${w}`;
+      svg.appendChild(tW);
+    }
+    else if (type === 'area_circle' || type === 'perimeter_circle') {
+      const r = params.r;
+      const circle = document.createElementNS(ns, "circle");
+      circle.setAttribute("cx", "100");
+      circle.setAttribute("cy", "100");
+      circle.setAttribute("r", "80");
+      circle.setAttribute("fill", "#A5D6A7");
+      circle.setAttribute("stroke", "#388E3C");
+      circle.setAttribute("stroke-width", "3");
+      svg.appendChild(circle);
+
+      const tR = document.createElementNS(ns, "text");
+      tR.setAttribute("x", "100");
+      tR.setAttribute("y", "190");
+      tR.setAttribute("text-anchor", "middle");
+      tR.setAttribute("class", "label-radius");
+      tR.textContent = `r = ${r}`;
+      svg.appendChild(tR);
+    }
+    else if (type === 'missing_angle') {
+      const { a1, a2 } = params;
+      const pts = "20,180 180,180 60,60";
+      const poly = document.createElementNS(ns, "polygon");
+      poly.setAttribute("points", pts);
+      poly.setAttribute("fill", "#A5D6A7");
+      poly.setAttribute("stroke", "#388E3C");
+      poly.setAttribute("stroke-width", "3");
+      svg.appendChild(poly);
+
+      const t1 = document.createElementNS(ns, "text");
+      t1.setAttribute("x", "25"); t1.setAttribute("y", "175");
+      t1.setAttribute("class", "label-length"); // reuse length color
+      t1.textContent = `${a1}°`;
+      svg.appendChild(t1);
+      const t2 = document.createElementNS(ns, "text");
+      t2.setAttribute("x", "175"); t2.setAttribute("y", "175");
+      t2.setAttribute("class", "label-width");
+      t2.textContent = `${a2}°`;
+      svg.appendChild(t2);
+    }
+    else if (type === 'area_triangle') {
+      const { base, height } = params;
+      const poly = document.createElementNS(ns, "polygon");
+      poly.setAttribute("points", "20,180 180,180 100,60");
+      poly.setAttribute("fill", "#A5D6A7");
+      poly.setAttribute("stroke", "#388E3C");
+      poly.setAttribute("stroke-width", "3");
+      svg.appendChild(poly);
+
+      const tB = document.createElementNS(ns, "text");
+      tB.setAttribute("x", "100");
+      tB.setAttribute("y", "195");
+      tB.setAttribute("text-anchor", "middle");
+      tB.setAttribute("class", "label-length");
+      tB.textContent = `b = ${base}`;
+      svg.appendChild(tB);
+      const tH = document.createElementNS(ns, "text");
+      tH.setAttribute("x", "160");
+      tH.setAttribute("y", "110");
+      tH.setAttribute("class", "label-height");
+      tH.textContent = `h = ${height}`;
+      svg.appendChild(tH);
+    }
+    else if (type === 'area_trapezoid') {
+      const { a, b, h } = params;
+      const pts = "50,140 150,140 180,180 20,180";
+      const poly = document.createElementNS(ns, "polygon");
+      poly.setAttribute("points", pts);
+      poly.setAttribute("fill", "#A5D6A7");
+      poly.setAttribute("stroke", "#388E3C");
+      poly.setAttribute("stroke-width", "3");
+      svg.appendChild(poly);
+
+      const tA = document.createElementNS(ns, "text");
+      tA.setAttribute("x", "80");
+      tA.setAttribute("y", "195");
+      tA.setAttribute("class", "label-length");
+      tA.textContent = `a = ${a}`;
+      svg.appendChild(tA);
+      const tB = document.createElementNS(ns, "text");
+      tB.setAttribute("x", "120");
+      tB.setAttribute("y", "195");
+      tB.setAttribute("class", "label-width");
+      tB.textContent = `b = ${b}`;
+      svg.appendChild(tB);
+      const tH = document.createElementNS(ns, "text");
+      tH.setAttribute("x", "160");
+      tH.setAttribute("y", "140");
+      tH.setAttribute("class", "label-height");
+      tH.textContent = `h = ${h}`;
+      svg.appendChild(tH);
+    }
+
+    diagramEl.appendChild(svg);
+  }
+
+  function showConfetti() {
+    for (let i = 0; i < 25; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti-piece';
+      c.style.left = Math.random() * window.innerWidth + 'px';
+      c.style.top = '-10px';
+      c.style.backgroundColor = `hsl(${Math.random()*360}, 80%, 70%)`;
+      c.style.width = c.style.height = (5 + Math.random()*5) + 'px';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 1500);
+    }
+  }
+
+  function generateQuestion() {
+    const types = ['area_square','perimeter_rect','area_circle','missing_angle','area_triangle','perimeter_circle','area_trapezoid'];
+    const type = types[randomInt(0, types.length - 1)];
+    let q = "", ans = 0, expl = "", params = {};
+
+    switch(type) {
+      case 'area_square': {
+        const s = randomInt(2, 15);
+        ans = s * s;
+        q = `What is the area of a square with side ${s}?`;
+        expl = `Area = side × side = ${s} × ${s} = ${ans}`;
+        params = { side: s };
+      } break;
+
+      case 'perimeter_rect': {
+        const l = randomInt(3,12), w = randomInt(3,10);
+        ans = 2 * (l + w);
+        q = `What is the perimeter of a rectangle length ${l}, width ${w}?`;
+        expl = `Perimeter = 2 × (l + w) = 2 × (${l} + ${w}) = ${ans}`;
+        params = { l, w };
+      } break;
+
+      case 'area_circle': {
+        const r = randomInt(2, 8);
+        ans = +(3.14 * r * r).toFixed(2);
+        q = `What is the area of a circle radius ${r}? (π≈3.14)`;
+        expl = `Area = π × r² = 3.14 × ${r}² = ${ans}`;
+        params = { r };
+      } break;
+
+      case 'perimeter_circle': {
+        const r = randomInt(2, 8);
+        ans = +(2 * 3.14 * r).toFixed(2);
+        q = `What is circumference of a circle with radius ${r}? (π≈3.14)`;
+        expl = `Perimeter = 2πr = 2 × 3.14 × ${r} = ${ans}`;
+        params = { r };
+      } break;
+
+      case 'missing_angle': {
+        const a1 = randomInt(30,70), a2 = randomInt(30,70);
+        ans = 180 - (a1 + a2);
+        q = `Triangle angles ${a1}° and ${a2}°. What is third angle?`;
+        expl = `180° - (${a1} + ${a2}) = ${ans}`;
+        params = { a1, a2 };
+      } break;
+
+      case 'area_triangle': {
+        const base = randomInt(3,15), height = randomInt(2,12);
+        ans = +(0.5 * base * height).toFixed(2);
+        q = `What is the area of triangle base ${base}, height ${height}?`;
+        expl = `Area = ½ × base × height = 0.5 × ${base} × ${height} = ${ans}`;
+        params = { base, height };
+      } break;
+
+      case 'area_trapezoid': {
+        const a = randomInt(3,12), b = randomInt(3,12), h = randomInt(2,10);
+        ans = +(((a + b) / 2) * h).toFixed(2);
+        q = `Area of trapezoid with sides ${a}, ${b}, height ${h}?`;
+        expl = `((a + b)/2) × h = ((${a} + ${b})/2) × ${h} = ${ans}`;
+        params = { a, b, h };
+      } break;
+    }
+
+    currentAnswer = ans;
+    currentExplanation = expl;
+
+    questionBox.textContent = q;
+    mascotMsg.textContent = "Look at the shape — notice the colored labels!";
+    feedbackEl.textContent = "";
+    explanationEl.style.display = 'none';
+
+    drawDiagram(type, params);
+
+    answersEl.innerHTML = '';
+    const choicesSet = new Set([ans]);
+    while (choicesSet.size < 4) {
+      let offset = 0;
+      if (type.includes('circle') || type.includes('trapezoid') || type.includes('triangle')) {
+        offset = (Math.random() * 4 - 2).toFixed(2);
+      } else {
+        offset = randomInt(-10, 10);
+      }
+      let distractor = +((ans + parseFloat(offset)).toFixed(2));
+      if (distractor <= 0) distractor = Math.abs(distractor) + 1;
+      if (!choicesSet.has(distractor)) choicesSet.add(distractor);
+    }
+
+    const choices = Array.from(choicesSet);
+    choices.sort(() => Math.random() - 0.5);
+
+    choices.forEach(c => {
+      const btn = document.createElement('div');
+      btn.className = 'answer';
+      btn.textContent = (c % 1 === 0 ? c : c.toFixed(2));
+      btn.onclick = () => checkAnswer(btn, c);
+      answersEl.appendChild(btn);
+    });
+
+    speak(q);
+  }
+
+  const soundCorrect = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
+  const soundWrong = new Audio('https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg');
+
+  function playSoundCorrect() {
+    soundCorrect.currentTime = 0;
+    soundCorrect.play().catch(() => {});
+  }
+  function playSoundWrong() {
+    soundWrong.currentTime = 0;
+    soundWrong.play().catch(() => {});
+  }
+
+  function checkAnswer(btn, selected) {
+    const all = answersEl.querySelectorAll('.answer');
+    all.forEach(b => b.style.pointerEvents = 'none');
+
+    if (Math.abs(selected - currentAnswer) < 0.01) {
+      btn.classList.add('correct');
+      feedbackEl.textContent = "🎉 Correct!";
+      mascot.classList.add('scale-up');
+      setTimeout(() => mascot.classList.remove('scale-up'), 300);
+      score += 10;
+      let newBadges = Math.floor(score / 50);
+      if (newBadges > badges) {
+        badges = newBadges;
+      }
+      showConfetti();
+      playSoundCorrect();
+    } else {
+      btn.classList.add('wrong');
+      feedbackEl.textContent = `❌ Not quite. Correct: ${currentAnswer}`;
+      playSoundWrong();
+    }
+
+    scoreEl.textContent = `Score: ${score}`;
+    let pct = Math.min(100, (score / 200) * 100);
+    scoreFill.style.width = pct + '%';
+    badgesEl.textContent = `Badges: ${'★'.repeat(badges)}`;
+
+    explanationEl.style.display = 'block';
+    explanationEl.textContent = "💡 Explanation: " + currentExplanation;
+
+    setTimeout(generateQuestion, 4000);
+  }
+
+  window.addEventListener('load', generateQuestion);
+</script>
+
+</body>
+</html>
