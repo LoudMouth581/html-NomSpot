@@ -1,490 +1,668 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Accounting Math Blaster Bubble Pop</title>
-<style>
-  /* Base & reset */
-  body, html {
-    margin: 0; padding: 0; overflow: hidden;
-    height: 100%; background: radial-gradient(circle at center, #001022, #000000);
-    color: #0ff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    user-select: none;
-  }
-  #game {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    max-width: 480px;
-    margin: 0 auto;
-    overflow: hidden;
-    background: radial-gradient(circle at bottom, #002033, #000010);
-    box-shadow: 0 0 15px #0ff inset;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  #header {
-    width: 100%;
-    padding: 12px;
-    display: flex;
-    justify-content: space-between;
-    font-weight: 700;
-    font-size: 1.3rem;
-    user-select: none;
-  }
-  #question {
-    font-size: 2rem;
-    font-weight: 900;
-    margin: 10px 0 4px;
-    text-align: center;
-    text-shadow: 0 0 10px #0ff;
-    user-select: none;
-  }
-  #score, #timer {
-    color: #0ff;
-  }
-  #playfield {
-    position: relative;
-    flex-grow: 1;
-    width: 100%;
-    background: #000011;
-    overflow: hidden;
-    border-radius: 14px;
-    touch-action: none;
-  }
-  /* Shooter */
-  #shooter {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 60px;
-    background: linear-gradient(135deg, #0ff, #00bbcc);
-    clip-path: polygon(50% 0%, 80% 100%, 20% 100%);
-    box-shadow: 0 0 12px #0ff;
-  }
-  /* Laser */
-  .laser {
-    position: absolute;
-    width: 4px;
-    height: 20px;
-    background: #0ff;
-    border-radius: 2px;
-    box-shadow: 0 0 10px #0ff;
-  }
-  /* Bubble style */
-  .bubble {
-    position: absolute;
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(135deg, #7ef9ff, #00fff7);
-    clip-path: polygon(
-      50% 0%, 61% 35%, 98% 35%, 68% 57%,
-      79% 91%, 50% 70%, 21% 91%, 32% 57%,
-      2% 35%, 39% 35%
-    );
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: #00444d;
-    text-shadow: 0 0 8px #00fff7;
-    box-shadow: 0 0 12px #00fff7;
-    user-select: none;
-  }
-  /* Pop animation */
-  .pop {
-    animation: popAnim 0.4s forwards;
-  }
-  @keyframes popAnim {
-    to {
-      transform: scale(2);
-      opacity: 0;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Carnival Accounting Teeth Shooting Game</title>
+  <style>
+    body, html {
+      margin: 0; padding: 0; height: 100%;
+      background: radial-gradient(circle at center, #191919, #000);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #0ff;
+      overflow: hidden;
+      user-select: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-  }
-  /* Feedback */
-  #feedback {
-    height: 28px;
-    text-align: center;
-    margin: 6px 0;
-    font-weight: 700;
-    font-size: 1.2rem;
-    min-height: 28px;
-    user-select: none;
-  }
-  /* Start button */
-  #startBtn {
-    margin: 6px 0 10px;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 14px;
-    background: #0ff;
-    color: #00444d;
-    font-weight: 700;
-    font-size: 1.3rem;
-    cursor: pointer;
-    user-select: none;
-    transition: background 0.3s ease;
-  }
-  #startBtn:hover:not(:disabled) {
-    background: #00ccc7;
-  }
-  #startBtn:disabled {
-    background: #006666;
-    cursor: not-allowed;
-  }
-  /* Responsive */
-  @media (max-width: 400px) {
-    .bubble {
-      width: 55px;
-      height: 55px;
+    #game {
+      width: 100vw;
+      max-width: 480px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #101622;
+      box-shadow: 0 0 30px #0ff inset;
+      position: relative;
+    }
+    /* Score and Timer bar */
+    #header {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 20px;
+      font-weight: 700;
       font-size: 1.2rem;
+      border-bottom: 2px solid #0ff;
+      user-select: none;
     }
-    #shooter {
+    #score, #timer {
+      color: #0ff;
+    }
+
+    /* Family Feud style question and answers container */
+    #question-container {
+      margin: 12px 16px;
+      background: #022;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #0ff inset;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+    #question-text {
+      font-weight: 900;
+      font-size: 1.8rem;
+      margin-bottom: 14px;
+      color: #0ff;
+      text-align: center;
+      text-shadow: 0 0 12px #0ff;
+    }
+
+    /* Teeth answers flex row */
+    #answers-row {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 440px;
+      gap: 12px;
+    }
+    .tooth {
+      background: linear-gradient(135deg, #7ef9ff, #00fff7);
+      width: 60px;
+      height: 80px;
+      border-radius: 0 0 30px 30px;
+      position: relative;
+      box-shadow: 0 0 15px #00fff7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: #00444d;
+      text-shadow: 0 0 8px #00fff7;
+      cursor: default;
+      user-select: none;
+      /* Teeth top “root” shape */
+      clip-path: polygon(
+        0% 20%, 15% 0%, 85% 0%, 100% 20%, 100% 100%, 0% 100%
+      );
+      transition: transform 0.2s ease;
+    }
+    .tooth.pop-correct {
+      background: #0f0;
+      box-shadow: 0 0 20px #0f0;
+      transform: scale(1.3) translateY(-10px);
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .tooth.pop-wrong {
+      background: #f33;
+      box-shadow: 0 0 20px #f33;
+      transform: scale(1.1) translateY(-5px);
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    /* Clown face container */
+    #clown-container {
+      position: relative;
+      height: 300px;
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      user-select: none;
+    }
+
+    /* Clown face base */
+    #clown-face {
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle at center, #f0c, #a00);
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 0 40px #f0c inset;
+    }
+
+    /* Clown eyes */
+    .eye {
+      position: absolute;
+      top: 80px;
       width: 40px;
-      height: 48px;
+      height: 40px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: inset 0 0 8px #000;
     }
-  }
-</style>
+    .eye.left {
+      left: 55px;
+    }
+    .eye.right {
+      right: 55px;
+    }
+    .pupil {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      width: 16px;
+      height: 16px;
+      background: #000;
+      border-radius: 50%;
+    }
+
+    /* Clown nose */
+    #nose {
+      position: absolute;
+      top: 130px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 40px;
+      background: #ff3c3c;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #f33 inset;
+    }
+
+    /* Teeth holder above clown mouth */
+    #teeth-holder {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      height: 90px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      pointer-events: none;
+    }
+    /* Each tooth on clown */
+    .clown-tooth {
+      width: 40px;
+      height: 70px;
+      background: linear-gradient(135deg, #fff, #ccc);
+      border-radius: 0 0 20px 20px;
+      clip-path: polygon(
+        0% 20%, 20% 0%, 80% 0%, 100% 20%, 100% 100%, 0% 100%
+      );
+      box-shadow: 0 0 8px #999 inset;
+      position: relative;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #222;
+      user-select: none;
+      text-shadow: none;
+    }
+    .clown-tooth:hover {
+      background: #fefefe;
+      transform: translateY(-6px);
+      box-shadow: 0 0 20px #0ff;
+    }
+    .clown-tooth.pop-correct {
+      background: #0f0;
+      box-shadow: 0 0 25px #0f0;
+      transform: scale(1.3) translateY(-10px);
+    }
+    .clown-tooth.pop-wrong {
+      background: #f33;
+      box-shadow: 0 0 25px #f33;
+      transform: scale(1.1) translateY(-5px);
+    }
+
+    /* Shooter at bottom center */
+    #shooter {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 90px;
+      background: linear-gradient(135deg, #0ff, #00bbcc);
+      clip-path: polygon(50% 0%, 80% 100%, 20% 100%);
+      box-shadow: 0 0 14px #0ff;
+      user-select: none;
+    }
+
+    /* Dart */
+    .dart {
+      position: absolute;
+      width: 6px;
+      height: 30px;
+      background: #0ff;
+      border-radius: 3px;
+      box-shadow: 0 0 12px #0ff;
+      pointer-events: none;
+      user-select: none;
+      z-index: 10;
+    }
+
+    /* Feedback text */
+    #feedback {
+      margin: 10px auto 8px;
+      font-weight: 700;
+      font-size: 1.3rem;
+      height: 32px;
+      text-align: center;
+      user-select: none;
+      color: #0ff;
+      text-shadow: 0 0 12px #0ff;
+      min-height: 32px;
+    }
+
+    /* Start button */
+    #startBtn {
+      margin: 8px auto 16px;
+      padding: 14px 26px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      background: #0ff;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      color: #00444d;
+      box-shadow: 0 0 20px #0ff inset;
+      transition: background 0.3s ease;
+      user-select: none;
+      max-width: 220px;
+      display: block;
+    }
+    #startBtn:hover:not(:disabled) {
+      background: #00ccc7;
+    }
+    #startBtn:disabled {
+      background: #006666;
+      cursor: not-allowed;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 400px) {
+      #game {
+        max-width: 100vw;
+      }
+      #question-text {
+        font-size: 1.5rem;
+      }
+      #answers-row {
+        gap: 8px;
+      }
+      .tooth {
+        width: 50px;
+        height: 70px;
+        font-size: 1rem;
+      }
+      #clown-face {
+        width: 200px;
+        height: 200px;
+      }
+      #teeth-holder {
+        width: 220px;
+        gap: 10px;
+      }
+      .clown-tooth {
+        width: 35px;
+        height: 60px;
+        font-size: 0.9rem;
+      }
+      #shooter {
+        width: 50px;
+        height: 75px;
+      }
+      .dart {
+        width: 5px;
+        height: 25px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div id="game">
-  <div id="header">
-    <div id="score">Score: 0</div>
-    <div id="timer">Time: 60</div>
+  <div id="game">
+    <div id="header">
+      <div id="score">Score: 0</div>
+      <div id="timer">Time: 60</div>
+    </div>
+    <div id="question-container" aria-live="polite">
+      <div id="question-text">Press Start to Play!</div>
+      <div id="answers-row"></div>
+    </div>
+    <div id="clown-container" aria-label="Carnival clown face with teeth targets">
+      <div id="clown-face" aria-hidden="true">
+        <div class="eye left"><div class="pupil"></div></div>
+        <div class="eye right"><div class="pupil"></div></div>
+        <div id="nose"></div>
+      </div>
+      <div id="teeth-holder" aria-live="polite" aria-atomic="true">
+        <!-- Teeth will be dynamically inserted here -->
+      </div>
+    </div>
+    <div id="feedback" aria-live="assertive" aria-atomic="true"></div>
+    <button id="startBtn" aria-label="Start Game Button">Start Game</button>
+    <div id="shooter" aria-label="Shooter, move left and right"></div>
   </div>
-  <div id="question">Press Start to Begin</div>
-  <div id="playfield">
-    <div id="shooter"></div>
-  </div>
-  <div id="feedback"></div>
-  <button id="startBtn">Start Game</button>
-</div>
 
-<script>
-(() => {
-  const scoreEl = document.getElementById('score');
-  const timerEl = document.getElementById('timer');
-  const questionEl = document.getElementById('question');
-  const playfield = document.getElementById('playfield');
-  const feedbackEl = document.getElementById('feedback');
-  const startBtn = document.getElementById('startBtn');
-  const shooter = document.getElementById('shooter');
+  <script>
+    (() => {
+      const scoreEl = document.getElementById('score');
+      const timerEl = document.getElementById('timer');
+      const questionText = document.getElementById('question-text');
+      const answersRow = document.getElementById('answers-row');
+      const teethHolder = document.getElementById('teeth-holder');
+      const feedbackEl = document.getElementById('feedback');
+      const startBtn = document.getElementById('startBtn');
+      const shooter = document.getElementById('shooter');
+      const game = document.getElementById('game');
 
-  const playfieldRect = () => playfield.getBoundingClientRect();
+      let score = 0;
+      let timeLeft = 60;
+      let timerInterval = null;
+      let gameActive = false;
 
-  let score = 0;
-  let timeLeft = 60;
-  let timerInterval = null;
-  let gameActive = false;
+      let currentQuestion = null;
+      let currentAnswer = null;
 
-  let currentAnswer = null;
-  let bubbles = [];
-  let lasers = [];
+      let darts = [];
 
-  const bubblesCount = 7;
-  const laserSpeed = 12;
+      // Utilities
+      const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-  // Utilities
-  function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+      // Generate accounting addition question & answers
+      function generateQA() {
+        const maxNum = Math.min(15 + Math.floor(score / 3), 99);
+        const a = randomInt(1, maxNum);
+        const b = randomInt(1, maxNum);
+        const correct = a + b;
+        const question = `${a} + ${b} = ?`;
+        const answersSet = new Set([correct]);
 
-  // Generate a question & answers for accounting addition practice
-  function generateQA() {
-    const maxNum = Math.min(15 + Math.floor(score / 3), 99);
-    const a = randomInt(1, maxNum);
-    const b = randomInt(1, maxNum);
-    currentAnswer = a + b;
-    const question = `${a} + ${b}`;
-    const answersSet = new Set([currentAnswer]);
+        while (answersSet.size < 6) {  // 6 answers total
+          let candidate = correct + randomInt(-maxNum, maxNum);
+          if (candidate < 0) candidate = 0;
+          answersSet.add(candidate);
+        }
 
-    while (answersSet.size < bubblesCount) {
-      let candidate = currentAnswer + randomInt(-maxNum, maxNum);
-      if (candidate < 0) candidate = 0;
-      answersSet.add(candidate);
-    }
-    const answersArr = Array.from(answersSet);
-    for (let i = answersArr.length - 1; i > 0; i--) {
-      const j = randomInt(0, i);
-      [answersArr[i], answersArr[j]] = [answersArr[j], answersArr[i]];
-    }
-    return { question, answers: answersArr };
-  }
+        const answersArr = Array.from(answersSet);
+        // Shuffle answers
+        for (let i = answersArr.length - 1; i > 0; i--) {
+          const j = randomInt(0, i);
+          [answersArr[i], answersArr[j]] = [answersArr[j], answersArr[i]];
+        }
 
-  // Create bubble element and initial position
-  function createBubble(value) {
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    bubble.textContent = value;
-
-    const pfWidth = playfield.clientWidth;
-    const pfHeight = playfield.clientHeight;
-
-    const x = randomInt(30, pfWidth - 100);
-    const y = randomInt(-150, -70); // start above view
-
-    bubble.style.left = `${x}px`;
-    bubble.style.top = `${y}px`;
-
-    playfield.appendChild(bubble);
-
-    return {
-      el: bubble,
-      value,
-      x,
-      y,
-      speedY: 1 + Math.random() * 1.5
-    };
-  }
-
-  // Setup bubbles for a question
-  function setupBubbles(answers) {
-    // Clear old bubbles
-    bubbles.forEach(b => {
-      if (b.el.parentNode) b.el.parentNode.removeChild(b.el);
-    });
-    bubbles = [];
-
-    answers.forEach(val => {
-      bubbles.push(createBubble(val));
-    });
-  }
-
-  // Update bubble positions (moving downward)
-  function updateBubbles() {
-    const pfHeight = playfield.clientHeight;
-
-    bubbles.forEach(b => {
-      b.y += b.speedY;
-      if (b.y > pfHeight + 80) {
-        // Respawn above
-        b.y = randomInt(-150, -70);
-        b.x = randomInt(30, playfield.clientWidth - 100);
-        b.speedY = 1 + Math.random() * 1.5;
+        return { question, correct, answers: answersArr };
       }
-      b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
-    });
-  }
 
-  // Create laser and shoot from current shooter position
-  function shootLaser() {
-    if (!gameActive) return;
-
-    const laser = document.createElement('div');
-    laser.className = 'laser';
-
-    const pfRect = playfield.getBoundingClientRect();
-    const shooterRect = shooter.getBoundingClientRect();
-
-    // Laser start position (center top of shooter relative to playfield)
-    const startX = shooter.offsetLeft + shooter.clientWidth / 2 - 2; // 2px laser width offset
-    const startY = shooter.offsetTop - 20; // just above shooter
-
-    laser.style.left = `${startX}px`;
-    laser.style.top = `${startY}px`;
-
-    playfield.appendChild(laser);
-
-    lasers.push({
-      el: laser,
-      x: startX,
-      y: startY,
-      speedY: -laserSpeed
-    });
-  }
-
-  // Update laser positions and check collisions
-  function updateLasers() {
-    for (let i = lasers.length - 1; i >= 0; i--) {
-      const laser = lasers[i];
-      laser.y += laser.speedY;
-      if (laser.y < -30) {
-        // Remove laser out of screen
-        laser.el.remove();
-        lasers.splice(i, 1);
-        continue;
+      // Update score display
+      function updateScore() {
+        scoreEl.textContent = `Score: ${score}`;
       }
-      laser.el.style.transform = `translate(${laser.x}px, ${laser.y}px)`;
 
-      // Check collision with bubbles
-      for (let j = bubbles.length - 1; j >= 0; j--) {
-        const b = bubbles[j];
-        if (isColliding(laser, b)) {
-          // Hit detected
-          if (b.value === currentAnswer) {
-            score += 10;
-            feedbackEl.textContent = "✅ Correct!";
-            feedbackEl.style.color = "#0f0";
-            popBubble(b, true);
-            nextQuestion();
-          } else {
-            score = Math.max(0, score - 5);
-            feedbackEl.textContent = "❌ Wrong!";
-            feedbackEl.style.color = "#f33";
-            popBubble(b, false);
+      // Start timer countdown
+      function startTimer() {
+        timeLeft = 60;
+        timerEl.textContent = `Time: ${timeLeft}`;
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          timerEl.textContent = `Time: ${timeLeft}`;
+          if (timeLeft <= 0) {
+            endGame();
           }
-          updateScore();
+        }, 1000);
+      }
 
-          // Remove laser
-          laser.el.remove();
-          lasers.splice(i, 1);
-          break;
+      // End game state
+      function endGame() {
+        gameActive = false;
+        clearInterval(timerInterval);
+        questionText.textContent = 'Game Over!';
+        feedbackEl.textContent = `Your final score: ${score}`;
+        clearTeeth();
+        clearAnswersRow();
+        darts.forEach(d => d.el.remove());
+        darts = [];
+        startBtn.disabled = false;
+        startBtn.textContent = 'Restart Game';
+      }
+
+      // Clear teeth from clown mouth
+      function clearTeeth() {
+        while (teethHolder.firstChild) {
+          teethHolder.removeChild(teethHolder.firstChild);
         }
       }
-    }
-  }
-
-  // Check collision between laser and bubble (approximate)
-  function isColliding(laser, bubble) {
-    const lRect = laser.el.getBoundingClientRect();
-    const bRect = bubble.el.getBoundingClientRect();
-    return !(
-      lRect.right < bRect.left ||
-      lRect.left > bRect.right ||
-      lRect.bottom < bRect.top ||
-      lRect.top > bRect.bottom
-    );
-  }
-
-  // Pop bubble animation and removal
-  function popBubble(bubbleObj, correct) {
-    const el = bubbleObj.el;
-    el.classList.add('pop');
-    if (correct) {
-      el.style.background = '#0f0';
-      el.style.boxShadow = '0 0 20px #0f0';
-    } else {
-      el.style.background = '#f33';
-      el.style.boxShadow = '0 0 20px #f33';
-    }
-    setTimeout(() => {
-      if (el.parentNode) el.parentNode.removeChild(el);
-    }, 400);
-    // Remove bubble from array
-    bubbles = bubbles.filter(b => b !== bubbleObj);
-  }
-
-  // Next question setup
-  function nextQuestion() {
-    const qa = generateQA();
-    currentAnswer = qa.answers.find(a => a === currentAnswer) || qa.answers[0];
-    questionEl.textContent = qa.question;
-    setupBubbles(qa.answers);
-  }
-
-  // Update score display
-  function updateScore() {
-    scoreEl.textContent = `Score: ${score}`;
-  }
-
-  // Timer countdown
-  function startTimer() {
-    timeLeft = 60;
-    timerEl.textContent = `Time: ${timeLeft}`;
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      timerEl.textContent = `Time: ${timeLeft}`;
-      if (timeLeft <= 0) {
-        endGame();
+      // Clear answers from top row
+      function clearAnswersRow() {
+        while (answersRow.firstChild) {
+          answersRow.removeChild(answersRow.firstChild);
+        }
       }
-    }, 1000);
-  }
 
-  // End game state
-  function endGame() {
-    gameActive = false;
-    clearInterval(timerInterval);
-    questionEl.textContent = 'Game Over!';
-    feedbackEl.textContent = `Your final score: ${score}`;
+      // Setup question and teeth answers
+      function setupQuestion() {
+        clearTeeth();
+        clearAnswersRow();
 
-    bubbles.forEach(b => {
-      if (b.el.parentNode) b.el.parentNode.removeChild(b.el);
-    });
-    bubbles = [];
+        const qa = generateQA();
+        currentQuestion = qa.question;
+        currentAnswer = qa.correct;
 
-    lasers.forEach(l => {
-      if (l.el.parentNode) l.el.parentNode.removeChild(l.el);
-    });
-    lasers = [];
+        questionText.textContent = currentQuestion;
 
-    startBtn.disabled = false;
-    startBtn.textContent = 'Restart Game';
-  }
+        // Top row answers (Family Feud style)
+        qa.answers.forEach(answer => {
+          const tooth = document.createElement('div');
+          tooth.className = 'tooth';
+          tooth.textContent = answer;
+          answersRow.appendChild(tooth);
+        });
 
-  // Start game
-  function startGame() {
-    score = 0;
-    updateScore();
-    feedbackEl.textContent = '';
-    startBtn.disabled = true;
-    startBtn.textContent = 'Game in Progress...';
-    gameActive = true;
+        // Teeth on clown mouth
+        qa.answers.forEach((answer, i) => {
+          const tooth = document.createElement('div');
+          tooth.className = 'clown-tooth';
+          tooth.textContent = answer;
+          tooth.dataset.value = answer;
+          teethHolder.appendChild(tooth);
+        });
 
-    nextQuestion();
-    startTimer();
-  }
+        feedbackEl.textContent = 'Shoot the correct tooth!';
 
-  // Game loop animation frame
-  function gameLoop() {
-    if (gameActive) {
-      updateBubbles();
-      updateLasers();
-    }
-    requestAnimationFrame(gameLoop);
-  }
+      }
 
-  // Move shooter horizontally with mouse or touch
-  function moveShooter(x) {
-    const pfWidth = playfield.clientWidth;
-    let newX = x - playfield.getBoundingClientRect().left - shooter.clientWidth / 2;
-    if (newX < 0) newX = 0;
-    if (newX > pfWidth - shooter.clientWidth) newX = pfWidth - shooter.clientWidth;
-    shooter.style.left = `${newX}px`;
-  }
+      // Move shooter horizontally with arrow keys (or A/D)
+      let shooterPos = 50; // percent left of game width
+      const shooterSpeed = 5; // percent per keypress
+      function updateShooter() {
+        shooter.style.left = `${shooterPos}%`;
+      }
 
-  // Event Listeners
+      function moveShooterLeft() {
+        shooterPos = Math.max(5, shooterPos - shooterSpeed);
+        updateShooter();
+      }
+      function moveShooterRight() {
+        shooterPos = Math.min(95, shooterPos + shooterSpeed);
+        updateShooter();
+      }
 
-  // Mouse move on playfield to move shooter
-  playfield.addEventListener('mousemove', e => {
-    if (!gameActive) return;
-    moveShooter(e.clientX);
-  });
+      // Shoot a dart
+      function shootDart() {
+        if (!gameActive) return;
 
-  // Touch move on playfield to move shooter
-  playfield.addEventListener('touchmove', e => {
-    if (!gameActive) return;
-    moveShooter(e.touches[0].clientX);
-  }, { passive: false });
+        const dart = document.createElement('div');
+        dart.className = 'dart';
+        game.appendChild(dart);
 
-  // Shoot laser on click or tap inside playfield
-  playfield.addEventListener('click', e => {
-    if (!gameActive) return;
-    shootLaser();
-  });
+        // Initial dart position
+        // Calculate pixel left relative to game container
+        const gameRect = game.getBoundingClientRect();
+        const leftPx = (shooterPos / 100) * gameRect.width;
+        const bottomPx = 110; // just above shooter approx
 
-  playfield.addEventListener('touchstart', e => {
-    if (!gameActive) return;
-    shootLaser();
-  }, { passive: false });
+        dart.style.left = `${leftPx - 3}px`; // center dart (6px width)
+        dart.style.bottom = `${bottomPx}px`;
 
-  startBtn.addEventListener('click', startGame);
+        // Dart object with position and element
+        const dartObj = {
+          el: dart,
+          x: leftPx,
+          y: bottomPx,
+          speed: 12, // px per frame approx
+          active: true,
+        };
+        darts.push(dartObj);
+      }
 
-  // Start animation loop
-  gameLoop();
+      // Detect collision between dart and teeth
+      function detectCollision(dartObj) {
+        const teeth = document.querySelectorAll('.clown-tooth');
+        for (const tooth of teeth) {
+          const rect = tooth.getBoundingClientRect();
+          const gameRect = game.getBoundingClientRect();
 
-  // Center shooter initially
-  function centerShooter() {
-    shooter.style.left = `${(playfield.clientWidth - shooter.clientWidth) / 2}px`;
-  }
-  window.addEventListener('resize', centerShooter);
-  centerShooter();
-})();
-</script>
+          // Calculate tooth bounds relative to game container (dart is positioned absolute to game)
+          const toothLeft = rect.left - gameRect.left;
+          const toothRight = rect.right - gameRect.left;
+          const toothTop = gameRect.height - (rect.bottom - gameRect.top);
+          const toothBottom = gameRect.height - (rect.top - gameRect.top);
+
+          // Dart bounds (dart.x is horizontal px pos, dart.y is vertical px pos from bottom)
+          const dartLeft = dartObj.x - 3; // dart width 6px, center -3
+          const dartRight = dartObj.x + 3;
+          const dartTop = dartObj.y + 30; // dart height 30 px
+          const dartBottom = dartObj.y;
+
+          // Check overlapping horizontally and vertically (y axis is bottom-up)
+          const horizontalOverlap = (dartRight > toothLeft) && (dartLeft < toothRight);
+          const verticalOverlap = (dartTop > toothBottom) && (dartBottom < toothTop);
+
+          if (horizontalOverlap && verticalOverlap) {
+            return tooth;
+          }
+        }
+        return null;
+      }
+
+      // Process hit tooth
+      function processHit(tooth) {
+        if (!gameActive) return;
+
+        const val = parseInt(tooth.dataset.value);
+        if (val === currentAnswer) {
+          score += 10;
+          updateScore();
+          feedbackEl.textContent = 'Correct! 🎉';
+
+          tooth.classList.add('pop-correct');
+
+          // Remove tooth after animation
+          setTimeout(() => {
+            tooth.remove();
+            setupQuestion();
+          }, 1000);
+        } else {
+          feedbackEl.textContent = `Wrong! That was ${val}. Try again!`;
+          tooth.classList.add('pop-wrong');
+          setTimeout(() => {
+            tooth.classList.remove('pop-wrong');
+            feedbackEl.textContent = 'Shoot the correct tooth!';
+          }, 800);
+        }
+      }
+
+      // Game loop to animate darts and check collisions
+      function gameLoop() {
+        if (!gameActive) return;
+
+        const gameRect = game.getBoundingClientRect();
+
+        for (let i = darts.length - 1; i >= 0; i--) {
+          const dartObj = darts[i];
+          if (!dartObj.active) continue;
+
+          dartObj.y += dartObj.speed;
+
+          // Move dart element visually (bottom up)
+          dartObj.el.style.bottom = `${dartObj.y}px`;
+
+          // Remove dart if offscreen
+          if (dartObj.y > gameRect.height) {
+            dartObj.el.remove();
+            darts.splice(i, 1);
+            continue;
+          }
+
+          // Check collision with teeth
+          const hitTooth = detectCollision(dartObj);
+          if (hitTooth) {
+            dartObj.active = false;
+            dartObj.el.remove();
+            darts.splice(i, 1);
+            processHit(hitTooth);
+          }
+        }
+
+        requestAnimationFrame(gameLoop);
+      }
+
+      // Keyboard controls
+      window.addEventListener('keydown', e => {
+        if (!gameActive) return;
+
+        if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') {
+          e.preventDefault();
+          moveShooterLeft();
+        }
+        else if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') {
+          e.preventDefault();
+          moveShooterRight();
+        }
+        else if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          shootDart();
+        }
+      });
+
+      // Touch controls: tap left/right of screen to move shooter
+      game.addEventListener('click', e => {
+        if (!gameActive) return;
+
+        const rect = game.getBoundingClientRect();
+        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+
+        if (xPercent < shooterPos) {
+          moveShooterLeft();
+        } else {
+          moveShooterRight();
+        }
+      });
+
+      // Start game
+      startBtn.addEventListener('click', () => {
+        if (gameActive) return;
+
+        score = 0;
+        updateScore();
+        feedbackEl.textContent = '';
+        startBtn.disabled = true;
+        startBtn.textContent = 'Game Running...';
+        gameActive = true;
+        shooterPos = 50;
+        updateShooter();
+
+        setupQuestion();
+        startTimer();
+        requestAnimationFrame(gameLoop);
+      });
+
+      // Initial setup
+      updateShooter();
+
+    })();
+  </script>
 </body>
 </html>
