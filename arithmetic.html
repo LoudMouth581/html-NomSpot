@@ -1,693 +1,642 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Arithmetic Trainer</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Baloo+2&display=swap');
-    body {
-      font-family: 'Baloo 2', cursive, sans-serif;
-      background: linear-gradient(135deg, #4caf50, #1b5e20);
-      margin: 0; padding: 0;
-      display: flex; flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      color: white;
-      user-select: none;
-    }
-    header {
-      background: #2e7d32;
-      width: 100%;
-      padding: 20px 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-      text-align: center;
-      font-weight: 700;
-      font-size: 2rem;
-      letter-spacing: 2px;
-      text-shadow: 0 0 6px #a5d6a7;
-    }
-    main {
-      background: #388e3c;
-      border-radius: 16px;
-      padding: 20px 25px;
-      max-width: 480px;
-      width: 90%;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 20px 0 40px;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Arithmetic Trainer</title>
+<style>
+  body {
+    margin:0; padding:0;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #eef9ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    user-select: none;
+  }
+  header {
+    padding: 1rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    color: #f0d600;
+    text-shadow: 0 0 10px #f0d600;
+  }
+  #game-container {
+    background: #1e2a38;
+    border-radius: 15px;
+    padding: 20px 30px;
+    width: 90vw;
+    max-width: 480px;
+    box-shadow: 0 0 25px #f0d600aa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #mascot {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 10px;
+    background: url('https://i.imgur.com/fGxAHgY.png') no-repeat center/contain;
+    filter: drop-shadow(0 0 5px #f0d600);
+  }
+  #mascot-message {
+    background: #0f2027cc;
+    padding: 8px 15px;
+    border-radius: 12px;
+    min-height: 40px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  #question {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #f0d600;
+    text-align: center;
+  }
+  #answers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  .answer-btn {
+    background: #203a43;
+    border-radius: 12px;
+    padding: 15px 25px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #eef9ff;
+    box-shadow: 0 0 10px #f0d600bb;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.15s ease, background-color 0.3s ease;
+    min-width: 80px;
+    text-align: center;
+  }
+  .answer-btn:hover {
+    background-color: #f0d600;
+    color: #1e2a38;
+    transform: scale(1.1);
+  }
+  #scoreboard {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    color: #f0d600;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+  }
+  #progress-bar {
+    width: 100%;
+    background: #203a43;
+    border-radius: 15px;
+    overflow: hidden;
+    height: 18px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 0 8px #f0d600aa;
+  }
+  #progress-fill {
+    height: 100%;
+    background: #f0d600;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+  #message {
+    font-weight: 700;
+    height: 24px;
+    margin-bottom: 15px;
+    min-height: 24px;
+    text-align: center;
+  }
+  #powerups {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 10px;
+  }
+  .powerup-btn {
+    background: #203a43;
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-weight: 700;
+    color: #eef9ff;
+    cursor: pointer;
+    box-shadow: 0 0 10px #f0d600bb;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  .powerup-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .powerup-btn:hover:not(:disabled) {
+    background-color: #f0d600;
+    color: #1e2a38;
+  }
+  #level-display {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #f0d600;
+  }
+  #unlockables {
+    width: 100%;
+    background: #1e2a38;
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: inset 0 0 15px #f0d600aa;
+    color: #f0d600cc;
+    font-weight: 600;
+    font-size: 1rem;
+    max-height: 120px;
+    overflow-y: auto;
+  }
+  /* Confetti CSS-only */
+  .confetti-piece {
+    position: fixed;
+    width: 10px; height: 10px;
+    background-color: #f0d600;
+    opacity: 0.9;
+    pointer-events: none;
+    animation: confetti-fall 1.2s ease forwards;
+    border-radius: 2px;
+  }
+  @keyframes confetti-fall {
+    0% {transform: translateY(0) rotate(0deg);}
+    100% {transform: translateY(100vh) rotate(360deg); opacity: 0;}
+  }
+
+  @media (max-width: 480px) {
+    #game-container {
+      width: 95vw;
+      padding: 15px 20px;
     }
     #mascot {
-      background: rgba(255 255 255 / 0.15);
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 1.3rem;
-      margin-bottom: 20px;
-      min-height: 50px;
-      text-align: center;
-      box-shadow: 0 0 12px #a5d6a7;
+      width: 90px;
+      height: 90px;
     }
-    #question {
-      font-size: 3rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      margin-bottom: 25px;
-      user-select: text;
-    }
-    #answers {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 16px;
-      width: 100%;
-      margin-bottom: 25px;
-    }
-    button.answer-btn {
-      background: #81c784;
-      border: none;
-      border-radius: 12px;
-      padding: 16px 30px;
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #1b5e20;
-      cursor: pointer;
-      box-shadow: 0 0 12px #aed581;
-      transition: background 0.3s ease, transform 0.15s ease;
-      flex: 1 1 40%;
-      max-width: 160px;
-      min-width: 140px;
-      user-select: none;
-    }
-    button.answer-btn:hover {
-      background: #c5e1a5;
-      color: #33691e;
-      transform: scale(1.1);
-    }
-    button.answer-btn:active {
-      transform: scale(0.95);
-    }
-    #scoreboard {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
+    .answer-btn {
+      min-width: 70px;
       font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 15px;
-      user-select: none;
+      padding: 12px 18px;
     }
-    #timerBar {
-      width: 100%;
-      height: 14px;
-      background: #1b5e20;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      box-shadow: inset 0 0 6px #33691e;
-    }
-    #timerFill {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, #aed581, #33691e);
-      transition: width 0.1s linear;
-    }
-    #message {
-      font-size: 1.3rem;
-      height: 40px;
-      text-align: center;
-      margin-bottom: 20px;
-      user-select: none;
-      min-height: 40px;
-    }
-    #powerups {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-      max-width: 480px;
-      width: 100%;
-    }
-    button.powerup-btn {
-      background: #aed581;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 18px;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #33691e;
-      cursor: pointer;
-      box-shadow: 0 0 10px #c5e1a5;
-      user-select: none;
-      flex: 1 1 30%;
-      max-width: 140px;
-      min-width: 120px;
-      transition: background 0.3s ease;
-    }
-    button.powerup-btn:disabled {
-      background: #7b9e4a;
-      color: #b0bca1;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-    button.powerup-btn:hover:not(:disabled) {
-      background: #dcedc8;
-      color: #33691e;
-    }
-    #unlocks {
-      font-size: 1rem;
-      margin-bottom: 20px;
-      user-select: none;
-      text-align: center;
-    }
-    #confetti-container {
-      pointer-events: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      overflow: visible;
-      z-index: 9999;
-      display: none;
-    }
-    .confetti-piece {
-      position: absolute;
-      width: 8px; height: 8px;
-      background-color: #c5e1a5;
-      opacity: 0.9;
-      animation-name: confetti-fall;
-      animation-timing-function: ease-out;
-      animation-iteration-count: 1;
-      border-radius: 3px;
-    }
-    @keyframes confetti-fall {
-      0% {
-        opacity: 1;
-        transform: translateY(0) rotate(0deg);
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(100vh) rotate(360deg);
-      }
-    }
-    footer {
-      color: #aed581;
-      margin-bottom: 15px;
-      user-select: none;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
+<header>Arithmetic Master</header>
 
-<header>Arithmetic </header>
+<div id="game-container" role="main" aria-live="polite">
+  <div id="mascot" aria-label="Mascot"></div>
+  <div id="mascot-message" aria-live="polite">Ready to master arithmetic? Let's start!</div>
 
-<div id="mascot" aria-live="polite" role="region">Ready? Let's sharpen those math skills!</div>
-
-<main>
   <div id="scoreboard">
     <div>Score: <span id="score">0</span></div>
+    <div>Level: <span id="level">1</span></div>
     <div>Strikes: <span id="strikes">0</span>/3</div>
-    <div>Streak: <span id="streak">0</span></div>
   </div>
 
-  <div id="timerBar" aria-label="Timer progress bar">
-    <div id="timerFill"></div>
+  <div id="progress-bar" aria-label="Progress bar">
+    <div id="progress-fill"></div>
   </div>
 
-  <div id="question" aria-live="assertive" aria-atomic="true"></div>
+  <div id="question" aria-label="Math question" role="heading" aria-level="2">Loading question...</div>
 
-  <div id="answers" role="list"></div>
+  <div id="answers" role="list" aria-label="Answer choices"></div>
 
-  <div id="message" aria-live="polite" aria-atomic="true"></div>
+  <div id="message" aria-live="assertive"></div>
 
-  <div id="powerups">
-    <button class="powerup-btn" id="skipBtn" title="Skip this question" aria-label="Skip question power-up">⏭️ Skip (0)</button>
-    <button class="powerup-btn" id="doublePointsBtn" title="Double points next question" aria-label="Double points power-up">✌️ Double Points (0)</button>
-    <button class="powerup-btn" id="extraTimeBtn" title="Extra 10 seconds" aria-label="Extra time power-up">⏳ Extra Time (0)</button>
+  <div id="powerups" aria-label="Power-ups">
+    <button id="doublePointsBtn" class="powerup-btn" aria-pressed="false" title="Double your points on the next correct answer!">Double Points</button>
+    <button id="skipBtn" class="powerup-btn" aria-pressed="false" title="Skip a question without penalty!">Skip Question</button>
   </div>
 
-  <div id="unlocks"></div>
-</main>
-
-<div id="confetti-container" aria-hidden="true"></div>
-
-<footer>© 2025 Arithmetic  — Master your math, fast & smart!</footer>
+  <div id="unlockables" aria-live="polite" aria-label="Unlockable titles and badges">
+    <strong>Unlockables:</strong>
+    <ul id="unlockList"></ul>
+  </div>
+</div>
 
 <script>
 (() => {
-  // Elements
-  const mascotEl = document.getElementById('mascot');
+  const scoreEl = document.getElementById('score');
+  const levelEl = document.getElementById('level');
+  const strikesEl = document.getElementById('strikes');
   const questionEl = document.getElementById('question');
   const answersEl = document.getElementById('answers');
-  const scoreEl = document.getElementById('score');
-  const strikesEl = document.getElementById('strikes');
-  const streakEl = document.getElementById('streak');
   const messageEl = document.getElementById('message');
-  const timerFillEl = document.getElementById('timerFill');
-  const confettiContainer = document.getElementById('confetti-container');
-  const unlocksEl = document.getElementById('unlocks');
+  const progressFill = document.getElementById('progress-fill');
+  const mascotMessage = document.getElementById('mascot-message');
+  const unlockList = document.getElementById('unlockList');
 
-  const skipBtn = document.getElementById('skipBtn');
   const doublePointsBtn = document.getElementById('doublePointsBtn');
-  const extraTimeBtn = document.getElementById('extraTimeBtn');
+  const skipBtn = document.getElementById('skipBtn');
 
-  // Sounds
+  // Audio setup
   const correctSound = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
   const wrongSound = new Audio('https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg');
+  const levelUpSound = new Audio('https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_hit.ogg');
 
-  // Game state
-  let score = 0;
-  let strikes = 0;
-  let streak = 0;
-  let timeLeft = 15; // seconds
-  let timerInterval;
-  let currentAnswer = null;
-  let canAnswer = true;
-  let currentOperation = 'addition';
-  let doublePointsActive = false;
-  let extraTimeActive = false;
-
-  // Power-ups counts
-  let powerUps = {
-    skip: 0,
-    doublePoints: 0,
-    extraTime: 0
-  };
-
-  // Unlock system
-  const operations = ['addition', 'subtraction', 'multiplication', 'division'];
-  const unlockThresholds = {
-    subtraction: 50,
-    multiplication: 120,
-    division: 220
-  };
-
-  // Messages
-  const mascotMessages = {
-    default: [
-      "Let's sharpen those math skills!",
-      "Ready for your next challenge?",
-      "You got this!",
-      "Stay sharp, speedster!",
-      "Math is your playground!"
-    ],
-    correct: [
-      "Awesome! Keep it up!",
-      "Right on! You're crushing it!",
-      "Fantastic job!",
-      "Math wizard in action!",
-      "Brilliant answer!"
-    ],
-    wrong: [
-      "Oops! Try again!",
-      "Almost had it!",
-      "Don't give up!",
-      "Keep pushing!",
-      "Mistakes help you learn!"
-    ],
-    powerup: [
-      "Power-up activated!",
-      "Use that boost wisely!",
-      "Feeling unstoppable now!",
-      "Let's speed this up!",
-      "You got this!"
-    ],
-    unlock: [
-      "You've unlocked a new operation!",
-      "Look at you go!",
-      "More math magic unlocked!",
-      "New challenge awaits!",
-      "Keep climbing!"
-    ]
-  };
-
-  // Load progress
-  function loadProgress() {
-    const data = localStorage.getItem('arithmeticTrainerData');
-    if (data) {
-      try {
-        const saved = JSON.parse(data);
-        score = saved.score || 0;
-        strikes = saved.strikes || 0;
-        streak = saved.streak || 0;
-        powerUps = saved.powerUps || powerUps;
-        updateScoreboard();
-        updatePowerupsUI();
-      } catch {
-        // ignore parse error
-      }
-    }
-  }
-
-  // Save progress
-  function saveProgress() {
-    localStorage.setItem('arithmeticTrainerData', JSON.stringify({
-      score, strikes, streak, powerUps
-    }));
-  }
-
-  // Text to speech
+  // Text to Speech
   function speak(text) {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
+      speechSynthesis.cancel(); // cancel any ongoing speech
+      speechSynthesis.speak(utterance);
     }
   }
 
-  // Generate a question based on currentOperation
+  // Game state
+  let score = 0;
+  let level = 1;
+  let strikes = 0;
+  let streak = 0;
+  let progress = 0; // 0 to 100%
+  let doublePointsActive = false;
+  let skipAvailable = 1;
+
+  const unlockables = [
+    { title: "Math Novice", threshold: 0, unlocked: false },
+    { title: "Quick Thinker", threshold: 100, unlocked: false },
+    { title: "Accuracy Ace", threshold: 250, unlocked: false },
+    { title: "Speedster", threshold: 500, unlocked: false },
+    { title: "Arithmetic Master", threshold: 1000, unlocked: false }
+  ];
+
+  const mascotsPhrases = {
+    start: [
+      "Ready to master arithmetic? Let's start!",
+      "Math is fun! Let's do this!",
+      "I believe in you! Show me what you've got!"
+    ],
+    correct: [
+      "Great job!",
+      "You nailed it!",
+      "Awesome! Keep it up!",
+      "You're on fire!"
+    ],
+    wrong: [
+      "Oops, try again!",
+      "Not quite, keep going!",
+      "Don't give up!",
+      "Almost there!"
+    ],
+    levelUp: [
+      "Level up! You're getting better!",
+      "Impressive! Next level unlocked!",
+      "Keep up the great work!"
+    ],
+    streakBonus: [
+      "Streak bonus! Keep rolling!",
+      "Amazing accuracy!",
+      "You're unstoppable!"
+    ]
+  };
+
+  // Utilities
+  function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  function shuffleArray(arr) {
+    for(let i = arr.length -1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i +1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
+  // Save and Load progress with localStorage
+  function saveProgress() {
+    localStorage.setItem('arithMasterSave', JSON.stringify({
+      score, level, strikes, streak, unlockables, doublePointsActive, skipAvailable
+    }));
+  }
+  function loadProgress() {
+    const data = localStorage.getItem('arithMasterSave');
+    if (!data) return;
+    try {
+      const obj = JSON.parse(data);
+      score = obj.score || 0;
+      level = obj.level || 1;
+      strikes = obj.strikes || 0;
+      streak = obj.streak || 0;
+      doublePointsActive = obj.doublePointsActive || false;
+      skipAvailable = obj.skipAvailable !== undefined ? obj.skipAvailable : 1;
+      // Restore unlockables state if exists
+      if (obj.unlockables && Array.isArray(obj.unlockables)) {
+        unlockables.forEach(u => {
+          const saved = obj.unlockables.find(x => x.title === u.title);
+          if (saved) u.unlocked = saved.unlocked;
+        });
+      }
+    } catch(e) {
+      console.warn('Failed to load progress:', e);
+    }
+  }
+
+  // Update UI elements
+  function updateScoreboard() {
+    scoreEl.textContent = score;
+    levelEl.textContent = level;
+    strikesEl.textContent = strikes;
+    progressFill.style.width = progress + '%';
+
+    doublePointsBtn.disabled = doublePointsActive;
+    doublePointsBtn.setAttribute('aria-pressed', doublePointsActive.toString());
+    skipBtn.disabled = skipAvailable < 1;
+  }
+
+  // Show unlockables list
+  function updateUnlockablesUI() {
+    unlockList.innerHTML = '';
+    unlockables.forEach(u => {
+      const li = document.createElement('li');
+      li.textContent = `${u.unlocked ? '🏅' : '🔒'} ${u.title}`;
+      unlockList.appendChild(li);
+    });
+  }
+
+  // Generate a math question depending on level (mixed operations)
   function generateQuestion() {
-    canAnswer = true;
+    // Clear message & answers
     messageEl.textContent = '';
-    timeLeft = extraTimeActive ? 25 : 15;
-    extraTimeActive = false; // reset after use
-    updateTimerBar();
+    answersEl.innerHTML = '';
 
-    let a, b, questionText, answer;
+    // Determine operation based on level (cycles every 4 levels)
+    const operations = ['+', '-', '*', '/'];
+    const opIndex = (level - 1) % operations.length;
+    const operation = operations[opIndex];
 
-    switch(currentOperation) {
-      case 'addition':
-        a = randomInt(1, 30);
-        b = randomInt(1, 30);
-        answer = a + b;
-        questionText = `${a} + ${b} = ?`;
-        break;
-      case 'subtraction':
-        a = randomInt(10, 50);
-        b = randomInt(1, a); // ensure no negative
-        answer = a - b;
-        questionText = `${a} - ${b} = ?`;
-        break;
-      case 'multiplication':
-        a = randomInt(2, 12);
-        b = randomInt(2, 12);
-        answer = a * b;
-        questionText = `${a} × ${b} = ?`;
-        break;
-      case 'division':
-        b = randomInt(2, 12);
-        answer = randomInt(2, 12);
-        a = b * answer; // ensures clean division
-        questionText = `${a} ÷ ${b} = ?`;
-        break;
-      default:
-        a = 1; b = 1; answer = 2;
-        questionText = '1 + 1 = ?';
+    // Define difficulty parameters
+    const baseMax = 10 + (level - 1) * 5; // increase difficulty with level
+
+    // Generate operands and answer
+    let a, b, correctAnswer;
+    if (operation === '+') {
+      a = randomInt(1, baseMax);
+      b = randomInt(1, baseMax);
+      correctAnswer = a + b;
+    } else if (operation === '-') {
+      a = randomInt(1, baseMax);
+      b = randomInt(1, a); // ensure non-negative result
+      correctAnswer = a - b;
+    } else if (operation === '*') {
+      a = randomInt(1, Math.min(baseMax, 12));
+      b = randomInt(1, Math.min(baseMax, 12));
+      correctAnswer = a * b;
+    } else { // division
+      b = randomInt(1, Math.min(baseMax, 12));
+      correctAnswer = randomInt(1, Math.min(baseMax, 12));
+      a = b * correctAnswer; // ensure divisible
     }
 
-    currentAnswer = answer;
-    questionEl.textContent = questionText;
-    speak(questionText);
+    // Create a simple word problem
+    const words = {
+      '+': `If you have ${a} apples and get ${b} more, how many apples do you have now?`,
+      '-': `You have ${a} candies and eat ${b}. How many are left?`,
+      '*': `If one pack has ${a} pencils, how many pencils in ${b} packs?`,
+      '/': `You have ${a} cookies, and divide them equally among ${b} friends. How many cookies each friend gets?`
+    };
 
-    // Generate answer choices
-    generateAnswers(answer);
+    questionEl.textContent = words[operation];
 
-    // Start timer
+    speak(words[operation]);
+
+    // Generate multiple choice answers with one correct + 3 wrong
+    let choices = new Set();
+    choices.add(correctAnswer);
+    while (choices.size < 4) {
+      let wrongChoice = correctAnswer + randomInt(-5, 5);
+      if (wrongChoice < 0 || choices.has(wrongChoice)) continue;
+      choices.add(wrongChoice);
+    }
+
+    let choicesArr = Array.from(choices);
+    shuffleArray(choicesArr);
+
+    choicesArr.forEach(choice => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.textContent = choice;
+      btn.setAttribute('role', 'listitem');
+      btn.addEventListener('click', () => handleAnswer(choice, correctAnswer));
+      answersEl.appendChild(btn);
+    });
+
+    // Reset timer for question
     startTimer();
   }
 
-  function generateAnswers(correctAnswer) {
-    answersEl.innerHTML = '';
-    let answersSet = new Set([correctAnswer]);
+  // Timer & scoring bonus for speed
+  let questionStartTime = 0;
+  let timerId;
+  const TIME_LIMIT_MS = 15000; // 15 seconds per question
+  const WARNING_TIME_MS = 8000;
 
-    while (answersSet.size < 4) {
-      let wrongAnswer = currentAnswer + randomInt(-10, 10);
-      if (wrongAnswer < 0) wrongAnswer = Math.abs(wrongAnswer) + 1;
-      if (wrongAnswer !== correctAnswer) {
-        answersSet.add(wrongAnswer);
-      }
-    }
-
-    const answersArr = Array.from(answersSet);
-    shuffleArray(answersArr);
-
-    for (let ans of answersArr) {
-      const btn = document.createElement('button');
-      btn.className = 'answer-btn';
-      btn.textContent = ans;
-      btn.setAttribute('role', 'listitem');
-      btn.addEventListener('click', () => selectAnswer(ans));
-      answersEl.appendChild(btn);
-    }
+  function startTimer() {
+    clearTimeout(timerId);
+    questionStartTime = Date.now();
+    // Could add visual timer or countdown here
+    timerId = setTimeout(() => {
+      messageEl.textContent = "Time's up! Strike added.";
+      playSound(wrongSound);
+      strikes++;
+      streak = 0;
+      updateScoreboard();
+      checkReset();
+      setTimeout(generateQuestion, 1500);
+    }, TIME_LIMIT_MS);
   }
 
-  function selectAnswer(selected) {
-    if (!canAnswer) return;
-    canAnswer = false;
-    stopTimer();
+  function stopTimer() {
+    clearTimeout(timerId);
+  }
 
-    if (selected === currentAnswer) {
+  // Handle answer click
+  function handleAnswer(selected, correct) {
+    stopTimer();
+    if (selected === correct) {
       playCorrect();
     } else {
       playWrong();
     }
   }
 
+  // Play sounds helper
+  function playSound(audio) {
+    audio.currentTime = 0;
+    audio.play().catch(() => {}); // ignore errors if play interrupted
+  }
+
+  // Confetti animation (CSS only)
+  function showConfetti() {
+    for (let i=0; i<30; i++) {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti-piece');
+      confetti.style.left = Math.random() * window.innerWidth + 'px';
+      confetti.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 70%)`;
+      confetti.style.animationDuration = 0.8 + Math.random() * 0.7 + 's';
+      confetti.style.width = confetti.style.height = (5 + Math.random()*7) + 'px';
+      confetti.style.top = '-10px';
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 1500);
+    }
+  }
+
+  // Mascot speaks randomly from category
+  function mascotSpeakRandom(category) {
+    const arr = mascotsPhrases[category];
+    if (!arr) return;
+    const phrase = arr[Math.floor(Math.random()*arr.length)];
+    mascotMessage.textContent = phrase;
+    speak(phrase);
+  }
+
+  // Power-ups
+  doublePointsBtn.addEventListener('click', () => {
+    if (!doublePointsActive) {
+      doublePointsActive = true;
+      doublePointsBtn.disabled = true;
+      doublePointsBtn.setAttribute('aria-pressed', 'true');
+      mascotMessage.textContent = "Double points ready for next correct answer!";
+    }
+  });
+  skipBtn.addEventListener('click', () => {
+    if (skipAvailable > 0) {
+      skipAvailable--;
+      updateScoreboard();
+      mascotMessage.textContent = "Question skipped!";
+      generateQuestion();
+    }
+  });
+
+  // Correct answer flow
   function playCorrect() {
+    playSound(correctSound);
+    showConfetti();
+
     streak++;
     strikes = 0;
-    let pointsEarned = 10;
+
+    // Calculate points based on speed
+    const timeTaken = Date.now() - questionStartTime;
+    let basePoints = 10;
+    if (timeTaken < 5000) basePoints += 10; // bonus for quick answer
+    else if (timeTaken < 10000) basePoints += 5;
 
     if (doublePointsActive) {
-      pointsEarned *= 2;
+      basePoints *= 2;
       doublePointsActive = false;
-      messageEl.textContent = "Double points used!";
+      doublePointsBtn.disabled = false;
+      doublePointsBtn.setAttribute('aria-pressed', 'false');
+      mascotMessage.textContent = "Double points used!";
     }
 
-    score += pointsEarned;
+    score += basePoints;
+
+    // Increase progress bar
+    progress += 20;
+    if (progress > 100) progress = 100;
 
     updateScoreboard();
     saveProgress();
     mascotSpeakRandom('correct');
 
-    showConfetti();
+    // Check streak bonuses and quick fire rounds
+    if (streak > 0 && streak % 3 === 0) {
+      mascotMessage.textContent = "Quick fire round!";
+      // Quick fire rounds: next 3 questions without skips or powerups (optional)
+    }
 
     checkUnlocks();
+
+    // Level up at score thresholds
+    if (score >= level * 100) {
+      levelUp();
+    }
 
     setTimeout(generateQuestion, 1500);
   }
 
-  function playWrong() {
-    strikes++;
-    streak = 0;
-    updateScoreboard();
-    saveProgress();
-    mascotSpeakRandom('wrong');
-
-    if (strikes >= 3) {
-      resetLevel();
-    } else {
-      setTimeout(generateQuestion, 1500);
-    }
-  }
-
-  function resetLevel() {
-    mascotEl.textContent = "3 strikes! Level reset, but you keep your unlocks!";
-    streak = 0;
-    strikes = 0;
-    score = Math.max(score - 20, 0);
-    updateScoreboard();
-    saveProgress();
-    setTimeout(generateQuestion, 2500);
-  }
-
-  function updateScoreboard() {
-    scoreEl.textContent = score;
-    strikesEl.textContent = strikes;
-    streakEl.textContent = streak;
-    updatePowerupsUI();
-  }
-
-  // Unlock operations based on score
-  function checkUnlocks() {
-    let unlockedOperations = ['addition'];
-    if (score >= unlockThresholds.subtraction) unlockedOperations.push('subtraction');
-    if (score >= unlockThresholds.multiplication) unlockedOperations.push('multiplication');
-    if (score >= unlockThresholds.division) unlockedOperations.push('division');
-
-    unlocksEl.textContent = 'Unlocked operations: ' + unlockedOperations.map(op => capitalize(op)).join(', ');
-
-    // Auto switch to highest unlocked operation for challenge
-    let newOperation = currentOperation;
-    for (let op of operations.slice().reverse()) {
-      if (unlockedOperations.includes(op)) {
-        newOperation = op;
-        break;
-      }
-    }
-
-    if (newOperation !== currentOperation) {
-      currentOperation = newOperation;
-      mascotSpeakRandom('unlock');
-    }
-
-    // Grant power-ups on streak milestones
-    if (streak > 0 && streak % 5 === 0) {
-      grantRandomPowerup();
-    }
-  }
-
-  // Power-up system
-  function grantRandomPowerup() {
-    const keys = Object.keys(powerUps);
-    const randomPower = keys[Math.floor(Math.random() * keys.length)];
-    powerUps[randomPower]++;
-    messageEl.textContent = `You earned a ${capitalize(randomPower)} power-up! 🎉`;
-    mascotSpeak("Power-up activated!");
-    updatePowerupsUI();
-    saveProgress();
-  }
-
-  function updatePowerupsUI() {
-    skipBtn.textContent = `⏭️ Skip (${powerUps.skip})`;
-    doublePointsBtn.textContent = `✌️ Double Points (${powerUps.doublePoints})`;
-    extraTimeBtn.textContent = `⏳ Extra Time (${powerUps.extraTime})`;
-
-    skipBtn.disabled = powerUps.skip === 0;
-    doublePointsBtn.disabled = powerUps.doublePoints === 0;
-    extraTimeBtn.disabled = powerUps.extraTime === 0;
-  }
-
-  skipBtn.addEventListener('click', () => {
-    if (powerUps.skip > 0) {
-      powerUps.skip--;
-      messageEl.textContent = "Question skipped!";
-      mascotSpeak("Skipping question.");
-      updatePowerupsUI();
-      saveProgress();
-      generateQuestion();
-    }
-  });
-
-  doublePointsBtn.addEventListener('click', () => {
-    if (powerUps.doublePoints > 0) {
-      powerUps.doublePoints--;
-      doublePointsActive = true;
-      messageEl.textContent = "Double points activated for next question!";
-      mascotSpeak("Double points on!");
-      updatePowerupsUI();
-      saveProgress();
-    }
-  });
-
-  extraTimeBtn.addEventListener('click', () => {
-    if (powerUps.extraTime > 0) {
-      powerUps.extraTime--;
-      extraTimeActive = true;
-      messageEl.textContent = "Extra time granted for next question!";
-      mascotSpeak("Extra time given!");
-      updatePowerupsUI();
-      saveProgress();
-    }
-  });
-
-  // Timer
-  function startTimer() {
-    clearInterval(timerInterval);
-    updateTimerBar();
-    timerInterval = setInterval(() => {
-      timeLeft -= 0.1;
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        mascotSpeak("Time's up!");
-        selectAnswer(null); // Treat as wrong answer
-      }
-      updateTimerBar();
-    }, 100);
-  }
-
-  function stopTimer() {
-    clearInterval(timerInterval);
-  }
-
-  function updateTimerBar() {
-    let percent = (timeLeft / (extraTimeActive ? 25 : 15)) * 100;
-    if (percent < 0) percent = 0;
-    timerFillEl.style.width = percent + '%';
-  }
-
-  // Helpers
-  function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-  function shuffleArray(arr) {
-    for(let i = arr.length -1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i+1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-  }
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
-  // Mascot speech & messages
-  function mascotSpeak(text) {
-    mascotEl.textContent = text;
-    speak(text);
-  }
-
-  function mascotSpeakRandom(type) {
-    const list = mascotMessages[type] || mascotMessages.default;
-    const msg = list[Math.floor(Math.random() * list.length)];
-    mascotSpeak(msg);
-  }
-
-  // Confetti
-  function showConfetti() {
-    confettiContainer.style.display = 'block';
-    for(let i = 0; i < 30; i++) {
-      const confetti = document.createElement('div');
-      confetti.className = 'confetti-piece';
-      confetti.style.backgroundColor = `hsl(${Math.random()*360}, 70%, 80%)`;
-      confetti.style.left = Math.random() * 100 + 'vw';
-      confetti.style.animationDuration = 2 + Math.random()*1.5 + 's';
-      confetti.style.animationDelay = Math.random()*1 + 's';
-      confetti.style.width = confetti.style.height = 5 + Math.random()*5 + 'px';
-      confettiContainer.appendChild(confetti);
-
-      confetti.addEventListener('animationend', () => {
-        confetti.remove();
-      });
-    }
-    setTimeout(() => {
-      confettiContainer.style.display = 'none';
-    }, 3000);
-  }
-
-  // Play sound effects
-  function playSound(sound) {
-    sound.currentTime = 0;
-    sound.play().catch(() => {});
-  }
-
-  // Hook sounds to correct/wrong
-  const originalPlayCorrect = playCorrect;
-  function playCorrect() {
-    playSound(correctSound);
-    showConfetti();
-    originalPlayCorrect();
-  }
-  const originalPlayWrong = playWrong;
+  // Wrong answer flow
   function playWrong() {
     playSound(wrongSound);
-    originalPlayWrong();
+    streak = 0;
+    strikes++;
+
+    mascotSpeakRandom('wrong');
+    updateScoreboard();
+    saveProgress();
+
+    checkReset();
+
+    setTimeout(generateQuestion, 1500);
   }
 
-  // Initialize
-  loadProgress();
-  checkUnlocks();
-  generateQuestion();
-
-  // Accessibility: Stop speech on unload
-  window.addEventListener('beforeunload', () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+  // Check if strikes hit limit
+  function checkReset() {
+    if (strikes >= 3) {
+      mascotMessage.textContent = "3 strikes! Level reset.";
+      strikes = 0;
+      streak = 0;
+      progress = 0;
+      score = Math.max(0, score - 50); // penalty
+      updateScoreboard();
+      saveProgress();
+      setTimeout(() => {
+        generateQuestion();
+      }, 2000);
     }
-  });
+  }
 
+  // Level up function
+  function levelUp() {
+    level++;
+    progress = 0;
+    levelUpSound.play();
+    mascotSpeakRandom('levelUp');
+    messageEl.textContent = `Level ${level} unlocked!`;
+    updateScoreboard();
+    saveProgress();
+  }
+
+  // Check unlockables based on score
+  function checkUnlocks() {
+    unlockables.forEach(u => {
+      if (!u.unlocked && score >= u.threshold) {
+        u.unlocked = true;
+        mascotMessage.textContent = `Unlocked: ${u.title}!`;
+        // Could play sound or animation here for unlock
+        updateUnlockablesUI();
+      }
+    });
+  }
+
+  // Init game
+  function init() {
+    loadProgress();
+    updateScoreboard();
+    updateUnlockablesUI();
+    generateQuestion();
+    mascotSpeakRandom('start');
+  }
+
+  init();
+
+  // Accessibility note: focus first answer button after generation
+  answersEl.addEventListener('DOMNodeInserted', () => {
+    const firstBtn = answersEl.querySelector('button.answer-btn');
+    if (firstBtn) firstBtn.focus();
+  });
 })();
 </script>
-
 </body>
 </html>
