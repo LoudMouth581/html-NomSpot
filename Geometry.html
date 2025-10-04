@@ -3,38 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Geometry Tutor with Color‑Coded Diagrams</title>
+  <title>Geometry Tutor (with better background)</title>
   <style>
     body {
-      margin:0; padding:0;
+      margin: 0; padding: 0;
       font-family: 'Comic Sans MS', sans-serif;
-      background: #E8F5E9;
+      background: url('https://i.imgur.com/7u0PJQ9.png') no-repeat center/cover;
       color: #2E7D32;
       display: flex; flex-direction: column; align-items: center;
       padding: 20px;
+      background-attachment: fixed;
     }
     h1 {
       color: #1B5E20;
       margin-bottom: 5px;
+      text-shadow: 1px 1px 4px rgba(255,255,255,0.6);
     }
     #theme-selector {
       margin: 10px;
+      background: rgba(255,255,255,0.8);
+      padding: 5px 10px;
+      border-radius: 8px;
     }
     #mascot {
       font-size: 3rem;
       margin: 10px;
       transition: transform 0.3s;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
     }
     #mascot-message {
-      background: #C8E6C9;
+      background: rgba(255,255,255,0.9);
       border: 2px solid #81C784;
       padding: 10px 15px;
       border-radius: 12px;
       min-height: 50px;
       text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
     #question-box {
-      background: #FFFFFF;
+      background: rgba(255,255,255,0.95);
       border: 3px solid #66BB6A;
       border-radius: 12px;
       padding: 20px;
@@ -42,13 +49,14 @@
       margin-bottom: 20px;
       max-width: 700px;
       text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
     .diagram {
       margin: 15px 0;
-      width: 200px;
-      height: 200px;
+      width: 200px; height: 200px;
+      background: rgba(255,255,255,0.9);
       border: 1px solid #66BB6A;
-      background: #F1F8E9;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
     .answers {
       display: flex;
@@ -57,7 +65,7 @@
       gap: 15px;
     }
     .answer {
-      background: #A5D6A7;
+      background: rgba(165,214,167,0.9);
       border: 2px solid #66BB6A;
       border-radius: 10px;
       padding: 12px 20px;
@@ -66,9 +74,10 @@
       font-weight: bold;
       min-width: 100px;
       text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
     .answer:hover {
-      background-color: #81C784;
+      background-color: rgba(129,199,132,0.9);
       transform: scale(1.05);
     }
     .answer.correct {
@@ -83,25 +92,28 @@
       margin-top: 15px;
       font-size: 1.2em;
       height: 24px;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
     }
     #explanation {
       margin-top: 10px;
-      background: #FFF9C4;
+      background: rgba(255,249,196,0.95);
       border: 2px dashed #FBC02D;
       padding: 12px;
       border-radius: 10px;
       max-width: 700px;
       display: none;
       font-size: 1.1em;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
     #score-bar {
       margin-top: 20px;
       width: 80%;
-      background: #C8E6C9;
+      background: rgba(200,230,201,0.9);
       border: 2px solid #66BB6A;
       border-radius: 12px;
       height: 20px;
       overflow: hidden;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
     }
     #score-fill {
       height: 100%;
@@ -112,23 +124,19 @@
     #score {
       margin-top: 10px;
       font-size: 1.2em;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
     }
     #badges {
       margin-top: 15px;
       font-size: 1.4em;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
     }
+
     body.theme-jungle {
-      background: url('https://i.imgur.com/OZQ2y2R.jpg') no-repeat center/cover;
-      color: #003300;
+      /* the same, or override with a classroom background if desired */
     }
-    body.theme-space {
-      background: url('https://i.imgur.com/TJvBjI3.jpg') no-repeat center/cover;
-      color: #CAF0F8;
-    }
-    body.theme-underwater {
-      background: url('https://i.imgur.com/n8P7h4J.jpg') no-repeat center/cover;
-      color: #004d66;
-    }
+    /* You can override each theme background if you have images */
+
     .confetti-piece {
       position: fixed;
       width:10px; height:10px;
@@ -163,19 +171,19 @@
 </head>
 <body class="theme-jungle">
 
-<h1>🎯 Geometry Tutor (Color‑Coded!)</h1>
+<h1>🎯 Geometry Tutor</h1>
 
 <div id="theme-selector">
-  Theme: 
+  Theme:
   <select id="themeSelect">
-    <option value="theme-jungle">Jungle</option>
+    <option value="theme-jungle">Tutor Default</option>
     <option value="theme-space">Space</option>
     <option value="theme-underwater">Underwater</option>
   </select>
 </div>
 
 <div id="mascot">😊</div>
-<div id="mascot-message">Hi! I'm Geo 🤗 — now with color labels to help you see!</div>
+<div id="mascot-message">Hi! I'm Geo 🤗 — teaching geometry visually!</div>
 
 <div id="question-box">Loading question...</div>
 <div class="diagram" id="diagram"></div>
@@ -248,7 +256,6 @@
       rect.setAttribute("stroke-width", "3");
       svg.appendChild(rect);
 
-      // color label: length = side (pink)
       const t = document.createElementNS(ns, "text");
       t.setAttribute("x", "100");
       t.setAttribute("y", "190");
@@ -269,7 +276,6 @@
       rect.setAttribute("stroke-width", "3");
       svg.appendChild(rect);
 
-      // label length (pink)
       const tL = document.createElementNS(ns, "text");
       tL.setAttribute("x", "100");
       tL.setAttribute("y", "185");
@@ -277,7 +283,7 @@
       tL.setAttribute("class", "label-length");
       tL.textContent = `l = ${l}`;
       svg.appendChild(tL);
-      // label width (orange)
+
       const tW = document.createElementNS(ns, "text");
       tW.setAttribute("x", "30");
       tW.setAttribute("y", "110");
@@ -315,12 +321,15 @@
       svg.appendChild(poly);
 
       const t1 = document.createElementNS(ns, "text");
-      t1.setAttribute("x", "25"); t1.setAttribute("y", "175");
-      t1.setAttribute("class", "label-length"); // reuse length color
+      t1.setAttribute("x", "25");
+      t1.setAttribute("y", "175");
+      t1.setAttribute("class", "label-length");
       t1.textContent = `${a1}°`;
       svg.appendChild(t1);
+
       const t2 = document.createElementNS(ns, "text");
-      t2.setAttribute("x", "175"); t2.setAttribute("y", "175");
+      t2.setAttribute("x", "175");
+      t2.setAttribute("y", "175");
       t2.setAttribute("class", "label-width");
       t2.textContent = `${a2}°`;
       svg.appendChild(t2);
@@ -341,6 +350,7 @@
       tB.setAttribute("class", "label-length");
       tB.textContent = `b = ${base}`;
       svg.appendChild(tB);
+
       const tH = document.createElementNS(ns, "text");
       tH.setAttribute("x", "160");
       tH.setAttribute("y", "110");
@@ -364,12 +374,14 @@
       tA.setAttribute("class", "label-length");
       tA.textContent = `a = ${a}`;
       svg.appendChild(tA);
+
       const tB = document.createElementNS(ns, "text");
       tB.setAttribute("x", "120");
       tB.setAttribute("y", "195");
       tB.setAttribute("class", "label-width");
       tB.textContent = `b = ${b}`;
       svg.appendChild(tB);
+
       const tH = document.createElementNS(ns, "text");
       tH.setAttribute("x", "160");
       tH.setAttribute("y", "140");
@@ -461,7 +473,7 @@
     currentExplanation = expl;
 
     questionBox.textContent = q;
-    mascotMsg.textContent = "Look at the shape — notice the colored labels!";
+    mascotMsg.textContent = "Look at the colored labels!";
     feedbackEl.textContent = "";
     explanationEl.style.display = 'none';
 
