@@ -2,30 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Geometry </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Geometry Tutor</title>
   <style>
     body {
       margin: 0;
       padding: 20px;
-      font-family: 'Comic Sans MS', sans-serif;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
       background: white;
       color: #2E7D32;
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
     }
-
     h1 {
       color: #1B5E20;
       margin-bottom: 5px;
     }
-
     #mascot {
       font-size: 3rem;
       margin: 10px;
     }
-
     #mascot-message {
       background: #F0F4C3;
       border: 2px solid #81C784;
@@ -34,8 +32,9 @@
       min-height: 50px;
       text-align: center;
       margin-bottom: 20px;
+      font-weight: bold;
+      user-select: none;
     }
-
     #question-box {
       background: #ffffff;
       border: 3px solid #66BB6A;
@@ -45,22 +44,43 @@
       margin-bottom: 20px;
       max-width: 700px;
       text-align: center;
+      user-select: none;
     }
-
     .diagram {
       margin: 15px 0;
-      width: 200px;
-      height: 200px;
-      border: 1px solid #66BB6A;
+      width: 240px;
+      height: 240px;
+      border: 2px solid #66BB6A;
+      border-radius: 12px;
+      position: relative;
     }
-
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 12px;
+      user-select: none;
+    }
+    text {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-weight: bold;
+      font-size: 14px;
+      pointer-events: none;
+      user-select: none;
+    }
+    .label-length { fill: #e91e63; }
+    .label-width { fill: #ff9800; }
+    .label-radius { fill: #2196f3; }
+    .label-height { fill: #8bc34a; }
+    .label-angle { fill: #673ab7; font-size: 16px; }
     .answers {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 15px;
+      max-width: 700px;
+      margin-bottom: 10px;
     }
-
     .answer {
       background: #A5D6A7;
       border: 2px solid #66BB6A;
@@ -71,29 +91,27 @@
       font-weight: bold;
       min-width: 100px;
       text-align: center;
+      user-select: none;
     }
-
     .answer:hover {
       background-color: #81C784;
       transform: scale(1.05);
     }
-
     .answer.correct {
       background-color: #C5E1A5;
       border-color: #558B2F;
     }
-
     .answer.wrong {
       background-color: #FFCDD2;
       border-color: #E53935;
     }
-
     #feedback {
       margin-top: 15px;
       font-size: 1.2em;
       height: 24px;
+      min-height: 24px;
+      user-select: none;
     }
-
     #explanation {
       margin-top: 10px;
       background: #FFF9C4;
@@ -103,8 +121,8 @@
       max-width: 700px;
       display: none;
       font-size: 1.1em;
+      user-select: none;
     }
-
     #score-bar {
       margin-top: 20px;
       width: 80%;
@@ -114,45 +132,40 @@
       height: 20px;
       overflow: hidden;
     }
-
     #score-fill {
       height: 100%;
       width: 0%;
       background-color: #66BB6A;
       transition: width 0.5s ease;
     }
-
     #score {
       margin-top: 10px;
       font-size: 1.2em;
+      user-select: none;
     }
-
     #badges {
       margin-top: 15px;
       font-size: 1.4em;
+      user-select: none;
     }
-
-    .label-length { fill: #e91e63; }
-    .label-width { fill: #ff9800; }
-    .label-radius { fill: #2196f3; }
-    .label-height { fill: #8bc34a; }
-
     @media (max-width: 480px) {
       .answer {
         font-size: 1rem;
         padding: 10px 14px;
       }
-
       .diagram {
-        width: 140px;
-        height: 140px;
+        width: 160px;
+        height: 160px;
+      }
+      text {
+        font-size: 12px;
       }
     }
   </style>
 </head>
 <body>
 
-  <h1>🎯 Geometry</h1>
+  <h1>🎯 Geometry Tutor</h1>
 
   <div id="mascot">😊</div>
   <div id="mascot-message">Hi! I'm Geo 🤗 — your geometry guide!</div>
@@ -170,15 +183,286 @@
   <div id="badges">Badges: ★0</div>
 
   <script>
-    // JavaScript logic goes here (omitted for brevity but should include:
-    // - generateQuestion()
-    // - drawDiagram()
-    // - checkAnswer()
-    // - play sound / narration
-    // - show feedback
-    // - update score and badges
-    // I can reattach the full JS portion here if you want everything together)
-  </script>
+    (() => {
+      const mascotEl = document.getElementById('mascot');
+      const mascotMsg = document.getElementById('mascot-message');
+      const questionBox = document.getElementById('question-box');
+      const diagramDiv = document.getElementById('diagram');
+      const answersDiv = document.getElementById('answers');
+      const feedbackEl = document.getElementById('feedback');
+      const explanationEl = document.getElementById('explanation');
+      const scoreBarFill = document.getElementById('score-fill');
+      const scoreEl = document.getElementById('score');
+      const badgesEl = document.getElementById('badges');
 
+      let score = 0;
+      let badges = 0;
+
+      // Questions types
+      // Each question type has:
+      // - generateQuestion: returns question object with details
+      // - drawDiagram: draws the relevant SVG diagram with colored labels
+      // - explanationText: explanation for the solution
+
+      const PI = 3.14;
+
+      const questionTypes = [
+        // Area of square
+        {
+          type: 'Area of Square',
+          generateQuestion: () => {
+            const side = randomInt(3, 15);
+            return {
+              questionText: `Calculate the area of a square with side length <span style="color:#e91e63">${side}</span> units.`,
+              correctAnswer: side * side,
+              diagramData: { side },
+              explanation: `Area of a square = side × side = ${side} × ${side} = ${side*side} square units.`,
+              drawDiagram(svg) {
+                svg.innerHTML = `
+                  <rect x="30" y="30" width="140" height="140" fill="#C8E6C9" stroke="#2E7D32" stroke-width="3" />
+                  <line x1="30" y1="170" x2="170" y2="170" stroke="#e91e63" stroke-width="4" marker-end="url(#arrow)" />
+                  <line x1="170" y1="170" x2="170" y2="30" stroke="#e91e63" stroke-width="4" marker-end="url(#arrow)" />
+                  <text x="100" y="20" class="label-length">Side = {side}</text>
+                  <text x="95" y="185" class="label-length" fill="#e91e63">${side}</text>
+                  <text x="180" y="100" class="label-length" fill="#e91e63" transform="rotate(90 180,100)"> ${side} </text>
+                `.replace(/{side}/g, side);
+              }
+        },
+        // Perimeter of rectangle
+        {
+          type: 'Perimeter of Rectangle',
+          generateQuestion: () => {
+            const length = randomInt(5, 20);
+            const width = randomInt(3, 15);
+            return {
+              questionText: `Find the perimeter of a rectangle with length <span style="color:#e91e63">${length}</span> units and width <span style="color:#ff9800">${width}</span> units.`,
+              correctAnswer: 2 * (length + width),
+              diagramData: { length, width },
+              explanation: `Perimeter = 2 × (length + width) = 2 × (${length} + ${width}) = ${2*(length+width)} units.`,
+              drawDiagram(svg) {
+                svg.innerHTML = `
+                <rect x="30" y="50" width="${length * 8}" height="${width * 8}" fill="#C8E6C9" stroke="#2E7D32" stroke-width="3" />
+                <line x1="30" y1="${50 + width * 8}" x2="${30 + length * 8}" y2="${50 + width * 8}" stroke="#e91e63" stroke-width="4" marker-end="url(#arrow)" />
+                <line x1="${30 + length * 8}" y1="${50 + width * 8}" x2="${30 + length * 8}" y2="50" stroke="#ff9800" stroke-width="4" marker-end="url(#arrow)" />
+                <text x="${30 + length * 4}" y="${50 + width * 8 + 20}" class="label-length" fill="#e91e63">${length}</text>
+                <text x="${30 + length * 8 + 10}" y="${50 + width * 4}" class="label-width" fill="#ff9800" transform="rotate(90 ${30 + length * 8 + 10},${50 + width * 4})">${width}</text>
+                `;
+              }
+            };
+          }
+        },
+        // Area of circle
+        {
+          type: 'Area of Circle',
+          generateQuestion: () => {
+            const radius = randomInt(3, 10);
+            const area = Math.round(PI * radius * radius * 100) / 100;
+            return {
+              questionText: `Calculate the area of a circle with radius <span style="color:#2196f3">${radius}</span> units. Use π ≈ 3.14.`,
+              correctAnswer: area,
+              diagramData: { radius },
+              explanation: `Area of a circle = π × radius² = 3.14 × ${radius}² = ${area} square units.`,
+              drawDiagram(svg) {
+                const r = radius * 10;
+                svg.innerHTML = `
+                  <circle cx="120" cy="120" r="${r}" fill="#C8E6C9" stroke="#2E7D32" stroke-width="3" />
+                  <line x1="120" y1="120" x2="${120 + r}" y2="120" stroke="#2196f3" stroke-width="4" marker-end="url(#arrow)" />
+                  <text x="${120 + r/2}" y="110" class="label-radius" fill="#2196f3">Radius = ${radius}</text>
+                `;
+              }
+            };
+          }
+        },
+        // Missing angle in triangle
+        {
+          type: 'Missing Angle in Triangle',
+          generateQuestion: () => {
+            // two angles given, find third angle
+            const angle1 = randomInt(20, 80);
+            const angle2 = randomInt(20, 80);
+            const missing = 180 - (angle1 + angle2);
+            return {
+              questionText: `A triangle has two angles measuring <span style="color:#673ab7">${angle1}°</span> and <span style="color:#673ab7">${angle2}°</span>. Find the missing angle.`,
+              correctAnswer: missing,
+              diagramData: { angle1, angle2, missing },
+              explanation: `Sum of angles in a triangle is 180°. Missing angle = 180° - (${angle1}° + ${angle2}°) = ${missing}°.`,
+              drawDiagram(svg) {
+                svg.innerHTML = `
+                  <polygon points="40,180 200,180 40,50" fill="#C8E6C9" stroke="#2E7D32" stroke-width="3" />
+                  <text x="35" y="45" class="label-angle">${this.diagramData.angle2}°</text>
+                  <text x="195" y="185" class="label-angle">${this.diagramData.angle1}°</text>
+                  <text x="90" y="140" class="label-angle">${this.diagramData.missing}°</text>
+                  <line x1="40" y1="180" x2="40" y2="50" stroke="#673ab7" stroke-width="3" />
+                  <line x1="40" y1="180" x2="200" y2="180" stroke="#673ab7" stroke-width="3" />
+                  <line x1="200" y1="180" x2="40" y2="50" stroke="#673ab7" stroke-width="3" />
+                `;
+              }
+            };
+          }
+        }
+      ];
+
+      // We'll simplify to pick randomly from these types each question
+
+      // Generate multiple choices for answers: one correct and 3 wrong close values
+      function generateChoices(correct) {
+        let choices = new Set();
+        choices.add(correct);
+
+        while (choices.size < 4) {
+          let delta = Math.floor(Math.random() * 10) + 1;
+          let sign = Math.random() > 0.5 ? 1 : -1;
+          let wrong = Math.max(0, Math.round(correct + sign * delta));
+          if (wrong !== correct) choices.add(wrong);
+        }
+        return shuffle(Array.from(choices));
+      }
+
+      // Shuffle helper
+      function shuffle(arr) {
+        for (let i = arr.length -1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i+1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      // Draw arrow marker defs once for all SVGs
+      function createSvgDefs(svg) {
+        if (svg.querySelector('defs')) return;
+        const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+        defs.innerHTML = `
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#e91e63" />
+          </marker>
+        `;
+        svg.appendChild(defs);
+      }
+
+      // Draw the diagram for question
+      function drawDiagram(diagramData, drawFunc) {
+        diagramDiv.innerHTML = '';
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute('viewBox', '0 0 240 240');
+        svg.setAttribute('aria-label', 'Geometry diagram');
+        diagramDiv.appendChild(svg);
+        createSvgDefs(svg);
+        drawFunc(svg, diagramData);
+      }
+
+      // Speak text (simple TTS)
+      function speak(text) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel(); // cancel previous
+        const utterance = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g, '')); // remove html tags
+        utterance.lang = 'en-US';
+        window.speechSynthesis.speak(utterance);
+      }
+
+      // Mascot messages
+      function setMascotMessage(msg, emoji='😊') {
+        mascotEl.textContent = emoji;
+        mascotMsg.innerHTML = msg;
+      }
+
+      // Update score and badges
+      function updateScore(increment) {
+        score += increment;
+        if (score < 0) score = 0;
+        scoreEl.textContent = `Score: ${score}`;
+
+        // Progress bar 0-100, max 100 for visual
+        const progress = Math.min(score, 100);
+        scoreBarFill.style.width = progress + '%';
+
+        // Award badge every 50 points
+        let newBadges = Math.floor(score / 50);
+        if (newBadges > badges) {
+          badges = newBadges;
+          badgesEl.textContent = `Badges: ★${badges}`;
+          setMascotMessage(`Awesome! You earned a badge! ★`, '🏅');
+        }
+      }
+
+      // Question flow
+      let currentQuestion = null;
+      let allowAnswer = true;
+
+      function loadQuestion() {
+        allowAnswer = true;
+        feedbackEl.textContent = '';
+        explanationEl.style.display = 'none';
+        explanationEl.textContent = '';
+
+        // Pick random question type
+        const qType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+
+        // Generate question object
+        currentQuestion = qType.generateQuestion();
+
+        // Show question text
+        questionBox.innerHTML = currentQuestion.questionText;
+
+        // Draw diagram
+        qType.drawDiagram(diagramDiv.querySelector('svg') || diagramDiv, currentQuestion.diagramData);
+
+        // Speak question
+        speak(currentQuestion.questionText);
+
+        // Generate answer choices
+        const choices = generateChoices(currentQuestion.correctAnswer);
+
+        // Render answer buttons
+        answersDiv.innerHTML = '';
+        choices.forEach(choice => {
+          const btn = document.createElement('button');
+          btn.className = 'answer';
+          btn.textContent = choice;
+          btn.onclick = () => {
+            if (!allowAnswer) return;
+            allowAnswer = false;
+            checkAnswer(choice);
+          };
+          answersDiv.appendChild(btn);
+        });
+
+        // Reset mascot message
+        setMascotMessage(`Try to answer!`);
+      }
+
+      // Check answer
+      function checkAnswer(choice) {
+        if (choice === currentQuestion.correctAnswer) {
+          feedbackEl.textContent = 'Correct! 🎉';
+          feedbackEl.style.color = '#388E3C';
+          setMascotMessage('Great job! You got it right! 🎉', '😄');
+          updateScore(10);
+          explanationEl.style.display = 'block';
+          explanationEl.textContent = currentQuestion.explanation;
+          speak('Correct! ' + currentQuestion.explanation);
+        } else {
+          feedbackEl.textContent = `Oops! Try again. ❌`;
+          feedbackEl.style.color = '#D32F2F';
+          setMascotMessage('Keep trying! You can do it! 💪', '🤔');
+          updateScore(-5);
+          speak('Incorrect. Try again.');
+          allowAnswer = true;
+          return; // allow retry, don't load next question yet
+        }
+        // Load next question after short delay
+        setTimeout(loadQuestion, 4500);
+      }
+
+      // Utils
+      function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      // Initialize first question
+      loadQuestion();
+
+    })();
+  </script>
 </body>
 </html>
