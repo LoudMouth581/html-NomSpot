@@ -3,8 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Arithmetic Trainer</title>
+<title>Arithmetic Quest</title>
 <style>
+  let totalQuestions = 0;
+let totalTimeTaken = 0;
+totalQuestions++;
+totalTimeTaken += timeTaken;
+totalQuestions++;
+
   body::before {
   content: "";
   position: fixed;
@@ -210,11 +216,16 @@
 </style>
 </head>
 <body>
-<header>Arithmetic Master</header>
+  
+<header>Arithmetic Quest</header>
 
 <div id="game-container" role="main" aria-live="polite">
   <div id="mascot" aria-label="Mascot"></div>
   <div id="mascot-message" aria-live="polite">Ready to master arithmetic? Let's start!</div>
+  <div id="performance" style="text-align:center; margin-bottom: 15px;">
+  Accuracy: <span id="accuracy">100%</span> | Avg Time: <span id="avgTime">0s</span>
+</div>
+
 
   <div id="scoreboard">
     <div>Score: <span id="score">0</span></div>
@@ -258,29 +269,21 @@
   const doublePointsBtn = document.getElementById('doublePointsBtn');
   const skipBtn = document.getElementById('skipBtn');
 
-  // Audio setup
   const correctSound = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
   const wrongSound = new Audio('https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg');
   const levelUpSound = new Audio('https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_hit.ogg');
 
-  // Text to Speech
-  function speak(text) {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      speechSynthesis.cancel(); // cancel any ongoing speech
-      speechSynthesis.speak(utterance);
-    }
-  }
-
-  // Game state
   let score = 0;
   let level = 1;
   let strikes = 0;
   let streak = 0;
-  let progress = 0; // 0 to 100%
+  let progress = 0;
   let doublePointsActive = false;
   let skipAvailable = 1;
+  let totalQuestions = 0;
+  let totalTimeTaken = 0;
+  let questionStartTime = 0;
+  let timerId;
 
   const unlockables = [
     { title: "Math Novice", threshold: 0, unlocked: false },
@@ -320,47 +323,26 @@
     ]
   };
 
-  // Utilities
+  function speak(text) {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+  }
+
   function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
+
   function shuffleArray(arr) {
-    for(let i = arr.length -1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i +1));
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
   }
 
-  // Save and Load progress with localStorage
-  function saveProgress() {
-    localStorage.setItem('arithMasterSave', JSON.stringify({
-      score, level, strikes, streak, unlockables, doublePointsActive, skipAvailable
-    }));
-  }
-  function loadProgress() {
-    const data = localStorage.getItem('arithMasterSave');
-    if (!data) return;
-    try {
-      const obj = JSON.parse(data);
-      score = obj.score || 0;
-      level = obj.level || 1;
-      strikes = obj.strikes || 0;
-      streak = obj.streak || 0;
-      doublePointsActive = obj.doublePointsActive || false;
-      skipAvailable = obj.skipAvailable !== undefined ? obj.skipAvailable : 1;
-      // Restore unlockables state if exists
-      if (obj.unlockables && Array.isArray(obj.unlockables)) {
-        unlockables.forEach(u => {
-          const saved = obj.unlockables.find(x => x.title === u.title);
-          if (saved) u.unlocked = saved.unlocked;
-        });
-      }
-    } catch(e) {
-      console.warn('Failed to load progress:', e);
-    }
-  }
-
-  // Update UI elements
   function updateScoreboard() {
     scoreEl.textContent = score;
     levelEl.textContent = level;
@@ -370,9 +352,17 @@
     doublePointsBtn.disabled = doublePointsActive;
     doublePointsBtn.setAttribute('aria-pressed', doublePointsActive.toString());
     skipBtn.disabled = skipAvailable < 1;
+
+    updatePerformance(); // ← update performance here too
   }
 
-  // Show unlockables list
+  function updatePerformance() {
+    const acc = totalQuestions ? ((score / (totalQuestions * 10)) * 100).toFixed(1) : 100;
+    const avgTime = totalQuestions ? (totalTimeTaken / totalQuestions / 1000).toFixed(1) : 0;
+    document.getElementById('accuracy').textContent = acc + '%';
+    document.getElementById('avgTime').textContent = avgTime + 's';
+  }
+
   function updateUnlockablesUI() {
     unlockList.innerHTML = '';
     unlockables.forEach(u => {
@@ -382,59 +372,87 @@
     });
   }
 
-  // Generate a math question depending on level (mixed operations)
+  function getTimeLimitMs(level) {
+    if (level <= 2) return 300000;
+    if (level <= 4) return 120000;
+    if (level <= 6) return 60000;
+    if (level <= 8) return 45000;
+    if (level <= 10) return 30000;
+    return 20000;
+  }
+
+  function startTimer() {
+    const timeLimit = getTimeLimitMs(level);
+    questionStartTime = Date.now();
+    timerId = setTimeout(() => {
+      playWrong(); // fail if time expires
+    }, timeLimit);
+  }
+
+  function stopTimer() {
+    clearTimeout(timerId);
+  }
+
   function generateQuestion() {
-    // Clear message & answers
     messageEl.textContent = '';
     answersEl.innerHTML = '';
 
-    // Determine operation based on level (cycles every 4 levels)
     const operations = ['+', '-', '*', '/'];
-    const opIndex = (level - 1) % operations.length;
+    const opIndex = Math.floor(Math.random() * Math.min(level, 4));
     const operation = operations[opIndex];
 
-    // Define difficulty parameters
-    const baseMax = 10 + (level - 1) * 5; // increase difficulty with level
+    let a, b, correctAnswer, expression, questionText;
+    const max = 10 + level * 5;
 
-    // Generate operands and answer
-    let a, b, correctAnswer;
-    if (operation === '+') {
-      a = randomInt(1, baseMax);
-      b = randomInt(1, baseMax);
-      correctAnswer = a + b;
-    } else if (operation === '-') {
-      a = randomInt(1, baseMax);
-      b = randomInt(1, a); // ensure non-negative result
-      correctAnswer = a - b;
-    } else if (operation === '*') {
-      a = randomInt(1, Math.min(baseMax, 12));
-      b = randomInt(1, Math.min(baseMax, 12));
-      correctAnswer = a * b;
-    } else { // division
-      b = randomInt(1, Math.min(baseMax, 12));
-      correctAnswer = randomInt(1, Math.min(baseMax, 12));
-      a = b * correctAnswer; // ensure divisible
+    if (level < 4) {
+      a = randomInt(1, max);
+      b = randomInt(1, max);
+    } else if (level < 7) {
+      a = randomInt(10, max * 2);
+      b = randomInt(5, max);
+    } else {
+      let c = randomInt(2, 10);
+      a = randomInt(10, max);
+      b = randomInt(10, max);
+      expression = `(${a} ${operation} ${b}) * ${c}`;
+      correctAnswer = eval(expression);
+      questionText = `Solve: ${expression}`;
+      questionEl.textContent = questionText;
+      speak(questionText);
+      setupMultipleChoice(correctAnswer);
+      startTimer();
+      return;
     }
 
-    // Create a simple word problem
-    const words = {
-      '+': `If you have ${a} apples and get ${b} more, how many apples do you have now?`,
-      '-': `You have ${a} candies and eat ${b}. How many are left?`,
-      '*': `If one pack has ${a} pencils, how many pencils in ${b} packs?`,
-      '/': `You have ${a} cookies, and divide them equally among ${b} friends. How many cookies each friend gets?`
+    if (operation === '+') correctAnswer = a + b;
+    else if (operation === '-') correctAnswer = a - b;
+    else if (operation === '*') correctAnswer = a * b;
+    else {
+      b = b === 0 ? 1 : b;
+      a = b * randomInt(1, max / b);
+      correctAnswer = a / b;
+    }
+
+    const wordFormats = {
+      '+': `If you have ${a} apples and get ${b} more, how many now?`,
+      '-': `You had ${a} coins and spent ${b}. How many left?`,
+      '*': `Each bag has ${a} marbles. How many in ${b} bags?`,
+      '/': `Divide ${a} pencils equally into ${b} boxes. How many per box?`
     };
 
-    questionEl.textContent = words[operation];
+    questionText = wordFormats[operation];
+    questionEl.textContent = questionText;
+    speak(questionText);
+    setupMultipleChoice(correctAnswer);
+    startTimer();
+  }
 
-    speak(words[operation]);
-
-    // Generate multiple choice answers with one correct + 3 wrong
+  function setupMultipleChoice(correctAnswer) {
     let choices = new Set();
     choices.add(correctAnswer);
     while (choices.size < 4) {
-      let wrongChoice = correctAnswer + randomInt(-5, 5);
-      if (wrongChoice < 0 || choices.has(wrongChoice)) continue;
-      choices.add(wrongChoice);
+      let wrong = correctAnswer + randomInt(-10, 10);
+      if (wrong !== correctAnswer && wrong >= 0) choices.add(wrong);
     }
 
     let choicesArr = Array.from(choices);
@@ -444,41 +462,11 @@
       const btn = document.createElement('button');
       btn.className = 'answer-btn';
       btn.textContent = choice;
-      btn.setAttribute('role', 'listitem');
       btn.addEventListener('click', () => handleAnswer(choice, correctAnswer));
       answersEl.appendChild(btn);
     });
-
-    // Reset timer for question
-    startTimer();
   }
 
-  // Timer & scoring bonus for speed
-  let questionStartTime = 0;
-  let timerId;
-  const TIME_LIMIT_MS = 15000; // 15 seconds per question
-  const WARNING_TIME_MS = 8000;
-
-  function startTimer() {
-    clearTimeout(timerId);
-    questionStartTime = Date.now();
-    // Could add visual timer or countdown here
-    timerId = setTimeout(() => {
-      messageEl.textContent = "Time's up! Strike added.";
-      playSound(wrongSound);
-      strikes++;
-      streak = 0;
-      updateScoreboard();
-      checkReset();
-      setTimeout(generateQuestion, 1500);
-    }, TIME_LIMIT_MS);
-  }
-
-  function stopTimer() {
-    clearTimeout(timerId);
-  }
-
-  // Handle answer click
   function handleAnswer(selected, correct) {
     stopTimer();
     if (selected === correct) {
@@ -488,174 +476,109 @@
     }
   }
 
-  // Play sounds helper
-  function playSound(audio) {
-    audio.currentTime = 0;
-    audio.play().catch(() => {}); // ignore errors if play interrupted
+  function playCorrect() {
+    const timeTaken = Date.now() - questionStartTime;
+    totalQuestions++;
+    totalTimeTaken += timeTaken;
+
+    streak++;
+    strikes = 0;
+    let basePoints = 10;
+    if (timeTaken < 3000) basePoints += 5;
+    if (doublePointsActive) basePoints *= 2;
+
+    score += basePoints;
+    progress += 20;
+    correctSound.play();
+
+    if (streak % 5 === 0) mascotMessage.textContent = mascotsPhrases.streakBonus[Math.floor(Math.random() * mascotsPhrases.streakBonus.length)];
+
+    if (progress >= 100) {
+      level++;
+      progress = 0;
+      mascotMessage.textContent = mascotsPhrases.levelUp[Math.floor(Math.random() * mascotsPhrases.levelUp.length)];
+      levelUpSound.play();
+    } else {
+      mascotMessage.textContent = mascotsPhrases.correct[Math.floor(Math.random() * mascotsPhrases.correct.length)];
+    }
+
+    if (level >= 10) {
+      mascotMessage.textContent = "🔥 Genius Level Activated! Answer fast!";
+    }
+
+    unlockables.forEach(u => {
+      if (!u.unlocked && score >= u.threshold) u.unlocked = true;
+    });
+
+    updateScoreboard();
+    updateUnlockablesUI();
+    generateQuestion();
   }
 
-  // Confetti animation (CSS only)
-  function showConfetti() {
-    for (let i=0; i<30; i++) {
-      const confetti = document.createElement('div');
-      confetti.classList.add('confetti-piece');
-      confetti.style.left = Math.random() * window.innerWidth + 'px';
-      confetti.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 70%)`;
-      confetti.style.animationDuration = 0.8 + Math.random() * 0.7 + 's';
-      confetti.style.width = confetti.style.height = (5 + Math.random()*7) + 'px';
-      confetti.style.top = '-10px';
-      document.body.appendChild(confetti);
-      setTimeout(() => confetti.remove(), 1500);
+  function playWrong() {
+    totalQuestions++;
+    streak = 0;
+    strikes++;
+    mascotMessage.textContent = mascotsPhrases.wrong[Math.floor(Math.random() * mascotsPhrases.wrong.length)];
+    wrongSound.play();
+
+    if (strikes >= 3) {
+      alert('Game Over! Final Score: ' + score);
+      resetGame();
+    } else {
+      updateScoreboard();
+      generateQuestion();
     }
   }
 
-  // Mascot speaks randomly from category
-  function mascotSpeakRandom(category) {
-    const arr = mascotsPhrases[category];
-    if (!arr) return;
-    const phrase = arr[Math.floor(Math.random()*arr.length)];
-    mascotMessage.textContent = phrase;
-    speak(phrase);
+  function resetGame() {
+    score = 0;
+    level = 1;
+    strikes = 0;
+    streak = 0;
+    progress = 0;
+    doublePointsActive = false;
+    skipAvailable = 1;
+    totalQuestions = 0;
+    totalTimeTaken = 0;
+
+    unlockables.forEach(u => u.unlocked = false);
+    mascotMessage.textContent = mascotsPhrases.start[Math.floor(Math.random() * mascotsPhrases.start.length)];
+    updateScoreboard();
+    updateUnlockablesUI();
+    generateQuestion();
   }
 
-  // Power-ups
   doublePointsBtn.addEventListener('click', () => {
     if (!doublePointsActive) {
       doublePointsActive = true;
       doublePointsBtn.disabled = true;
-      doublePointsBtn.setAttribute('aria-pressed', 'true');
-      mascotMessage.textContent = "Double points ready for next correct answer!";
+      setTimeout(() => {
+        doublePointsActive = false;
+        doublePointsBtn.disabled = false;
+        updateScoreboard();
+      }, 10000);
+      updateScoreboard();
     }
   });
+
   skipBtn.addEventListener('click', () => {
     if (skipAvailable > 0) {
       skipAvailable--;
       updateScoreboard();
-      mascotMessage.textContent = "Question skipped!";
       generateQuestion();
     }
   });
 
-  // Correct answer flow
-  function playCorrect() {
-    playSound(correctSound);
-    showConfetti();
-
-    streak++;
-    strikes = 0;
-
-    // Calculate points based on speed
-    const timeTaken = Date.now() - questionStartTime;
-    let basePoints = 10;
-    if (timeTaken < 5000) basePoints += 10; // bonus for quick answer
-    else if (timeTaken < 10000) basePoints += 5;
-
-    if (doublePointsActive) {
-      basePoints *= 2;
-      doublePointsActive = false;
-      doublePointsBtn.disabled = false;
-      doublePointsBtn.setAttribute('aria-pressed', 'false');
-      mascotMessage.textContent = "Double points used!";
-    }
-
-    score += basePoints;
-
-    // Increase progress bar
-    progress += 20;
-    if (progress > 100) progress = 100;
-
-    updateScoreboard();
-    saveProgress();
-    mascotSpeakRandom('correct');
-
-    // Check streak bonuses and quick fire rounds
-    if (streak > 0 && streak % 3 === 0) {
-      mascotMessage.textContent = "Quick fire round!";
-      // Quick fire rounds: next 3 questions without skips or powerups (optional)
-    }
-
-    checkUnlocks();
-
-    // Level up at score thresholds
-    if (score >= level * 100) {
-      levelUp();
-    }
-
-    setTimeout(generateQuestion, 1500);
-  }
-
-  // Wrong answer flow
-  function playWrong() {
-    playSound(wrongSound);
-    streak = 0;
-    strikes++;
-
-    mascotSpeakRandom('wrong');
-    updateScoreboard();
-    saveProgress();
-
-    checkReset();
-
-    setTimeout(generateQuestion, 1500);
-  }
-
-  // Check if strikes hit limit
-  function checkReset() {
-    if (strikes >= 3) {
-      mascotMessage.textContent = "3 strikes! Level reset.";
-      strikes = 0;
-      streak = 0;
-      progress = 0;
-      score = Math.max(0, score - 50); // penalty
-      updateScoreboard();
-      saveProgress();
-      setTimeout(() => {
-        generateQuestion();
-      }, 2000);
-    }
-  }
-
-  // Level up function
-  function levelUp() {
-    level++;
-    progress = 0;
-    levelUpSound.play();
-    mascotSpeakRandom('levelUp');
-    messageEl.textContent = `Level ${level} unlocked!`;
-    updateScoreboard();
-    saveProgress();
-  }
-
-  // Check unlockables based on score
-  function checkUnlocks() {
-    unlockables.forEach(u => {
-      if (!u.unlocked && score >= u.threshold) {
-        u.unlocked = true;
-        mascotMessage.textContent = `Unlocked: ${u.title}!`;
-        // Could play sound or animation here for unlock
-        updateUnlockablesUI();
-      }
-    });
-  }
-
-  // Init game
-  function init() {
-    loadProgress();
-    updateScoreboard();
-    updateUnlockablesUI();
-    generateQuestion();
-    mascotSpeakRandom('start');
-  }
-
-  init();
-
-  // Accessibility note: focus first answer button after generation
-  answersEl.addEventListener('DOMNodeInserted', () => {
-    const firstBtn = answersEl.querySelector('button.answer-btn');
-    if (firstBtn) firstBtn.focus();
-  });
+  // Initial game start
+  mascotMessage.textContent = mascotsPhrases.start[Math.floor(Math.random() * mascotsPhrases.start.length)];
+  updateScoreboard();
+  updateUnlockablesUI();
+  generateQuestion();
 })();
 </script>
+
 </body>
 </html>
+
 
