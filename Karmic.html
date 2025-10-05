@@ -214,29 +214,43 @@
     let leaders = [];  // will load from backend
 
     // =========== Mock Backend Fetch ================
-   async function fetchLeaders() {
-   const dummy = [
-        { id: 1, name: "Elon Musk", karma: 92, nakshatra: "Ardra", birth: "1971-06-28", zodiacIdx: 8, planetIdx: 5 },
-        { id: 2, name: "Peter Thiel", karma: 87, nakshatra: "Ardra", birth: "1967-10-11", zodiacIdx: 9, planetIdx: 2 },
-        { id: 3, name: "Jeff Bezos", karma: 78, nakshatra: "Pushya", birth: "1964-01-12", zodiacIdx: 10, planetIdx: 0 },
-        { id: 4, name: "Mark Zuckerberg", karma: 89, nakshatra: "Ardra", birth: "1984-05-14", zodiacIdx: 5, planetIdx: 3 },
-        { id: 5, name: "Gavin Newsom", karma: 83, nakshatra: "Ardra", birth: "1967-10-10", zodiacIdx: 9, planetIdx: 6 }
-      ];
-      // Simulate network delay:
-      await new Promise(r => setTimeout(r, 300));
-      leaders = dummy.map(l => ({
-        id: l.id,
-        name: l.name,
-        karma: l.karma,
-        nakshatra: l.nakshatra,
-        birth: l.birth,
-        chakraIndex: 0,
-        houseIndex: 0,
-        zodiac: zodiacSigns[l.zodiacIdx],
-        planet: planets[l.planetIdx],
-        tarot: tarotDeck[l.id % tarotDeck.length]
-      }));
-    }
+  async function fetchLeaders() {
+  const dummy = [
+    { id: 1, name: "Elon Musk", karma: 92, nakshatra: "Ardra", birth: "1971-06-28", zodiacIdx: 8, planetIdx: 5 },
+    { id: 2, name: "Peter Thiel", karma: 87, nakshatra: "Ardra", birth: "1967-10-11", zodiacIdx: 9, planetIdx: 2 },
+    { id: 3, name: "Jeff Bezos", karma: 78, nakshatra: "Pushya", birth: "1964-01-12", zodiacIdx: 10, planetIdx: 0 },
+    { id: 4, name: "Mark Zuckerberg", karma: 89, nakshatra: "Ardra", birth: "1984-05-14", zodiacIdx: 5, planetIdx: 3 },
+    { id: 5, name: "Gavin Newsom", karma: 83, nakshatra: "Ardra", birth: "1967-10-10", zodiacIdx: 9, planetIdx: 6 },
+
+    // NEW leaders with your new data properties
+    { id: 6, name: "Donald Trump", karma: 85, karmaLabel: "Debt Loop", nakshatra: "Ardra", chakraIndex: 1, houseIndex: 0, zodiacIdx: 10, planetIdx: 0 },
+    { id: 7, name: "Kim Jong Un", karma: 90, karmaLabel: "Shadow Karma", nakshatra: "Ardra", chakraIndex: 2, houseIndex: 0, zodiacIdx: 9, planetIdx: 3 },
+    { id: 8, name: "Vladimir Putin", karma: 75, karmaLabel: "Power Karmic Reversal", nakshatra: "Ashwini", chakraIndex: 3, houseIndex: 0, zodiacIdx: 11, planetIdx: 5 },
+    { id: 9, name: "Xi Jinping", karma: 88, karmaLabel: "Locked Dharma", nakshatra: "Ardra", chakraIndex: 5, houseIndex: 0, zodiacIdx: 8, planetIdx: 2 },
+    { id: 10, name: "Mohammed bin Salman", karma: 70, karmaLabel: "Ancestral Karma Loop", nakshatra: "Pushya", chakraIndex: 0, houseIndex: 0, zodiacIdx: 4, planetIdx: 6 },
+    { id: 11, name: "Hun Sen", karma: 88, karmaLabel: "Legacy Control Loop", nakshatra: "Ardra", chakraIndex: 4, houseIndex: 0, zodiacIdx: 7, planetIdx: 3 },
+    { id: 12, name: "Hun Manet", karma: 84, karmaLabel: "Inherited Dharma Trap", nakshatra: "Ardra", chakraIndex: 2, houseIndex: 0, zodiacIdx: 5, planetIdx: 1 },
+    { id: 13, name: "VannDa", karma: 76, karmaLabel: "Rhythmic Samsara", nakshatra: "Ardra", chakraIndex: 3, houseIndex: 0, zodiacIdx: 6, planetIdx: 4 },
+    { id: 14, name: "Laura Mam", karma: 71, karmaLabel: "Cultural Karma Pulse", nakshatra: "Pushya", chakraIndex: 1, houseIndex: 0, zodiacIdx: 3, planetIdx: 2 }
+  ];
+
+  await new Promise(r => setTimeout(r, 300));
+
+  leaders = dummy.map(l => ({
+    id: l.id,
+    name: l.name,
+    karma: l.karma,
+    karmaLabel: l.karmaLabel || `Karma: ${l.karma}`,  // Use label if present, else default text
+    nakshatra: l.nakshatra,
+    birth: l.birth || '',
+    chakraIndex: l.chakraIndex || 0,
+    houseIndex: l.houseIndex || 0,
+    zodiac: zodiacSigns[l.zodiacIdx] || "Unknown",
+    planet: planets[l.planetIdx] || "Unknown",
+    tarot: tarotDeck[l.id % tarotDeck.length]
+  }));
+}
+
 
     // =========== Dashboard ================
     function updateDashboard() {
@@ -272,10 +286,11 @@
         nameDiv.textContent = leader.name;
         info.appendChild(nameDiv);
 
-        const karmaLoop = document.createElement("div");
-        karmaLoop.className = "karma-loop";
-        karmaLoop.textContent = `Karma: ${leader.karma}`;
-        info.appendChild(karmaLoop);
+       const karmaLoop = document.createElement("div");
+karmaLoop.className = "karma-loop";
+karmaLoop.textContent = leader.karmaLabel || `Karma: ${leader.karma}`;
+info.appendChild(karmaLoop);
+
 
         const housesLoopDiv = document.createElement("div");
         housesLoopDiv.className = "houses-loop";
