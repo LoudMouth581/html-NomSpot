@@ -5,17 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Arithmetic Trainer</title>
 <style>
+  body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 60px;
+  width: 2px;
+  height: 100%;
+  background-color: rgba(255, 0, 0, 0.3); /* red margin line */
+  z-index: 0;
+}
   body {
-    margin:0; padding:0;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #eef9ff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    user-select: none;
-  }
+  margin: 0;
+  padding: 0;
+  background-color: #fff8dc;
+  font-family: 'Courier New', Courier, monospace;
+  color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  user-select: none;
+
+  background-image:
+    linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px),
+    linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
   header {
     padding: 1rem 0;
     font-size: 2rem;
@@ -25,16 +41,18 @@
     text-shadow: 0 0 10px #f0d600;
   }
   #game-container {
-    background: #1e2a38;
-    border-radius: 15px;
-    padding: 20px 30px;
-    width: 90vw;
-    max-width: 480px;
-    box-shadow: 0 0 25px #f0d600aa;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  background: #ffffffcc;
+  border: 2px solid #333;
+  border-radius: 12px;
+  padding: 30px;
+  width: 90vw;
+  max-width: 480px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  backdrop-filter: blur(2px);
+}
   #mascot {
     width: 120px;
     height: 120px;
@@ -640,3 +658,4 @@
 </script>
 </body>
 </html>
+
