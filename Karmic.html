@@ -410,48 +410,52 @@
     houseIndex: 0,
     img: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Full_Sail_University_sign.JPG"
   },
-  {
-    id: 16,
-    name: "Garry Jones (President & Co‑Owner)",
-    birth: null,
-    karma: 85,
-    karmaLabel: "Operational Loop",
-    nakshatra: "Pushya",
-    chakraIndex: 5,
-    houseIndex: 0,
-    img: "https://upload.wikimedia.org/wikipedia/commons/d/d4/Garry_Jones_FSU.jpg"
-  },
-  {
-    id: 17,
-    name: "Full Sail University (est. 1979)",
-    birth: "1979-01-01",
-    karma: 100,
-    karmaLabel: "Institutional Karma Birth Chart",
-    nakshatra: "Ardra",
-    chakraIndex: 6,
-    houseIndex: 0,
-    img: "https://upload.wikimedia.org/wikipedia/commons/4/41/IPhone_image_of_Full_Sail_Studios_Arch.jpg"
-  }
+ {
+      id: 16,
+      name: "Garry Jones (President & Co‑Owner)",
+      birth: null,
+      karma: 85,
+      karmaLabel: "Operational Loop",
+      nakshatra: "Pushya",
+      chakraIndex: 5,
+      houseIndex: 0,
+      zodiacIdx: null,
+      planetIdx: null,
+      img: "https://upload.wikimedia.org/wikipedia/commons/d/d4/Garry_Jones_FSU.jpg"
+    },
+    {
+      id: 17,
+      name: "Full Sail University (est. 1979)",
+      birth: "1979-01-01",
+      karma: 100,
+      karmaLabel: "Institutional Karma Birth Chart",
+      nakshatra: "Ardra",
+      chakraIndex: 6,
+      houseIndex: 0,
+      zodiacIdx: null,
+      planetIdx: null,
+      img: "https://upload.wikimedia.org/wikipedia/commons/4/41/IPhone_image_of_Full_Sail_Studios_Arch.jpg"
+    }
 ];
 
-
-  await new Promise(r => setTimeout(r, 300));
+await new Promise(r => setTimeout(r, 300));
 
   leaders = dummy.map(l => ({
     id: l.id,
     name: l.name,
     karma: l.karma,
-    karmaLabel: l.karmaLabel || `Karma: ${l.karma}`,  // Use label if present, else default text
+    karmaLabel: l.karmaLabel || `Karma: ${l.karma}`,
     nakshatra: l.nakshatra,
     birth: l.birth || '',
     chakraIndex: l.chakraIndex || 0,
     houseIndex: l.houseIndex || 0,
-    zodiac: zodiacSigns[l.zodiacIdx] || "Unknown",
-    planet: planets[l.planetIdx] || "Unknown",
-    tarot: tarotDeck[l.id % tarotDeck.length]
+    zodiac: l.zodiacIdx !== null ? zodiacSigns[l.zodiacIdx] : "Unknown",
+    planet: l.planetIdx !== null ? planets[l.planetIdx] : "Unknown",
+    tarot: tarotDeck[l.id % tarotDeck.length],
+    img: l.img || null,
   }));
 }
-
+  
 
     // =========== Dashboard ================
     function updateDashboard() {
@@ -583,4 +587,5 @@ info.appendChild(karmaLoop);
   </script>
 </body>
 </html>
+
 
