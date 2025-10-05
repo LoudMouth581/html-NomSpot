@@ -24,10 +24,11 @@
       background: #1a1a2e;
       border-radius: 12px;
       padding: 15px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       box-shadow: 0 0 20px #661122 inset;
       display: flex;
       justify-content: space-around;
+      align-items: center;
     }
     .dashboard .stat {
       text-align: center;
@@ -36,6 +37,26 @@
       font-size: 2em;
       font-weight: 700;
       color: #ff9999;
+    }
+
+    .sort-controls {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .sort-controls button {
+      background: #331122;
+      border: none;
+      color: #ffaaaa;
+      font-weight: bold;
+      margin: 5px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .sort-controls button:hover {
+      background: #552233;
+      color: #fff;
     }
 
     .leader-card {
@@ -55,6 +76,14 @@
       transform: translateY(-5px);
       box-shadow: 0 8px 40px #bb3366 inset;
     }
+    .leader-card.flash {
+      animation: flashCard 0.5s ease;
+    }
+    @keyframes flashCard {
+      0% { background-color: #441122; }
+      50% { background-color: #882233; }
+      100% { background-color: #1a1a2e; }
+    }
 
     .leader-img {
       border-radius: 15px;
@@ -63,10 +92,6 @@
       object-fit: cover;
       box-shadow: 0 0 15px #ff5577;
       border: 3px solid #ff5577;
-      transition: transform 0.3s ease;
-    }
-    .leader-img:hover {
-      transform: scale(1.05);
     }
 
     .info {
@@ -82,8 +107,14 @@
     .karma-loop {
       font-style: italic;
       color: #bbb;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
+    .karma-label {
+      color: #ffaaee;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
+
     .houses-loop {
       display: flex;
       gap: 15px;
@@ -98,7 +129,6 @@
       text-align: center;
       font-weight: 600;
       color: #ffbbbb;
-      transition: background 0.4s ease, box-shadow 0.4s ease;
     }
     .house.active {
       background: #bb4444;
@@ -106,26 +136,23 @@
       box-shadow: 0 0 24px #ff6666;
       font-weight: 700;
     }
+
     .chakra-meter {
       display: flex;
       justify-content: space-between;
       max-width: 280px;
       margin-top: 10px;
-      user-select: none;
     }
     .chakra {
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: #333355;
-      box-shadow: 0 0 8px #222266 inset;
       position: relative;
       transition: all 0.4s ease;
       cursor: default;
     }
-    .chakra.active {
-      box-shadow: 0 0 15px 5px #ff6699;
-      background: #ff6699 !important;
+    .chakra.active::after {
+      font-weight: bold;
     }
     .chakra::after {
       content: attr(data-name);
@@ -137,6 +164,7 @@
       text-align: center;
       font-weight: 600;
     }
+
     .karma-impact-container {
       margin-top: 10px;
       background: #440000;
@@ -170,7 +198,6 @@
       background: rgba(0,0,0,0.5);
       padding: 4px 8px;
       border-radius: 6px;
-      pointer-events: none;
     }
     .tarot-overlay {
       position: absolute;
@@ -181,8 +208,6 @@
       background: rgba(30, 0, 60, 0.7);
       padding: 6px 10px;
       border-radius: 8px;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
     }
   </style>
 </head>
@@ -199,11 +224,16 @@
         <div class="value" id="stat-average">0</div>
       </div>
     </div>
+
+    <div class="sort-controls">
+      <button onclick="sortByKarma()">Sort by Karma</button>
+      <button onclick="sortByName()">Sort by Name</button>
+    </div>
+
     <div id="leaders"></div>
   </div>
 
   <script>
-    // =========== Data & Configuration ================
     const chakraNames = ["Root","Sacral","Solar","Heart","Throat","Third Eye","Crown"];
     const chakraColors = ["#ff0000","#ff7f00","#ffff00","#00ff00","#0000ff","#4b0082","#9400d3"];
     const houseLoop = [8, 12];
@@ -211,11 +241,10 @@
     const planets = ["☉ Sun","☾ Moon","☿ Mercury","♀ Venus","♂ Mars","♃ Jupiter","♄ Saturn","♅ Uranus","♆ Neptune","♇ Pluto"];
     const tarotDeck = ["The Fool","The Magician","The High Priestess","The Empress","The Emperor","The Hierophant","The Lovers","The Chariot","Strength","Hermit","Wheel of Fortune","Justice","The Hanged One","Death","Temperance","The Devil","The Tower","The Star","The Moon","The Sun","Judgement","The World"];
 
-    let leaders = [];  // will load from backend
+    let leaders = [];
 
-    // =========== Mock Backend Fetch ================
-   async function fetchLeaders() {
-  const people = [
+    async function fetchLeaders() {
+     const people = [
   {
     id: 1,
     name: "Elon Musk",
@@ -386,8 +415,7 @@
   }
 ];
 
-
-      // Simulate network delay:
+  // Simulate network delay:
       await new Promise(r => setTimeout(r, 300));
       leaders = people.map(l => ({
         id: l.id,
@@ -403,17 +431,13 @@
       }));
     }
 
-    // =========== Dashboard ================
     function updateDashboard() {
-      const countEl = document.getElementById("stat-count");
-      const avgEl = document.getElementById("stat-average");
       const count = leaders.length;
-      const avg = count > 0 ? (leaders.reduce((sum, l) => sum + l.karma, 0) / count).toFixed(1) : 0;
-      countEl.textContent = count;
-      avgEl.textContent = avg;
+      const avg = count ? (leaders.reduce((sum, l) => sum + l.karma, 0) / count).toFixed(1) : 0;
+      document.getElementById("stat-count").textContent = count;
+      document.getElementById("stat-average").textContent = avg;
     }
 
-    // =========== Rendering ================
     const leadersContainer = document.getElementById("leaders");
 
     function renderLeaders() {
@@ -426,7 +450,7 @@
         const img = document.createElement("img");
         img.className = "leader-img";
         img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-        img.alt = leader.name;
+        img.alt = `Portrait of ${leader.name}`;
         card.appendChild(img);
 
         const info = document.createElement("div");
@@ -441,6 +465,13 @@
         karmaLoop.className = "karma-loop";
         karmaLoop.textContent = `Karma: ${leader.karma}`;
         info.appendChild(karmaLoop);
+
+        if (leader.karmaLabel) {
+          const label = document.createElement("div");
+          label.className = "karma-label";
+          label.textContent = leader.karmaLabel;
+          info.appendChild(label);
+        }
 
         const housesLoopDiv = document.createElement("div");
         housesLoopDiv.className = "houses-loop";
@@ -460,6 +491,7 @@
           cd.className = "chakra";
           cd.dataset.name = cname;
           cd.style.backgroundColor = chakraColors[ci];
+          cd.style.boxShadow = `0 0 10px ${chakraColors[ci]}, inset 0 0 6px ${chakraColors[ci]}`;
           if (ci === leader.chakraIndex) cd.classList.add("active");
           chakraMeter.appendChild(cd);
         });
@@ -469,8 +501,7 @@
         karmaImpactContainer.className = "karma-impact-container";
         const karmaImpactBar = document.createElement("div");
         karmaImpactBar.className = "karma-impact-bar";
-        const barWidth = Math.min(leader.karma, 100);
-        karmaImpactBar.style.width = barWidth + "%";
+        karmaImpactBar.style.width = Math.min(leader.karma, 100) + "%";
         karmaImpactContainer.appendChild(karmaImpactBar);
         info.appendChild(karmaImpactContainer);
 
@@ -492,11 +523,12 @@
         card.appendChild(info);
         leadersContainer.appendChild(card);
 
-        // Interaction: click to increase karma
         card.addEventListener("click", () => {
           leader.karma = Math.min(leader.karma + 2, 100);
           animateKarmaBar(karmaImpactBar, leader.karma);
-          updateDashboard();
+          card.classList.add("flash");
+          setTimeout(() => card.classList.remove("flash"), 500);
+          renderLeaders();
         });
       });
 
@@ -504,7 +536,6 @@
     }
 
     function animateKarmaBar(barEl, newKarma) {
-      // Force reflow then set width to new value (to animate)
       barEl.style.transition = 'none';
       barEl.style.width = '0%';
       requestAnimationFrame(() => {
@@ -521,14 +552,21 @@
       renderLeaders();
     }
 
-    // =========== Initialize ================
-  (async () => {
-  await fetchLeaders();
-  renderLeaders();
-  setInterval(cycleAnimation, 5000);
-})();
+    function sortByKarma() {
+      leaders.sort((a, b) => b.karma - a.karma);
+      renderLeaders();
+    }
 
+    function sortByName() {
+      leaders.sort((a, b) => a.name.localeCompare(b.name));
+      renderLeaders();
+    }
 
+    (async () => {
+      await fetchLeaders();
+      renderLeaders();
+      setInterval(cycleAnimation, 5000);
+    })();
   </script>
 </body>
 </html>
