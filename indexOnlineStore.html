@@ -1,550 +1,150 @@
+// server.js
+
+const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+// In-memory HTML with CSS and JS
+const html = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Lucky Marketplace</title>
-<style>
-  /* Reset & base */
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0;
-    background: radial-gradient(circle at center, #0b0f1a 0%, #050810 100%);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #00ffee;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  header {
-    background: linear-gradient(90deg, #00ffee, #00aaff, #00ffee);
-    color: #000;
-    padding: 1.5rem;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    text-shadow: 0 0 5px #fff;
-    box-shadow: 0 0 20px #00ffee88;
-  }
-  header p {
-    font-size: 1rem;
-    font-weight: normal;
-    margin-top: 0.3rem;
-  }
-  nav {
-    background: #0d1224;
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    padding: 1rem 0;
-    border-bottom: 2px solid #00ffee55;
-  }
-  nav a {
-    color: #00ffee;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 0.3rem 0.7rem;
-    border-radius: 6px;
-    transition: background 0.3s, color 0.3s;
-    cursor: pointer;
-    user-select: none;
-  }
-  nav a:hover, nav a.active {
-    background: #00ffee;
-    color: #000;
-  }
-
-  main {
-    flex-grow: 1;
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-    width: 100%;
-  }
-
-  /* Views */
-  .view {
-    display: none;
-  }
-  .view.active {
-    display: block;
-  }
-
-  /* Product cards */
-  .products {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-  .product, .vendor-product {
-    background: #12182c;
-    border: 1px solid #00ffee66;
-    border-radius: 12px;
-    padding: 1rem;
-    box-shadow: 0 0 15px #00ffee44;
-    color: #00ffee;
-  }
-  .product h3, .vendor-product h3 {
-    margin: 0 0 0.5rem;
-  }
-  .countdown, .timer {
-    color: #ff67e7;
-    font-weight: bold;
-    margin: 0.5rem 0;
-  }
-  button {
-    background: #00ffee;
-    border: none;
-    padding: 0.7rem 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    font-weight: bold;
-    border-radius: 6px;
-    width: 100%;
-    transition: background 0.3s;
-    color: #000;
-  }
-  button:hover {
-    background: #00c0aa;
-  }
-
-  /* Forms */
-  input[type="text"], input[type="email"], input[type="url"], input[type="number"] {
-    width: 100%;
-    padding: 0.5rem;
-    margin: 0.3rem 0 1rem;
-    border-radius: 6px;
-    border: 1px solid #00ffee66;
-    background: #0b0f1a;
-    color: #00ffee;
-    font-size: 1rem;
-  }
-
-  /* Chat */
-  #chat-box {
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px dashed #00ffee88;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    background: #050810;
-    font-size: 0.9rem;
-  }
-
-  /* Vendor section */
-  .vendor-section {
-    margin-top: 3rem;
-    padding: 1rem;
-    background: #111133;
-    border: 2px solid #00ffee;
-    border-radius: 10px;
-  }
-  .vendor-section h2 {
-    text-align: center;
-    margin-bottom: 1rem;
-    color: #00ffee;
-  }
-  .vendor-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-  .vendor-form input {
-    flex: 1 1 300px;
-  }
-
-  /* Video Section */
-  .video-section {
-    margin-top: 3rem;
-    padding: 1rem;
-    background: #000018;
-    border: 2px dashed #00ffee;
-    border-radius: 10px;
-    text-align: center;
-  }
-  .video-section h2 {
-    color: #ff67e7;
-    margin-bottom: 1rem;
-  }
-  video {
-    max-width: 720px;
-    width: 100%;
-    border-radius: 10px;
-    border: 3px solid #00ffee;
-  }
-
-  /* Responsive */
-  @media (max-width: 600px) {
-    nav {
-      flex-direction: column;
-      gap: 1rem;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StreamShop Live</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
     }
-    .vendor-form {
-      flex-direction: column;
+    header {
+      background: #e60023;
+      color: white;
+      padding: 20px;
+      text-align: center;
     }
-  }
-</style>
+    main {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    #video {
+      margin-bottom: 30px;
+    }
+    #deals h2 {
+      margin-bottom: 10px;
+    }
+    #deal-list {
+      list-style: none;
+      padding: 0;
+    }
+    .deal {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-left: 5px solid #e60023;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .deal h3 {
+      margin: 0 0 5px;
+    }
+    .deal p {
+      margin: 5px 0;
+    }
+    .deal button {
+      background: #e60023;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #fff;
+      font-size: 14px;
+      margin-top: 40px;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>🛍️ StreamShop Live</h1>
+    <p>Watch Live & Shop Real-Time Deals!</p>
+  </header>
 
-<header>
-  🛸Lucky Marketplace
-  <p>Shop the Future, Today!</p>
-</header>
+  <main>
+    <section id="video">
+      <!-- Replace with your actual channel ID -->
+      <iframe width="100%" height="400" 
+        src="https://www.youtube.com/embed/live_stream?channel=YOUR_CHANNEL_ID&autoplay=1" 
+        frameborder="0" allowfullscreen allow="autoplay; encrypted-media">
+      </iframe>
+    </section>
 
-<nav>
-  <a href="#" data-view="home" class="active">Home</a>
-  <a href="#" data-view="vendorLogin">Vendor Login</a>
-  <a href="#" data-view="vendorDashboard">Dashboard</a>
-  <a href="#" data-view="liveVideo">Live Video</a>
-  <a href="#" data-view="HowToUse">How to use</a>
-</nav>
+    <section id="deals">
+      <h2>🔥 Live Deals</h2>
+      <ul id="deal-list"></ul>
+    </section>
+  </main>
 
-<main>
+  <footer>
+    <p>&copy; 2025 StreamShop Live. All rights reserved.</p>
+  </footer>
 
-  <!-- HOME VIEW -->
-  <section id="home" class="view active">
-    <h2>🛍️ Live Deals</h2>
-    <div class="products" id="products"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const dealList = document.getElementById('deal-list');
 
-    <h3>🗨️ Live Chat</h3>
-    <div id="chat-box"></div>
-    <input type="text" id="chatInput" placeholder="Say something..." />
-    <button id="sendChatBtn">Send</button>
-  </section>
-
-  <!-- VENDOR LOGIN -->
-  <section id="vendorLogin" class="view">
-    <h2>🔐 Vendor Login</h2>
-    <input type="text" id="vendorName" placeholder="Vendor Name" />
-    <button id="loginBtn">Login</button>
-  </section>
-
-  <!-- VENDOR DASHBOARD -->
-  <section id="vendorDashboard" class="view">
-    <h2>📦 Product Management</h2>
-    <div id="vendorWelcome"></div>
-
-    <input type="text" id="productName" placeholder="Product Name" />
-    <input type="text" id="productDesc" placeholder="Short Description" />
-    <input type="number" id="productCountdown" placeholder="Countdown (seconds)" min="1" />
-    <button id="addProductBtn">Add Product</button>
-
-    <hr />
-    <h3>🧾 Your Products</h3>
-    <div id="vendorProducts"></div>
-  </section>
-
-  <!-- LIVE VIDEO -->
-  <section id="liveVideo" class="view">
-    <h2>🎥 Live Sale Stream</h2>
-    <video id="liveStream" autoplay muted playsinline></video>
-    <p id="videoError" style="color:#ff5555;"></p>
-  </section>
- <!-- How to use -->
-  <section id="HowToUse" class="view active">
-    <p> How to use</p>
-    <ol><li>Use Vendor Login to log in with any vendor name (just a name, no password).</li>
-      <li>Add products with countdown timers.</li>
-      <li>View products and countdowns live on the home page.</li>
-      <li>Chat live in the chatbox (local, no real networking, stored in localStorage).</li>
-      <li>Go to Live Video tab to preview your webcam + mic stream locally.</li>
-      <ul>Notes:
-        <li>All data is stored in localStorage (vendor, products, chat).</li>
-         <li>Countdown timers start from the moment product is added.</li>
-         <li>Live chat is local to your browser — no network communication.</li>
-         <li>Webcam preview uses getUserMedia — you must allow camera/mic access.</li>
-         <li>No external scripts or stylesheets used; everything is self-contained.</li>
-         <li>Works offline once loaded.</li>
-      </ul>
-    </ol>
-    
-    
-    <div class="products" id="products"></div>
-</main>
-
-<script>
-  // Navigation & View control
-  const navLinks = document.querySelectorAll('nav a');
-  const views = document.querySelectorAll('.view');
-
-  function setActiveNav(link) {
-    navLinks.forEach(a => a.classList.remove('active'));
-    link.classList.add('active');
-  }
-
-  function showView(viewId) {
-    views.forEach(v => v.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
-    // Update vendor welcome if dashboard is shown
-    if(viewId === 'vendorDashboard' && currentVendor){
-      document.getElementById('vendorWelcome').textContent = `Welcome, ${currentVendor}`;
-      renderVendorProducts();
-    }
-    if(viewId === 'home'){
-      renderProducts();
-      renderChat();
-    }
-  }
-
-  navLinks.forEach(link => {
-    link.addEventListener('click', e => {
-      e.preventDefault();
-      const viewId = link.getAttribute('data-view');
-      setActiveNav(link);
-      showView(viewId);
+    socket.on('new-deal', (deal) => {
+      const li = document.createElement('li');
+      li.className = 'deal';
+      li.innerHTML = \`
+        <h3>\${deal.title}</h3>
+        <p>\${deal.description}</p>
+        <strong>$\${deal.price.toFixed(2)}</strong>
+        <br>
+        <button onclick="alert('Buying \${deal.title}')">Buy Now</button>
+      \`;
+      dealList.prepend(li);
     });
-  });
-
-  // Vendor Login & state
-  let currentVendor = localStorage.getItem('vendor') || null;
-
-  const loginBtn = document.getElementById('loginBtn');
-  const vendorNameInput = document.getElementById('vendorName');
-
-  loginBtn.addEventListener('click', () => {
-    const name = vendorNameInput.value.trim();
-    if(!name) {
-      alert('Please enter vendor name.');
-      return;
-    }
-    currentVendor = name;
-    localStorage.setItem('vendor', name);
-    vendorNameInput.value = '';
-    // Show dashboard after login
-    const dashboardLink = [...navLinks].find(a => a.getAttribute('data-view') === 'vendorDashboard');
-    setActiveNav(dashboardLink);
-    showView('vendorDashboard');
-  });
-
-  // Product Management
-  const addProductBtn = document.getElementById('addProductBtn');
-
-  addProductBtn.addEventListener('click', () => {
-    if(!currentVendor){
-      alert('Please login as vendor first.');
-      return;
-    }
-    const name = document.getElementById('productName').value.trim();
-    const desc = document.getElementById('productDesc').value.trim();
-    const countdownSec = parseInt(document.getElementById('productCountdown').value);
-    if(!name || !desc || !countdownSec || countdownSec < 1){
-      alert('Please fill all product details correctly.');
-      return;
-    }
-    addVendorProduct({
-      vendor: currentVendor,
-      name,
-      description: desc,
-      countdown: countdownSec,
-      createdAt: Date.now()
-    });
-    document.getElementById('productName').value = '';
-    document.getElementById('productDesc').value = '';
-    document.getElementById('productCountdown').value = '';
-    renderVendorProducts();
-  });
-
-  // Storage helpers
-  function getVendorProducts() {
-    const prods = localStorage.getItem('vendorProducts');
-    return prods ? JSON.parse(prods) : [];
-  }
-  function saveVendorProducts(prods) {
-    localStorage.setItem('vendorProducts', JSON.stringify(prods));
-  }
-  function addVendorProduct(product){
-    const prods = getVendorProducts();
-    prods.push(product);
-    saveVendorProducts(prods);
-  }
-  function removeVendorProduct(index){
-    let prods = getVendorProducts();
-    prods.splice(index,1);
-    saveVendorProducts(prods);
-  }
-
-  // Render Vendor's products with countdown timers
-  function renderVendorProducts(){
-    const container = document.getElementById('vendorProducts');
-    container.innerHTML = '';
-    const prods = getVendorProducts().filter(p => p.vendor === currentVendor);
-    if(prods.length === 0){
-      container.innerHTML = '<p>No products added yet.</p>';
-      return;
-    }
-    prods.forEach((p,i) => {
-      const card = document.createElement('div');
-      card.className = 'vendor-product';
-      card.innerHTML = `
-        <h3>${p.name}</h3>
-        <p>${p.description}</p>
-        <p>Countdown: <span class="timer" id="timer-${currentVendor}-${i}"></span></p>
-        <button data-index="${i}" class="removeBtn">Remove</button>
-      `;
-      container.appendChild(card);
-    });
-    // Add remove button listeners
-    container.querySelectorAll('.removeBtn').forEach(btn => {
-      btn.onclick = () => {
-        if(confirm('Remove this product?')){
-          removeVendorProduct(parseInt(btn.dataset.index));
-          renderVendorProducts();
-          renderProducts(); // update public view too
-        }
-      }
-    });
-    startAllCountdowns();
-  }
-
-  // Public products shown on home page with countdowns
-  function renderProducts(){
-    const container = document.getElementById('products');
-    container.innerHTML = '';
-    const prods = getVendorProducts();
-    if(prods.length === 0){
-      container.innerHTML = '<p>No live deals currently.</p>';
-      return;
-    }
-    prods.forEach((p,i) => {
-      const card = document.createElement('div');
-      card.className = 'product';
-      card.innerHTML = `
-        <h3>${p.name}</h3>
-        <p>${p.description}</p>
-        <p class="countdown" id="countdown-${i}">Loading...</p>
-      `;
-      container.appendChild(card);
-    });
-    startAllCountdowns();
-  }
-
-  // Countdown timers management
-  let countdownIntervals = [];
-
-  function startAllCountdowns(){
-    // Clear previous intervals
-    countdownIntervals.forEach(i => clearInterval(i));
-    countdownIntervals = [];
-
-    const prods = getVendorProducts();
-
-    prods.forEach((p, i) => {
-      const countdownEl = document.getElementById(`countdown-${i}`);
-      const timerEl = document.getElementById(`timer-${p.vendor}-${i}`);
-      if(!countdownEl && !timerEl) return; // if neither exists (maybe not in this view), skip
-
-      const startTime = p.createdAt;
-      const duration = p.countdown * 1000;
-
-      function update() {
-        const now = Date.now();
-        const elapsed = now - startTime;
-        const remaining = Math.max(duration - elapsed, 0);
-        const secondsLeft = Math.ceil(remaining / 1000);
-        const display = secondsLeft > 0 ? `${secondsLeft} second${secondsLeft !== 1 ? 's' : ''} left` : 'Deal ended';
-
-        if(countdownEl) countdownEl.textContent = display;
-        if(timerEl) timerEl.textContent = display;
-
-        if(remaining <= 0){
-          clearInterval(intervalId);
-          if(countdownEl) countdownEl.textContent = 'Deal ended';
-          if(timerEl) timerEl.textContent = 'Deal ended';
-          // Optional: remove ended products automatically? Or leave for vendor to remove
-        }
-      }
-      update();
-      const intervalId = setInterval(update, 1000);
-      countdownIntervals.push(intervalId);
-    });
-  }
-
-  // Chat implementation (local only)
-  let chatMessages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
-
-  const chatBox = document.getElementById('chat-box');
-  const chatInput = document.getElementById('chatInput');
-  const sendChatBtn = document.getElementById('sendChatBtn');
-
-  function renderChat(){
-    chatBox.innerHTML = '';
-    if(chatMessages.length === 0){
-      chatBox.innerHTML = '<p style="color:#555;">No messages yet. Start the conversation!</p>';
-      return;
-    }
-    chatMessages.forEach(msg => {
-      const p = document.createElement('p');
-      p.innerHTML = `<strong>${msg.user}:</strong> ${msg.text}`;
-      chatBox.appendChild(p);
-    });
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  sendChatBtn.addEventListener('click', () => {
-    const text = chatInput.value.trim();
-    if(!text) return;
-    const user = currentVendor || 'Guest';
-    chatMessages.push({user, text});
-    if(chatMessages.length > 100) chatMessages.shift(); // cap 100 messages
-    localStorage.setItem('chatMessages', JSON.stringify(chatMessages));
-    chatInput.value = '';
-    renderChat();
-  });
-
-  chatInput.addEventListener('keydown', e => {
-    if(e.key === 'Enter'){
-      sendChatBtn.click();
-    }
-  });
-
-  // Live Video (WebRTC local camera + mic preview)
-  const liveVideoSection = document.getElementById('liveVideo');
-  const liveStreamVideo = document.getElementById('liveStream');
-  const videoError = document.getElementById('videoError');
-
-  async function startLiveStream() {
-    videoError.textContent = '';
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
-      liveStreamVideo.srcObject = stream;
-    } catch(err) {
-      videoError.textContent = 'Error accessing camera/microphone: ' + err.message;
-    }
-  }
-
-  // Start camera when liveVideo view is shown
-  navLinks.forEach(link => {
-    link.addEventListener('click', e => {
-      if(link.getAttribute('data-view') === 'liveVideo'){
-        startLiveStream();
-      } else {
-        // Stop video if leaving live view
-        if(liveStreamVideo.srcObject){
-          liveStreamVideo.srcObject.getTracks().forEach(track => track.stop());
-          liveStreamVideo.srcObject = null;
-          videoError.textContent = '';
-        }
-      }
-    });
-  });
-
-  // On page load
-  if(currentVendor){
-    // If logged in, show dashboard by default or home?
-    showView('vendorDashboard');
-    setActiveNav([...navLinks].find(a => a.getAttribute('data-view') === 'vendorDashboard'));
-  } else {
-    showView('home');
-    setActiveNav([...navLinks].find(a => a.getAttribute('data-view') === 'home'));
-  }
-
-  renderProducts();
-  renderChat();
-
-</script>
-
+  </script>
 </body>
 </html>
+`;
+
+// Serve the HTML page from memory
+app.get('/', (req, res) => {
+  res.send(html);
+});
+
+// Static socket.io file support
+app.use('/socket.io', express.static(__dirname + '/node_modules/socket.io/client-dist'));
+
+// Example live deals
+const sampleDeals = [
+  { title: "Bluetooth Speaker", description: "Loud & Clear Sound", price: 29.99 },
+  { title: "Smart Watch", description: "Track steps, heart rate & more", price: 59.99 },
+  { title: "LED Ring Light", description: "Perfect for content creators", price: 19.99 },
+  { title: "Wireless Earbuds", description: "Noise cancelling with long battery", price: 39.99 },
+  { title: "HD Webcam", description: "1080p for streaming & video calls", price: 49.99 },
+];
+
+// Emit a new deal every 20 seconds
+setInterval(() => {
+  const deal = sampleDeals[Math.floor(Math.random() * sampleDeals.length)];
+  io.emit('new-deal', deal);
+}, 20000);
+
+// Start server
+const PORT = process.env.PORT || 3000;
+http.listen(PORT, () => {
+  console.log(\`✅ StreamShop Live running at http://localhost:\${PORT}\`);
+});
