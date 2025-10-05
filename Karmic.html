@@ -214,222 +214,29 @@
     let leaders = [];  // will load from backend
 
     // =========== Mock Backend Fetch ================
-  async function fetchLeaders() {
-  const dummy = [
-     { id: 1, 
-      name: "Elon Musk", 
-      karma: 92, 
-      nakshatra: "Ardra", 
-      birth: "1971-06-28",
-      karmaLabel: null, 
-      zodiacIdx: 8,
-      chakraIndex: null, 
-      houseIndex: null, 
-      planetIdx: 5,   
-      img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-  },
-  {
-    id: 2,
-    name: "Peter Thiel",
-    birth: "1967-10-11",
-    karma: 87,
-    karmaLabel: null,
-    nakshatra: "Ardra",
-    zodiacIdx: 9,
-    planetIdx: 2,
-    chakraIndex: null,
-    houseIndex: null,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 3,
-    name: "Jeff Bezos",
-    birth: "1964-01-12",
-    karma: 78,
-    karmaLabel: null,
-    nakshatra: "Pushya",
-    zodiacIdx: 10,
-    planetIdx: 0,
-    chakraIndex: null,
-    houseIndex: null,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 4,
-    name: "Mark Zuckerberg",
-    birth: "1984-05-14",
-    karma: 89,
-    karmaLabel: null,
-    nakshatra: "Ardra",
-    zodiacIdx: 5,
-    planetIdx: 3,
-    chakraIndex: null,
-    houseIndex: null,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 5,
-    name: "Gavin Newsom",
-    birth: "1967-10-10",
-    karma: 83,
-    karmaLabel: null,
-    nakshatra: "Ardra",
-    zodiacIdx: 9,
-    planetIdx: 6,
-    chakraIndex: null,
-    houseIndex: null,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 6,
-    name: "Donald Trump",
-    birth: "1946-06-14",
-    karma: 85,
-    karmaLabel: "Debt Loop",
-    nakshatra: "Ardra",
-    zodiacIdx: 10,
-    planetIdx: 0,
-    chakraIndex: 1,
-    houseIndex: 0,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 7,
-    name: "Kim Jong Un",
-    birth: "1984-01-08",
-    karma: 90,
-    karmaLabel: "Shadow Karma",
-    nakshatra: "Ardra",
-    zodiacIdx: 9,
-    planetIdx: 3,
-    chakraIndex: 2,
-    houseIndex: 0,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 8,
-    name: "Vladimir Putin",
-    birth: "1952-10-07",
-    karma: 75,
-    karmaLabel: "Power Karmic Reversal",
-    nakshatra: "Ashwini",
-    zodiacIdx: 11,
-    planetIdx: 5,
-    chakraIndex: 3,
-    houseIndex: 0,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 9,
-    name: "Xi Jinping",
-    birth: "1953-06-15",
-    karma: 88,
-    karmaLabel: "Locked Dharma",
-    nakshatra: "Ardra",
-    zodiacIdx: 8,
-    planetIdx: 2,
-    chakraIndex: 5,
-    houseIndex: 0,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 10,
-    name: "Mohammed bin Salman",
-    birth: "1985-08-31",
-    karma: 70,
-    karmaLabel: "Ancestral Karma Loop",
-    nakshatra: "Pushya",
-    zodiacIdx: 4,
-    planetIdx: 6,
-    chakraIndex: 0,
-    houseIndex: 0,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 11,
-    name: "Hun Sen",
-    birth: "1952-08-05",
-    karma: 88,
-    karmaLabel: "Legacy Control Loop",
-    nakshatra: "Ardra",
-    zodiacIdx: 7,
-    planetIdx: 3,
-    chakraIndex: 4,
-    houseIndex: 0,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 12,
-    name: "Hun Manet",
-    birth: "1977-10-20",
-    karma: 84,
-    karmaLabel: "Inherited Dharma Trap",
-    nakshatra: "Ardra",
-    zodiacIdx: 5,
-    planetIdx: 1,
-    chakraIndex: 2,
-    houseIndex: 0,
-    img:img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 13,
-    name: "VannDa",
-    birth: "1997-01-22",
-    karma: 76,
-    karmaLabel: "Rhythmic Samsara",
-    nakshatra: "Ardra",
-    zodiacIdx: 6,
-    planetIdx: 4,
-    chakraIndex: 3,
-    houseIndex: 0,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-  {
-    id: 14,
-    name: "Laura Mam",
-    birth: "1984-01-31",
-    karma: 71,
-    karmaLabel: "Cultural Karma Pulse",
-    nakshatra: "Pushya",
-    zodiacIdx: 3,
-    planetIdx: 2,
-    chakraIndex: 1,
-    houseIndex: 0,
-    img: img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-
-  },
-];
-
-await new Promise(r => setTimeout(r, 300));
-
-  leaders = dummy.map(l => ({
-    id: l.id,
-    name: l.name,
-    karma: l.karma,
-    karmaLabel: l.karmaLabel || `Karma: ${l.karma}`,
-    nakshatra: l.nakshatra,
-    birth: l.birth || '',
-    chakraIndex: l.chakraIndex || 0,
-    houseIndex: l.houseIndex || 0,
-    zodiac: l.zodiacIdx !== null ? zodiacSigns[l.zodiacIdx] : "Unknown",
-    planet: l.planetIdx !== null ? planets[l.planetIdx] : "Unknown",
-    tarot: tarotDeck[l.id % tarotDeck.length],
-    img: l.img || null,
-  }));
-}
-  
+   async function fetchLeaders() {
+   const dummy = [
+        { id: 1, name: "Elon Musk", karma: 92, nakshatra: "Ardra", birth: "1971-06-28", zodiacIdx: 8, planetIdx: 5 },
+        { id: 2, name: "Peter Thiel", karma: 87, nakshatra: "Ardra", birth: "1967-10-11", zodiacIdx: 9, planetIdx: 2 },
+        { id: 3, name: "Jeff Bezos", karma: 78, nakshatra: "Pushya", birth: "1964-01-12", zodiacIdx: 10, planetIdx: 0 },
+        { id: 4, name: "Mark Zuckerberg", karma: 89, nakshatra: "Ardra", birth: "1984-05-14", zodiacIdx: 5, planetIdx: 3 },
+        { id: 5, name: "Gavin Newsom", karma: 83, nakshatra: "Ardra", birth: "1967-10-10", zodiacIdx: 9, planetIdx: 6 }
+      ];
+      // Simulate network delay:
+      await new Promise(r => setTimeout(r, 300));
+      leaders = dummy.map(l => ({
+        id: l.id,
+        name: l.name,
+        karma: l.karma,
+        nakshatra: l.nakshatra,
+        birth: l.birth,
+        chakraIndex: 0,
+        houseIndex: 0,
+        zodiac: zodiacSigns[l.zodiacIdx],
+        planet: planets[l.planetIdx],
+        tarot: tarotDeck[l.id % tarotDeck.length]
+      }));
+    }
 
     // =========== Dashboard ================
     function updateDashboard() {
@@ -465,11 +272,10 @@ await new Promise(r => setTimeout(r, 300));
         nameDiv.textContent = leader.name;
         info.appendChild(nameDiv);
 
-       const karmaLoop = document.createElement("div");
-karmaLoop.className = "karma-loop";
-karmaLoop.textContent = leader.karmaLabel || `Karma: ${leader.karma}`;
-info.appendChild(karmaLoop);
-
+        const karmaLoop = document.createElement("div");
+        karmaLoop.className = "karma-loop";
+        karmaLoop.textContent = `Karma: ${leader.karma}`;
+        info.appendChild(karmaLoop);
 
         const housesLoopDiv = document.createElement("div");
         housesLoopDiv.className = "houses-loop";
@@ -561,9 +367,3 @@ info.appendChild(karmaLoop);
   </script>
 </body>
 </html>
-
-
-
-
-
-
