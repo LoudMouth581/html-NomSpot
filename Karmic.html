@@ -1,369 +1,170 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Karmic</title>
-  <style>
-    body {
-      background: #0b0c1a;
-      color: #eee;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #ff5555;
-      text-shadow: 0 0 10px #ff5555;
-    }
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    .dashboard {
-      background: #1a1a2e;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 20px #661122 inset;
-      display: flex;
-      justify-content: space-around;
-    }
-    .dashboard .stat {
-      text-align: center;
-    }
-    .stat .value {
-      font-size: 2em;
-      font-weight: 700;
-      color: #ff9999;
-    }
-
-    .leader-card {
-      background: #1a1a2e;
-      border-radius: 15px;
-      padding: 20px;
-      margin: 20px 0;
-      box-shadow: 0 0 30px #aa2244 inset;
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .leader-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 40px #bb3366 inset;
-    }
-
-    .leader-img {
-      border-radius: 15px;
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      box-shadow: 0 0 15px #ff5577;
-      border: 3px solid #ff5577;
-      transition: transform 0.3s ease;
-    }
-    .leader-img:hover {
-      transform: scale(1.05);
-    }
-
-    .info {
-      flex: 1;
-    }
-    .name {
-      font-size: 1.8em;
-      font-weight: 700;
-      color: #ff8899;
-      margin-bottom: 6px;
-      letter-spacing: 1.2px;
-    }
-    .karma-loop {
-      font-style: italic;
-      color: #bbb;
-      margin-bottom: 8px;
-    }
-    .houses-loop {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 10px;
-    }
-    .house {
-      flex: 1;
-      background: #330000;
-      padding: 12px;
-      border-radius: 12px;
-      box-shadow: 0 0 14px #bb4444;
-      text-align: center;
-      font-weight: 600;
-      color: #ffbbbb;
-      transition: background 0.4s ease, box-shadow 0.4s ease;
-    }
-    .house.active {
-      background: #bb4444;
-      color: #fff;
-      box-shadow: 0 0 24px #ff6666;
-      font-weight: 700;
-    }
-    .chakra-meter {
-      display: flex;
-      justify-content: space-between;
-      max-width: 280px;
-      margin-top: 10px;
-      user-select: none;
-    }
-    .chakra {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #333355;
-      box-shadow: 0 0 8px #222266 inset;
-      position: relative;
-      transition: all 0.4s ease;
-      cursor: default;
-    }
-    .chakra.active {
-      box-shadow: 0 0 15px 5px #ff6699;
-      background: #ff6699 !important;
-    }
-    .chakra::after {
-      content: attr(data-name);
-      position: absolute;
-      bottom: -18px;
-      font-size: 9px;
-      color: #ff99bbaa;
-      width: 100%;
-      text-align: center;
-      font-weight: 600;
-    }
-    .karma-impact-container {
-      margin-top: 10px;
-      background: #440000;
-      border-radius: 10px;
-      width: 100%;
-      height: 18px;
-      box-shadow: inset 0 0 8px #bb4444;
-      overflow: hidden;
-    }
-    .karma-impact-bar {
-      height: 100%;
-      border-radius: 10px;
-      background: linear-gradient(90deg, #ff4444, #ff9999);
-      box-shadow: 0 0 10px #ff5555;
-      width: 0;
-      transition: width 1s ease;
-    }
-    .karma-impact-text {
-      margin-top: 4px;
-      font-size: 0.9em;
-      color: #ffbbbb;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-    }
-    .overlay {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      color: #fff;
-      font-size: 0.9em;
-      background: rgba(0,0,0,0.5);
-      padding: 4px 8px;
-      border-radius: 6px;
-      pointer-events: none;
-    }
-    .tarot-overlay {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      color: #ffeeaa;
-      font-size: 1em;
-      background: rgba(30, 0, 60, 0.7);
-      padding: 6px 10px;
-      border-radius: 8px;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Karmic</h1>
-    <div class="dashboard" id="dashboard">
-      <div class="stat">
-        <div>Total</div>
-        <div class="value" id="stat-count">0</div>
-      </div>
-      <div class="stat">
-        <div>Karma</div>
-        <div class="value" id="stat-average">0</div>
-      </div>
-    </div>
-    <div id="leaders"></div>
-  </div>
-
-  <script>
-    // =========== Data & Configuration ================
-    const chakraNames = ["Root","Sacral","Solar","Heart","Throat","Third Eye","Crown"];
-    const chakraColors = ["#ff0000","#ff7f00","#ffff00","#00ff00","#0000ff","#4b0082","#9400d3"];
-    const houseLoop = [8, 12];
-    const zodiacSigns = ["♈ Aries","♉ Taurus","♊ Gemini","♋ Cancer","♌ Leo","♍ Virgo","♎ Libra","♏ Scorpio","♐ Sagittarius","♑ Capricorn","♒ Aquarius","♓ Pisces"];
-    const planets = ["☉ Sun","☾ Moon","☿ Mercury","♀ Venus","♂ Mars","♃ Jupiter","♄ Saturn","♅ Uranus","♆ Neptune","♇ Pluto"];
-    const tarotDeck = ["The Fool","The Magician","The High Priestess","The Empress","The Emperor","The Hierophant","The Lovers","The Chariot","Strength","Hermit","Wheel of Fortune","Justice","The Hanged One","Death","Temperance","The Devil","The Tower","The Star","The Moon","The Sun","Judgement","The World"];
-
-    let leaders = [];  // will load from backend
-
-    // =========== Mock Backend Fetch ================
-   async function fetchLeaders() {
-   const dummy = [
-        { id: 1, name: "Elon Musk", karma: 92, nakshatra: "Ardra", birth: "1971-06-28", zodiacIdx: 8, planetIdx: 5 },
-        { id: 2, name: "Peter Thiel", karma: 87, nakshatra: "Ardra", birth: "1967-10-11", zodiacIdx: 9, planetIdx: 2 },
-        { id: 3, name: "Jeff Bezos", karma: 78, nakshatra: "Pushya", birth: "1964-01-12", zodiacIdx: 10, planetIdx: 0 },
-        { id: 4, name: "Mark Zuckerberg", karma: 89, nakshatra: "Ardra", birth: "1984-05-14", zodiacIdx: 5, planetIdx: 3 },
-        { id: 5, name: "Gavin Newsom", karma: 83, nakshatra: "Ardra", birth: "1967-10-10", zodiacIdx: 9, planetIdx: 6 }
-      ];
-      // Simulate network delay:
-      await new Promise(r => setTimeout(r, 300));
-      leaders = dummy.map(l => ({
-        id: l.id,
-        name: l.name,
-        karma: l.karma,
-        nakshatra: l.nakshatra,
-        birth: l.birth,
-        chakraIndex: 0,
-        houseIndex: 0,
-        zodiac: zodiacSigns[l.zodiacIdx],
-        planet: planets[l.planetIdx],
-        tarot: tarotDeck[l.id % tarotDeck.length]
-      }));
-    }
-
-    // =========== Dashboard ================
-    function updateDashboard() {
-      const countEl = document.getElementById("stat-count");
-      const avgEl = document.getElementById("stat-average");
-      const count = leaders.length;
-      const avg = count > 0 ? (leaders.reduce((sum, l) => sum + l.karma, 0) / count).toFixed(1) : 0;
-      countEl.textContent = count;
-      avgEl.textContent = avg;
-    }
-
-    // =========== Rendering ================
-    const leadersContainer = document.getElementById("leaders");
-
-    function renderLeaders() {
-      leadersContainer.innerHTML = "";
-      leaders.forEach((leader, idx) => {
-        const card = document.createElement("div");
-        card.className = "leader-card";
-        card.dataset.idx = idx;
-
-        const img = document.createElement("img");
-        img.className = "leader-img";
-        img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(leader.name)}`;
-        img.alt = leader.name;
-        card.appendChild(img);
-
-        const info = document.createElement("div");
-        info.className = "info";
-
-        const nameDiv = document.createElement("div");
-        nameDiv.className = "name";
-        nameDiv.textContent = leader.name;
-        info.appendChild(nameDiv);
-
-        const karmaLoop = document.createElement("div");
-        karmaLoop.className = "karma-loop";
-        karmaLoop.textContent = `Karma: ${leader.karma}`;
-        info.appendChild(karmaLoop);
-
-        const housesLoopDiv = document.createElement("div");
-        housesLoopDiv.className = "houses-loop";
-        houseLoop.forEach((h, hi) => {
-          const hd = document.createElement("div");
-          hd.className = "house";
-          hd.textContent = `${h}th`;
-          if (hi === leader.houseIndex) hd.classList.add("active");
-          housesLoopDiv.appendChild(hd);
-        });
-        info.appendChild(housesLoopDiv);
-
-        const chakraMeter = document.createElement("div");
-        chakraMeter.className = "chakra-meter";
-        chakraNames.forEach((cname, ci) => {
-          const cd = document.createElement("div");
-          cd.className = "chakra";
-          cd.dataset.name = cname;
-          cd.style.backgroundColor = chakraColors[ci];
-          if (ci === leader.chakraIndex) cd.classList.add("active");
-          chakraMeter.appendChild(cd);
-        });
-        info.appendChild(chakraMeter);
-
-        const karmaImpactContainer = document.createElement("div");
-        karmaImpactContainer.className = "karma-impact-container";
-        const karmaImpactBar = document.createElement("div");
-        karmaImpactBar.className = "karma-impact-bar";
-        const barWidth = Math.min(leader.karma, 100);
-        karmaImpactBar.style.width = barWidth + "%";
-        karmaImpactContainer.appendChild(karmaImpactBar);
-        info.appendChild(karmaImpactContainer);
-
-        const karmaImpactText = document.createElement("div");
-        karmaImpactText.className = "karma-impact-text";
-        karmaImpactText.textContent = `Impact: ${leader.karma}%`;
-        info.appendChild(karmaImpactText);
-
-        const ov = document.createElement("div");
-        ov.className = "overlay";
-        ov.textContent = `${leader.zodiac}, ${leader.planet}`;
-        card.appendChild(ov);
-
-        const tarotOv = document.createElement("div");
-        tarotOv.className = "tarot-overlay";
-        tarotOv.textContent = leader.tarot;
-        card.appendChild(tarotOv);
-
-        card.appendChild(info);
-        leadersContainer.appendChild(card);
-
-        // Interaction: click to increase karma
-        card.addEventListener("click", () => {
-          leader.karma = Math.min(leader.karma + 2, 100);
-          animateKarmaBar(karmaImpactBar, leader.karma);
-          updateDashboard();
-        });
-      });
-
-      updateDashboard();
-    }
-
-    function animateKarmaBar(barEl, newKarma) {
-      // Force reflow then set width to new value (to animate)
-      barEl.style.transition = 'none';
-      barEl.style.width = '0%';
-      requestAnimationFrame(() => {
-        barEl.style.transition = 'width 1s ease';
-        barEl.style.width = newKarma + '%';
-      });
-    }
-
-    function cycleAnimation() {
-      leaders.forEach(l => {
-        l.chakraIndex = (l.chakraIndex + 1) % chakraNames.length;
-        l.houseIndex = (l.houseIndex + 1) % houseLoop.length;
-      });
-      renderLeaders();
-    }
-
-    // =========== Initialize ================
-  (async () => {
-  await fetchLeaders();
-  renderLeaders();
-  setInterval(cycleAnimation, 5000);
-})();
-
-
-  </script>
-</body>
-</html>
+const people = [
+  {
+    id: 1,
+    name: "Elon Musk",
+    birth: "1971-06-28",
+    karma: 92,
+    karmaLabel: null,
+    nakshatra: "Ardra",
+    zodiacIdx: 8,
+    planetIdx: 5,
+    chakraIndex: null,
+    houseIndex: null
+  },
+  {
+    id: 2,
+    name: "Peter Thiel",
+    birth: "1967-10-11",
+    karma: 87,
+    karmaLabel: null,
+    nakshatra: "Ardra",
+    zodiacIdx: 9,
+    planetIdx: 2,
+    chakraIndex: null,
+    houseIndex: null
+  },
+  {
+    id: 3,
+    name: "Jeff Bezos",
+    birth: "1964-01-12",
+    karma: 78,
+    karmaLabel: null,
+    nakshatra: "Pushya",
+    zodiacIdx: 10,
+    planetIdx: 0,
+    chakraIndex: null,
+    houseIndex: null
+  },
+  {
+    id: 4,
+    name: "Mark Zuckerberg",
+    birth: "1984-05-14",
+    karma: 89,
+    karmaLabel: null,
+    nakshatra: "Ardra",
+    zodiacIdx: 5,
+    planetIdx: 3,
+    chakraIndex: null,
+    houseIndex: null
+  },
+  {
+    id: 5,
+    name: "Gavin Newsom",
+    birth: "1967-10-10",
+    karma: 83,
+    karmaLabel: null,
+    nakshatra: "Ardra",
+    zodiacIdx: 9,
+    planetIdx: 6,
+    chakraIndex: null,
+    houseIndex: null
+  },
+  {
+    id: 6,
+    name: "Donald Trump",
+    birth: "1946-06-14",
+    karma: 85,
+    karmaLabel: "Debt Loop",
+    nakshatra: "Ardra",
+    zodiacIdx: 10,
+    planetIdx: 0,
+    chakraIndex: 1,
+    houseIndex: 0
+  },
+  {
+    id: 7,
+    name: "Kim Jong Un",
+    birth: "1984-01-08",
+    karma: 90,
+    karmaLabel: "Shadow Karma",
+    nakshatra: "Ardra",
+    zodiacIdx: 9,
+    planetIdx: 3,
+    chakraIndex: 2,
+    houseIndex: 0
+  },
+  {
+    id: 8,
+    name: "Vladimir Putin",
+    birth: "1952-10-07",
+    karma: 75,
+    karmaLabel: "Power Karmic Reversal",
+    nakshatra: "Ashwini",
+    zodiacIdx: 11,
+    planetIdx: 5,
+    chakraIndex: 3,
+    houseIndex: 0
+  },
+  {
+    id: 9,
+    name: "Xi Jinping",
+    birth: "1953-06-15",
+    karma: 88,
+    karmaLabel: "Locked Dharma",
+    nakshatra: "Ardra",
+    zodiacIdx: 8,
+    planetIdx: 2,
+    chakraIndex: 5,
+    houseIndex: 0
+  },
+  {
+    id: 10,
+    name: "Mohammed bin Salman",
+    birth: "1985-08-31",
+    karma: 70,
+    karmaLabel: "Ancestral Karma Loop",
+    nakshatra: "Pushya",
+    zodiacIdx: 4,
+    planetIdx: 6,
+    chakraIndex: 0,
+    houseIndex: 0
+  },
+  {
+    id: 11,
+    name: "Hun Sen",
+    birth: "1952-08-05",
+    karma: 88,
+    karmaLabel: "Legacy Control Loop",
+    nakshatra: "Ardra",
+    zodiacIdx: 7,
+    planetIdx: 3,
+    chakraIndex: 4,
+    houseIndex: 0
+  },
+  {
+    id: 12,
+    name: "Hun Manet",
+    birth: "1977-10-20",
+    karma: 84,
+    karmaLabel: "Inherited Dharma Trap",
+    nakshatra: "Ardra",
+    zodiacIdx: 5,
+    planetIdx: 1,
+    chakraIndex: 2,
+    houseIndex: 0
+  },
+  {
+    id: 13,
+    name: "VannDa",
+    birth: "1997-01-22",
+    karma: 76,
+    karmaLabel: "Rhythmic Samsara",
+    nakshatra: "Ardra",
+    zodiacIdx: 6,
+    planetIdx: 4,
+    chakraIndex: 3,
+    houseIndex: 0
+  },
+  {
+    id: 14,
+    name: "Laura Mam",
+    birth: "1984-01-31",
+    karma: 71,
+    karmaLabel: "Cultural Karma Pulse",
+    nakshatra: "Pushya",
+    zodiacIdx: 3,
+    planetIdx: 2,
+    chakraIndex: 1,
+    houseIndex: 0
+  }
+];
