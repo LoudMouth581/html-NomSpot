@@ -35,10 +35,18 @@
   tr:nth-child(even) {
     background-color: rgba(255, 255, 255, 0.05);
   }
-  .karma-bar {
+  .karma-bar-container {
+    background: rgba(255, 218, 121, 0.1);
+    border-radius: 8px;
+    width: 100%;
     height: 15px;
+  }
+  .karma-bar {
+    height: 100%;
     background: linear-gradient(to right, #ffd580, #ffecb3);
     border-radius: 8px;
+    box-shadow: 0 0 10px #ffecb3;
+    transition: width 1s linear;
   }
 </style>
 </head>
@@ -75,44 +83,52 @@ const people = [
   { name: "Hun Manet", karma: 84 },
   { name: "VannDa", karma: 76 },
   { name: "Laura Mam", karma: 71 },
-  { name: "Sam Altman", karma: 95 }
+  { name: "Sam Altman", karma: 95 },
+  { name: "Mike Pence", karma: 82 }  // added Mike Pence
 ];
 
-// Current date and Thanksgiving (assume US Thanksgiving: 4th Thursday of November)
+// Current date and Thanksgiving (4th Thursday of November)
 const today = new Date();
 const year = today.getFullYear();
-let thanksgiving = new Date(year, 10, 1); // November 1
-// find the 4th Thursday
+let thanksgiving = new Date(year, 10, 1); // Nov 1
 let thursdayCount = 0;
 while (true) {
   if (thanksgiving.getDay() === 4) thursdayCount++;
   if (thursdayCount === 4) break;
   thanksgiving.setDate(thanksgiving.getDate() + 1);
 }
-
-// Calculate total duration in milliseconds
 const totalDuration = thanksgiving - today;
 
 const tableBody = document.getElementById('karma-table');
 
-people.forEach(person => {
-  const row = document.createElement('tr');
-
-  // Calculate progress percentage
+function updateKarma() {
+  tableBody.innerHTML = '';
   const now = new Date();
   const progress = Math.min(((now - today) / totalDuration) * 100, 100);
 
-  row.innerHTML = `
-    <td>${person.name}</td>
-    <td>${person.karma}</td>
-    <td>${Math.round(person.karma * (progress / 100))}</td>
-    <td>
-      <div class="karma-bar" style="width:${progress}%;"></div>
-    </td>
-  `;
+  people.forEach(person => {
+    const row = document.createElement('tr');
+    const karmaReturned = Math.round(person.karma * (progress / 100));
 
-  tableBody.appendChild(row);
-});
+    row.innerHTML = `
+      <td>${person.name}</td>
+      <td>${person.karma}</td>
+      <td>${karmaReturned}</td>
+      <td>
+        <div class="karma-bar-container">
+          <div class="karma-bar" style="width:${progress}%;"></div>
+        </div>
+      </td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+// Initial render
+updateKarma();
+
+// Optional: live update every second
+setInterval(updateKarma, 1000);
 </script>
 
 </body>
