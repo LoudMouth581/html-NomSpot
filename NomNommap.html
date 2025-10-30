@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>📍 Flavor Realms Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <div id="particles"></div>
+
+    <header>
+      <h1>🗺️ Flavor Realms Explorer</h1>
+    </header>
+
+    <main>
+      <section class="card" style="flex: 1 1 100%">
+        <h2>🌍 Map of Taste Realms</h2>
+        <div id="map">Loading Map...</div>
+      </section>
+
+      <a class="nav-button" href="IndexMainPage.html">🏠 Back to Hub</a>
+    </main>
+
+    <footer>🌀 “Every Bite is a Discovery.”</footer>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/map.js"></script>
+    <script src="./server.js"></script>
+  </body>
+</html>
