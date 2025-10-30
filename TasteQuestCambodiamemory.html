@@ -6,6 +6,245 @@
     <title>Cultural Memory | Taste Quest: Cambodia</title>
     <link rel="stylesheet" href="../CSS/cambodia.css" />
   </head>
+  <style>/* Global look */
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #0b0f2a, #010314 80%);
+  color: #e3e3e3;
+  font-family: "Orbitron", "Poppins", sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  text-shadow: 0 0 8px #00f9ff;
+}
+
+header.header-future {
+  background: linear-gradient(90deg, #020024, #090979, #00d4ff);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.nav-btn {
+  color: #fff;
+  background: #00e0ff;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+.nav-btn:hover {
+  background: #05f5a5;
+  box-shadow: 0 0 10px #00f9ff;
+}
+
+/* Map & dropdown area */
+.map-section {
+  text-align: center;
+  margin: 3rem auto;
+  max-width: 600px;
+}
+#province-select {
+  padding: 0.6rem;
+  border-radius: 8px;
+  background: #14182f;
+  color: #00f9ff;
+  border: 2px solid #00f9ff;
+  font-family: inherit;
+  font-size: 1rem;
+}
+.info-box {
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid #00f9ff;
+  border-radius: 10px;
+  margin-top: 1rem;
+  padding: 1rem;
+  box-shadow: 0 0 10px #00f9ff33;
+}
+
+/* Battle section */
+.battle-section {
+  text-align: center;
+  margin-top: 4rem;
+}
+.battle-btn {
+  background: linear-gradient(45deg, #ff006e, #ffbe0b);
+  border: none;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.battle-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #ffbe0b;
+}
+.battle-box {
+  margin-top: 1.5rem;
+  min-height: 50px;
+  font-size: 1.1rem;
+}
+
+/* Calendar */
+.calendar-section table {
+  margin: 2rem auto;
+  width: 90%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.calendar-section th,
+.calendar-section td {
+  padding: 0.8rem;
+  border: 1px solid #00f9ff55;
+}
+.calendar-section th {
+  background: #00f9ff33;
+}
+
+/* Partner Page */
+.partner-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+}
+.partner-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #00f9ff44;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 80%;
+  max-width: 600px;
+  text-align: center;
+  box-shadow: 0 0 20px #00f9ff22;
+}
+.partner-btn {
+  margin: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.partner-btn.vlog {
+  background: linear-gradient(45deg, #ff00cc, #3333ff);
+}
+.partner-btn.indie {
+  background: linear-gradient(45deg, #05f5a5, #00bcd4);
+}
+.partner-btn.sponsor {
+  background: linear-gradient(45deg, #ffd600, #ff8c00);
+}
+.partner-btn.cafe {
+  background: linear-gradient(45deg, #7b2ff7, #f107a3);
+}
+.partner-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #00f9ff;
+}
+
+.submit-btn {
+  background: linear-gradient(45deg, #00f9ff, #00e0ff);
+  color: #000;
+  font-weight: 700;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+.submit-btn:hover {
+  background: #05f5a5;
+}
+/* Append to style.css */
+
+/* Food Pyramid Cards */
+.food-card {
+  background: #fff8e1;
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 0.5rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.food-card:hover {
+  transform: scale(1.05);
+}
+
+.battle-container {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.battle-btn {
+  background: #4caf50;
+  border: none;
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.battle-btn:hover {
+  background: #45a049;
+}
+/* AR Event Pop-up */
+.ar-event {
+  position: fixed;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  padding: 1rem 1.5rem;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  z-index: 1000;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.ar-event h2 {
+  margin-top: 0;
+}
+
+.ar-event button {
+  background: #00796b;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
+</style>
   <body>
     <header class="khmer-header">
       <h1>🌺 Cultural Memory of Cambodia</h1>
@@ -209,3 +448,4 @@
     </script>
   </body>
 </html>
+
