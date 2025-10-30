@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cultural Memory | Taste Quest: Cambodia</title>
+    <link rel="stylesheet" href="../CSS/cambodia.css" />
+  </head>
+  <body>
+    <header class="khmer-header">
+      <h1>🌺 Cultural Memory of Cambodia</h1>
+      <nav>
+        <a href="../html/TasteQuestCambodiaindex.html" class="nav-btn"
+          >🏠 Back to Game Map</a
+        >
+        <a href="../html/TasteQuestCambodiabusiness.html" class="nav-btn"
+          >🤝 Partner Page</a
+        >
+      </nav>
+    </header>
+
+    <h1>🎉 Cambodian Holiday Calendar</h1>
+    <ul id="holiday-list"></ul>
+
+    <script src="../js/cambodiaCultureLib.js"></script>
+    <script src="../js/TasteQuestCambodiascript.js"></script>
+    <script src="../js/cambodiaChallengeLib.js"></script>
+    <script src="../js/TasteQuestCambodiamainApp.js"></script>
+    <script src="../js/TasteQuestCambodiamainApp.js"></script>
+
+    <main>
+      <section class="intro">
+        <h2>Explore Cambodian Culture</h2>
+        <p>
+          Discover traditions, holidays, and regional customs that make Cambodia
+          unique. Each province carries stories, flavors, and rituals that
+          connect generations.
+        </p>
+      </section>
+
+      <!-- Province Selection -->
+      <section class="province-memory">
+        <h3>🗺️ Select a Province</h3>
+        <select id="province-dropdown">
+          <option value="">-- Choose from 25 Provinces --</option>
+        </select>
+
+        <div id="province-info" class="memory-box">
+          <h4 id="province-name">No Province Selected</h4>
+          <p id="province-details">
+            Select a province to explore its cultural events and traditional
+            foods.
+          </p>
+        </div>
+      </section>
+
+      <!-- Holiday Calendar -->
+      <section class="holiday-calendar">
+        <h2>🎉 Cambodian Holiday Calendar</h2>
+        <p>
+          These events shape the rhythm of Cambodian life — from temple
+          offerings to family feasts.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Holiday</th>
+              <th>Date</th>
+              <th>Tradition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cambodian New Year ពិធីបុណ្យចូលឆ្នាំថ្មី ប្រពៃណីជាតិ</td>
+              <td>April 13–16</td>
+              <td>
+                Three days of celebration, water blessings, and traditional
+                games.
+              </td>
+            </tr>
+            <tr>
+              <td>Pchum Ben ពិធីបុណ្យភ្ជុំបិណ្ឌ (Ancestors’ Day)</td>
+              <td>3 days Moveable, September or October</td>
+              <td>
+                Families honor ancestors with food offerings and prayers at
+                pagodas.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Water Festival ពិធីបុណ្យអុំទូក បណ្ដែតប្រទីប អកអំបុក
+                និងសំពះព្រះខែ (Bon Om Touk)
+              </td>
+              <td>3 days Moveable, October or November</td>
+              <td>
+                Boat races celebrate the river’s reversal, marking gratitude and
+                unity.
+              </td>
+            </tr>
+            <tr>
+              <td>Visakh Bochea[2]ពិធីបុណ្យវិសាខបូជា</td>
+              <td>Moveable, April or May</td>
+              <td>
+                Buddhist observance commemorating the birth, enlightenment and
+                passing of the Buddh
+              </td>
+            </tr>
+            <td>Royal Ploughing Ceremony ព្រះរាជពិធីច្រត់ព្រះនង្គ័ល</td>
+            <td>Moveable, April or May</td>
+            <td>
+              Marks the start of the rice season, predicting harvest success.
+            </td>
+            <tr>
+              <td>Independence Day ទិវាបុណ្យឯករាជ្យជាតិ</td>
+              <td>November 9</td>
+              <td>
+                Celebrates Cambodia’s freedom, often with street food festivals
+                and performances.Celebrates Cambodia's independence from France
+                in 1953.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="holiday-actions">
+          <button class="cambodia-btn" id="aim-calendar">
+            🎯 Aim for Holiday Calendar
+          </button>
+          <button class="cambodia-btn" id="learn-tradition">
+            📚 Learn a Tradition
+          </button>
+          <button class="cambodia-btn" id="festival-mode">
+            🏮 Enter Festival Mode
+          </button>
+        </div>
+
+        <div id="event-output" class="event-output"></div>
+      </section>
+    </main>
+
+    <footer class="khmer-footer">
+      <p>© 2025 Taste Quest: Cambodia | Celebrating Culture, Unity & Flavor</p>
+    </footer>
+
+    <script>
+      // Province data (simplified placeholders)
+      const provinces = [
+        "Phnom Penh",
+        "Siem Reap",
+        "Battambang",
+        "Kampot",
+        "Kandal",
+        "Takeo",
+        "Kampong Cham",
+        "Kampong Thom",
+        "Kampong Chhnang",
+        "Koh Kong",
+        "Kratie",
+        "Mondulkiri",
+        "Oddar Meanchey",
+        "Pailin",
+        "Preah Vihear",
+        "Prey Veng",
+        "Pursat",
+        "Ratanakiri",
+        "Sihanoukville",
+        "Stung Treng",
+        "Svay Rieng",
+        "Tbong Khmum",
+        "Kep",
+        "Banteay Meanchey",
+        "Poipet District",
+      ];
+
+      const dropdown = document.getElementById("province-dropdown");
+      provinces.forEach((p) => {
+        const opt = document.createElement("option");
+        opt.value = p;
+        opt.textContent = p;
+        dropdown.appendChild(opt);
+      });
+
+      dropdown.addEventListener("change", () => {
+        const name = dropdown.value;
+        document.getElementById("province-name").textContent =
+          name || "No Province Selected";
+        document.getElementById("province-details").textContent = name
+          ? `${name} holds vibrant traditions waiting to be rediscovered.`
+          : "Select a province to explore its cultural events.";
+      });
+
+      // Interactive Event Buttons
+      const output = document.getElementById("event-output");
+      document.getElementById("aim-calendar").addEventListener("click", () => {
+        output.textContent =
+          "🎯 You’ve aligned your journey with Cambodia’s cultural seasons. Events unlocked!";
+      });
+      document
+        .getElementById("learn-tradition")
+        .addEventListener("click", () => {
+          output.textContent =
+            "📚 You learned about traditional Khmer games and ancestral rituals.";
+        });
+      document.getElementById("festival-mode").addEventListener("click", () => {
+        output.textContent =
+          "🏮 Festival Mode activated! Your world fills with music, lights, and food challenges.";
+      });
+    </script>
+  </body>
+</html>

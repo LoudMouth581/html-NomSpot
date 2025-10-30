@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Partner With SpiceCore</title>
+    <link rel="stylesheet" href="../CSS/TasteQuestCambodiastyles.css" />
+  </head>
+  <body>
+    <header class="header-future">
+      <h1>🤝 Partner With SpiceCore</h1>
+      <nav>
+        <a href="./TasteQuestCambodiaindex.html" class="nav-btn"
+          >← Back to Game</a
+        >
+      </nav>
+    </header>
+
+    <main class="partner-container">
+      <section class="partner-box">
+        <h2>Join the Adventure</h2>
+        <p>
+          Select your partnership type and help bring Cambodia’s flavors to
+          life!
+        </p>
+
+        <div class="partner-buttons">
+          <button class="partner-btn vlog">🎥 Tourism Partner (Vlogs)</button>
+          <button class="partner-btn indie">🌿 Independent Creator</button>
+          <button class="partner-btn sponsor">💎 Sponsor</button>
+          <button class="partner-btn cafe">☕ Café or Lounge</button>
+        </div>
+
+        <div class="partner-lists">
+          <h3>Preferred Collaboration Themes:</h3>
+          <ul>
+            <li>🧋 Teas & Boba Concepts</li>
+            <li>☕ Coffee & Espresso Events</li>
+            <li>🏝️ Hangout & Travel Spots</li>
+            <li>💼 Business or Lounge Experiences</li>
+          </ul>
+        </div>
+
+        <form id="partner-form">
+          <input type="text" placeholder="Business Name" required />
+          <input type="email" placeholder="Contact Email" required />
+          <textarea
+            placeholder="Describe your idea or collaboration"
+            required
+          ></textarea>
+          <button type="submit" class="submit-btn">Submit Proposal</button>
+        </form>
+        <p id="form-status"></p>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2025 Taste Quest Cambodia | Connect • Create • Inspire</p>
+    </footer>
+
+    <script>
+        document
+          .getElementById("partner-form")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+            document.getElementById("form-status").textContent =
+              "✅ Proposal received! We'll contact you soon.";
+          });
+      </script    <script src="/assets/map-cambodia.png/provinces.json">
+    </script>
+  </body>
+</html>

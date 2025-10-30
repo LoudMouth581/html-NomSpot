@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Taste Quest: Cambodia</title>
+    <link rel="stylesheet" href="../CSS/TasteQuestCambodiastyles.css" />
+  </head>
+  <body>
+    <header class="header-future">
+      <h1>🍜 Taste Quest: Cambodia</h1>
+      <nav>
+        <a href="./TasteQuestCambodiabusiness.html" class="nav-btn"
+          >Partner Portal</a
+        >
+      </nav>
+    </header>
+
+    <main>
+      <!-- MAP DROPDOWN -->
+      <section class="map-section">
+        <h2>Explore Cambodia</h2>
+        <p>Select a province or area to begin your SpiceCore adventure:</p>
+        <select id="province-select">
+          <option value="">-- Choose a Region (25 Areas) --</option>
+        </select>
+
+        <div id="province-info" class="info-box">
+          <h3 id="selected-province">No Region Selected</h3>
+          <p id="province-details">
+            Pick a region to view its food quest and battle opportunities.
+          </p>
+        </div>
+      </section>
+
+      <!-- BATTLE / CHEF CHALLENGE -->
+      <section class="battle-section">
+        <h2>🔥 Chef Showdown Arena</h2>
+        <p>Challenge top chefs or friends to duels and quests — earn badges!</p>
+        <button id="start-battle" class="battle-btn">Start Battle</button>
+        <div id="battle-result" class="battle-box"></div>
+      </section>
+
+      <!-- HOLIDAY CALENDAR -->
+      <section class="calendar-section">
+        <h2>🎉 Cambodian Holiday Calendar</h2>
+        <p>Events and challenges.</p>
+
+        <table id="holiday-calendar">
+          <thead>
+            <tr>
+              <th>Holiday</th>
+              <th>Date</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Khmer New Year</td>
+              <td>April 13–16</td>
+              <td>Biggest festival with cooking contests & family feasts.</td>
+            </tr>
+            <tr>
+              <td>Pchum Ben</td>
+              <td>October (15th day of waning moon)</td>
+              <td>Offerings and special dessert quests.</td>
+            </tr>
+            <tr>
+              <td>Water Festival (Bon Om Touk)</td>
+              <td>November</td>
+              <td>Boat races, river foods, and seafood events.</td>
+            </tr>
+            <tr>
+              <td>Royal Plowing Ceremony</td>
+              <td>May</td>
+              <td>Start of rice season; farming and harvest-themed quests.</td>
+            </tr>
+            <tr>
+              <td>Independence Day</td>
+              <td>November 9</td>
+              <td>Special “Street Food Freedom” event!</td>
+            </tr>
+          </tbody>
+        </table>
+        <section class="battle-section">
+          <h2>🔥Holiday's Showdown Arena</h2>
+          <p>Challenges friends' to duels and quests — earn badges!</p>
+
+          <nav>
+            <a href="./TasteQuestCambodiamemory.html" class="nav-btn"
+              >holiday-calendar</a
+            >
+          </nav>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2025 Taste Quest: Cambodia | Play. Taste. Discover.</p>
+    </footer>
+
+    <script src="../js/TasteQuestCambodiascript.js"></script>
+    <script src="../js/cambodiaMapLib.js"></script>
+    <script src="../js/cambodiaCultureLib.js"></script>
+    <script src="../js/cambodiaChallengeLib.js"></script>
+    <script src="../js/TasteQuestCambodiamainApp.js"></script>
+  </body>
+</html>
