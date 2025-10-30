@@ -1,438 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>🍽️ NomSpot: SpiceCore</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Press+Start+2P&display=swap" rel="stylesheet" />
-  <!-- Mapbox -->
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.css" rel="stylesheet" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>7 Continents - Explorer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- 🔊 Sound Effects -->
+    <audio id="click-sound" src="sounds/" preload="auto"></audio>
+    <audio id="new-player-sound" src="./sounds/" preload="auto"></audio>
 
-  <style>
-    :root {
-      --neon-blue: #00f0ff;
-      --neon-pink: #ff00cc;
-      --neon-yellow: #fff700;
-      --bg-dark: #0b0f1a;
-      --panel-dark: #141926;
-    }
+    <header>
+      <h1>🕹️ 7 CONTINENTS EXPLORER</h1>
+      <div id="scoreboard">🪙 Score: <span id="score">0</span></div>
+    </header>
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <main>
+      <!-- Continent Links -->
+      <section class="continent-links">
+        <a href="./continents/n. america/north-america.html"
+          >🌎 North America</a
+        >
+        <a href="./continents/s.america/south-america.html">🌎 South America</a>
+        <a href="./continents/europe/europe.html">🌍 Europe</a>
+        <a href="./continents/asia/asia.html">🌏 Asia</a>
+        <a href="./continents/africa/africa.html">🌍 Africa</a>
+        <a href="./continents/aussie/oceania.html">🌊 Australia</a>
+        <a href="./continents/antarctica/antarctica.html">❄️ Antarctica</a>
+      </section>
 
-    html, body {
-      height: 100%;
-      background: linear-gradient(180deg, #1a1f2e 0%, #000 100%);
-      font-family: 'Orbitron', sans-serif;
-      color: var(--neon-blue);
-      overflow-x: hidden;
-    }
+      <!-- Continent Cards -->
+      <section class="card-grid">
+        <button class="card" data-sound="tom-1.mp3" data-players="30">
+          Africa
+        </button>
+        <button class="card" data-sound="tom-2.mp3" data-players="5">
+          Antarctica
+        </button>
+        <button class="card" data-sound="snare.mp3" data-players="80">
+          Asia
+        </button>
+        <button class="card" data-sound="crash.mp3" data-players="20">
+          Australia
+        </button>
+        <button class="card" data-sound="kick-bass.mp3" data-players="60">
+          Europe
+        </button>
+        <button class="card" data-sound="tom-3.mp3" data-players="50">
+          North America
+        </button>
+        <button class="card" data-sound="tom-4.mp3" data-players="25">
+          South America
+        </button>
+      </section>
 
-    /* Magical Particle Effects */
-    .sparkle {
-      position: fixed;
-      width: 4px;
-      height: 4px;
-      background: var(--neon-pink);
-      box-shadow: 0 0 6px var(--neon-pink);
-      border-radius: 50%;
-      animation: float 6s infinite;
-      pointer-events: none;
-      opacity: 0.6;
-    }
+      <!-- Players by Continent -->
+      <section class="karma-table">
+        <h2>🌍 Players by Continent</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Continent</th>
+              <th>Players</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Africa</td>
+              <td>
+                <div class="thermometer"><div style="width: 30%"></div></div>
+                <span class="player-count">30</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Antarctica</td>
+              <td>
+                <div class="thermometer"><div style="width: 5%"></div></div>
+                <span class="player-count">5</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Asia</td>
+              <td>
+                <div class="thermometer"><div style="width: 80%"></div></div>
+                <span class="player-count">80</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Australia</td>
+              <td>
+                <div class="thermometer"><div style="width: 20%"></div></div>
+                <span class="player-count">20</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Europe</td>
+              <td>
+                <div class="thermometer"><div style="width: 60%"></div></div>
+                <span class="player-count">60</span>
+              </td>
+            </tr>
+            <tr>
+              <td>North America</td>
+              <td>
+                <div class="thermometer"><div style="width: 50%"></div></div>
+                <span class="player-count">50</span>
+              </td>
+            </tr>
+            <tr>
+              <td>South America</td>
+              <td>
+                <div class="thermometer"><div style="width: 25%"></div></div>
+                <span class="player-count">25</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-    @keyframes float {
-      0% {
-        transform: translateY(100vh) translateX(0);
-        opacity: 0;
+      <!-- Leaderboard -->
+      <section class="leaderboard">
+        <h2>🏆 Alliances by Continent</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Alliance</th>
+              <th>Continent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Player1</td>
+              <td>Asia</td>
+            </tr>
+            <tr>
+              <td>GeoMaster</td>
+              <td>Europe</td>
+            </tr>
+            <tr>
+              <td>ExplorerZ</td>
+              <td>South America</td>
+            </tr>
+            <tr>
+              <td>Newbie</td>
+              <td>Antarctica</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer>
+      <p>🔻 INSERT COIN TO BEGIN | © 2025 Destiny QUEST CORP 🔺</p>
+    </footer>
+
+    <script>
+      const buttons = document.querySelectorAll(".card");
+      const scoreDisplay = document.getElementById("score");
+      let score = 0;
+
+      const newPlayerSound = document.getElementById("new-player-sound");
+
+      // Card click logic
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const soundFile = button.dataset.sound;
+          if (soundFile) {
+            const sound = new Audio(`sounds/${soundFile}`);
+            sound
+              .play()
+              .catch((err) => console.warn("Sound play blocked:", err));
+          }
+
+          score += 100;
+          scoreDisplay.textContent = score;
+
+          button.classList.add("pressed");
+          setTimeout(() => button.classList.remove("pressed"), 100);
+        });
+      });
+
+      // Update player table dynamically
+      function updatePlayerTable(continentName, players) {
+        const rows = document.querySelectorAll(".karma-table tbody tr");
+        rows.forEach((row) => {
+          if (row.cells[0].textContent === continentName) {
+            const bar = row.querySelector(".thermometer div");
+            bar.style.width = Math.min(players, 100) + "%";
+            row.querySelector(".player-count").textContent = players;
+          }
+        });
       }
-      50% {
-        opacity: 1;
+
+      // New player joins
+      function newPlayerJoined(continentButton) {
+        continentButton.classList.add("blink");
+        setTimeout(() => continentButton.classList.remove("blink"), 1500);
+
+        newPlayerSound
+          .play()
+          .catch((err) => console.warn("Sound play blocked:", err));
+
+        let players = parseInt(continentButton.dataset.players);
+        players++;
+        continentButton.dataset.players = players;
+
+        updatePlayerTable(continentButton.textContent, players);
       }
-      100% {
-        transform: translateY(-100vh) translateX(20px);
-        opacity: 0;
+
+      // Simulate random new players every 3–6 seconds
+      function simulateRandomNewPlayers() {
+        const randomIndex = Math.floor(Math.random() * buttons.length);
+        const randomButton = buttons[randomIndex];
+        newPlayerJoined(randomButton);
       }
-    }
-
-    header {
-      background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
-      padding: 2rem;
-      text-align: center;
-      color: white;
-      box-shadow: 0 0 20px var(--neon-pink);
-      position: relative;
-    }
-
-    header h1 {
-      font-size: 2rem;
-      text-shadow: 0 0 8px var(--neon-yellow);
-    }
-
-    .profile-pic {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      border: 4px solid white;
-      box-shadow: 0 0 12px var(--neon-blue);
-      margin-top: -60px;
-      background: #000;
-    }
-
-    main {
-      max-width: 1100px;
-      margin: auto;
-      padding: 2rem 1rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      justify-content: center;
-    }
-
-    .card {
-      background: rgba(20, 20, 40, 0.9);
-      border: 2px solid var(--neon-blue);
-      border-radius: 10px;
-      padding: 1.5rem;
-      flex: 1 1 350px;
-      box-shadow: 0 0 15px var(--neon-pink);
-      backdrop-filter: blur(4px);
-    }
-
-    h2 {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 1rem;
-      color: var(--neon-yellow);
-      margin-bottom: 1rem;
-      text-shadow: 0 0 3px var(--neon-blue);
-    }
-
-    .scroll-lore {
-      max-height: 200px;
-      overflow-y: auto;
-      border: 2px dashed var(--neon-pink);
-      padding: 1rem;
-      font-size: 0.75rem;
-      line-height: 1.5;
-      color: #fff;
-      border-radius: 8px;
-      background: rgba(10, 10, 30, 0.6);
-    }
-
-    .nav-button {
-      display: block;
-      text-align: center;
-      background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
-      padding: 0.8rem;
-      margin-top: 1rem;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: bold;
-      color: white;
-      box-shadow: 0 0 10px var(--neon-blue);
-      transition: 0.3s ease;
-    }
-
-    .nav-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px var(--neon-pink);
-    }
-
-    #map {
-      width: 100%;
-      height: 400px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px var(--neon-blue);
-      margin-top: 1rem;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #aaa;
-      background: #111;
-      font-size: 0.8rem;
-      margin-top: 3rem;
-      box-shadow: 0 0 10px var(--neon-blue);
-    }
-
-    @media (max-width: 768px) {
-      .card {
-        flex: 1 1 90%;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Magical Particles -->
-  <div id="particles"></div>
-
-  <header>
-    <img src="RabbitWithBlueHoodie.png" alt="Profile Picture" class="profile-pic" />
-    <h1>NomSpot:SpiceCore</h1>
-    <p>✨ "Where Taste Meets Tribe - Discover, Share & Celebrate Every Bite."✨</p>
-  </header>
-
-  <main>
-    <!-- Lore Card -->
-    <section class="card">
-      <h2>🧾  The Mythical Flavor Scroll</h2>
-      <div class="scroll-lore">
-         <p>An Ancient Culinary Codex from the First Table of Twelve</p>
-          <p>In the beginning, the First Table of Twelve gathered beneath the sky-flame to break bread.</p>
-        <p>In the Twelve Realms of Taste. The Culinary Crests govern balance, each brought a flavor:</p>
-        <ul>
-          <li>🔥 Ember Spice</li>
-          <li>🌊 Ocean Broth</li>
-          <li>🌿 Herb Sanctuary</li>
-          <li>🌌 Cosmic Sweet</li>
-          <li>🍣 Sushi Spirit</li>
-        </ul>
-        <p>The Scroll holds recipes of lost Kingdoms. Seek them. Cook with them. Bond with your Bite Totem.</p>
-        <p>🗝️ Unlock the Taste Keyblade and protect your Flavor Heart.</p>
-        <p>🗝️The pen is mighter than the sword.</p>
-          <p>🗝️Only those who have tasted the truths may inscribe a new line in the Codex. Will you be next? </p>
-      </div>
-      <a class="nav-button" href="indexTenBadge.html">Begin Your Journey</a>
-    </section>
-
-    <!-- User Totem -->
-    <section class="card">
-      <h2>🍜 SpiceCore Profile</h2>
-      <ul>
-        <li><strong>Username:</strong> @MisoNinja</li>
-        <li><strong>SpiceCore Alliance:</strong> Spicy Stardust Ramen</li>
-        <li><strong>Nommon Pet:</strong> Fire Rabbit</li>
-        <li><strong>Zodiac:</strong> Aquarius</li>
-      </ul>
-      <a class="nav-button" href="SignUpLoginForm.html">Update Profile</a>
-    </section>
-
-    <!-- Map Card -->
-    <section class="card" style="flex: 1 1 100%;">
-      <h2>📍 Flavor Realms Map</h2>
-      <div id="map">Loading Map...</div>
-    </section>
-
-    <!-- Navigation -->
-    <section class="card">
-      <h2>🎮 Explore SpiceCore Realms</h2>
-      <a class="nav-button" href="indexMagazine.html">🍔 Fork Feed/ Profile</a>
-      <a class="nav-button" href="indexLiveStream.html">📡 Savor Stream</a>
-      <a class="nav-button" href="indexNomSpotCommunityRadar.html">🛰️ Nom Radar/ Community</a>
-      <a class="nav-button" href="indexNetworking.html">🧠 Mind Meetups/ Business Collaboration</a>
-      <a class="nav-button" href="indexInvite.html">🎁 Summon a Friend /Invite</a>
-    </section>
-
-      <!-- Navigation -->
-    <section class="card">
-      <h2>🎮 Explore Realms</h2>
-      <a class="nav-button" href="indexBand.html">Music</a>
-      <a class="nav-button" href="indexOnlineStore.html">📡 Online Stream Shopping</a>
-      <a class="nav-button" href="indexBlog.html">🛰️ Chirp Chirp Community</a>
-      <a class="nav-button" href="MarketExploits.html">MarketExploits</a>
-      <a class="nav-button" href="">Zodiac</a>
-    </section>
-
-      <!-- Navigation -->
-    <section class="card">
-      <h2>🎮 Explore Realms</h2>
-      <a class="nav-button" href="index7Cont.html">Global</a>
-      <a class="nav-button" href="Dictators.html">Dictators</a>
-      <a class="nav-button" href="USAtimeline.html">USA</a>
-      <a class="nav-button" href="digital game lab.html">Dark History</a>
-      <a class="nav-button" href="epstein_wargame_lab.html">Trump & Epstein</a>
-    </section>
-
-      <!-- Navigation -->
-    <section class="card">
-      <h2>🎮 Explore Realms</h2>
-      <a class="nav-button" href="thebig3.html">Crime</a>
-      <a class="nav-button" href="CultsAroundtheWorld.html">Cults Around the World</a>
-      <a class="nav-button" href="Scientology.html">Scientology Mystery</a>
-      <a class="nav-button" href="MusicIndustryMystery.html">Dark Music Industry</a>
-      <a class="nav-button" href="diddy.html">Did Diddy do it?</a>
-    </section>
-
-     <section class="card">
-      <h2>🎮 Explore Realms</h2>
-      <a class="nav-button" href="DJPhantom.html">DJ Phantom</a>
-      <a class="nav-button" href="karma.html">Karma</a>
-      <a class="nav-button" href="KarmicLoops.html">Karmic Loops</a>
-      <a class="nav-button" href="MoronKarma.html">Morons Karma</a>
-      <a class="nav-button" href="cambokarma.html">Thief Karma</a>
-    </section>
-
-     <section class="card">
-      <h2>🎮 Explore  Realms</h2>
-      <a class="nav-button" href="Fullsail.html">Full Sail</a>
-      <a class="nav-button" href="https://www.sidepiecesadia.com/"> side piece Sadia </a>
-      <a class="nav-button" href="SpeedRun.html">Games</a>
-      <a class="nav-button" href="demo.html">Live In Feeling Emotions</a>
-      <a class="nav-button" href="math.html">Math</a>
-    </section>
-
-      <section class="card">
-      <h2>🎮 Math Galaxy</h2>
-      <a class="nav-button" href="Add.html">Addition</a>
-      <a class="nav-button" href="subtract.html">Subtract</a>
-      <a class="nav-button" href="Multiplication.html">Multiplication</a>
-      <a class="nav-button" href="Division.html">Division</a>
-      <a class="nav-button" href="arithmetic.html">Arithmetic</a>
-    </section>
-
-     <section class="card">
-      <h2>🎮 Math Galaxy</h2>
-      <a class="nav-button" href="algebra.html">Algebra</a>
-      <a class="nav-button" href="Geometry.html">Geometry</a>
-      <a class="nav-button" href="Trigonometry.html">Trigonometry</a>
-      <a class="nav-button" href="Calculus.html">Calculus</a>
-      <a class="nav-button" href="">Statistics</a>
-    </section>
-
-      <section class="card">
-      <h2>🎮 Math Galaxy</h2>
-      <a class="nav-button" href="">Linear Algebra</a>
-      <a class="nav-button" href="">Discrete Mathematics</a>
-      <a class="nav-button" href="">Number Theory</a>
-      <a class="nav-button" href="">Mathematical Logic</a>
-      <a class="nav-button" href="">Real Analysis</a>
-    </section>
-
-      <section class="card">
-      <h2>🎮 Math Galaxy</h2>
-      <a class="nav-button" href="">Complex Analysis</a>
-      <a class="nav-button" href="">Abstract Algebra</a>
-      <a class="nav-button" href="">Topology</a>
-      <a class="nav-button" href="">Differential Equations</a>
-      <a class="nav-button" href="Karmic.html"></a>
-    </section>
-
-     <section class="card">
-      <h2>🎮 Math Games</h2>
-      <a class="nav-button" href="arithmetic_quiz.py">Arithmetic Master</a>
-      <a class="nav-button" href="Truth Alignment.html"></a>
-      <a class="nav-button" href="Karma Returned.html"></a>
-      <a class="nav-button" href=""></a>
-      <a class="nav-button" href=""></a>
-    </section>
-     <section class="card">
-      <h2>🎮 Math Games</h2>
-      <a class="nav-button" href=""></a>
-      <a class="nav-button" href=""></a>
-      <a class="nav-button" href=""></a>
-      <a class="nav-button" href=""></a>
-      <a class="nav-button" href=""></a>
-    </section>
-  </main>
-
-  <footer>
-    🌀 NomSpot &copy; 2025 — “Fuel your Fate.”
-  </footer>
-
-  <!-- Mapbox -->
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.14.0/mapbox-gl.js"></script>
-  <script>
-    mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/dark-v11',
-      center: [121.0, 14.6],
-      zoom: 3.8
-    });
-
-    const marker = new mapboxgl.Marker({ color: "#ff00cc" })
-      .setLngLat([121.0, 14.6])
-      .setPopup(new mapboxgl.Popup().setText("✨ Temple of Taste"))
-      .addTo(map);
-  </script>
-
-  <!-- Magical Sparkle Generator -->
-  <script>
-    const sparkleCount = 30;
-    for (let i = 0; i < sparkleCount; i++) {
-      const sparkle = document.createElement('div');
-      sparkle.classList.add('sparkle');
-      sparkle.style.left = `${Math.random() * 100}%`;
-      sparkle.style.top = `${Math.random() * 100}%`;
-      sparkle.style.animationDuration = `${3 + Math.random() * 3}s`;
-      document.getElementById('particles').appendChild(sparkle);
-    }
-  </script>
-
-</body>
+      setInterval(
+        simulateRandomNewPlayers,
+        Math.floor(Math.random() * 3000) + 3000
+      );
+    </script>
+  </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
