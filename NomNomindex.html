@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>7 Continents - Explorer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- 🔊 Sound Effects -->
+    <audio id="click-sound" src="sounds/" preload="auto"></audio>
+    <audio id="new-player-sound" src="./sounds/" preload="auto"></audio>
+
+    <header>
+      <h1>🕹️ 7 CONTINENTS EXPLORER</h1>
+      <div id="scoreboard">🪙 Score: <span id="score">0</span></div>
+    </header>
+
+    <main>
+      <!-- Continent Links -->
+      <section class="continent-links">
+        <a href="./continents/n. america/NorthAmerica.html">🌎 North America</a>
+        <a href="./continents/s.america/south-america.html">🌎 South America</a>
+        <a href="./continents/europe/europe.html">🌍 Europe</a>
+        <a href="./continents/asia/asia.html">🌏 Asia</a>
+        <a href="./continents/africa/africa.html">🌍 Africa</a>
+        <a href="./continents/aussie/oceania.html">🌊 Australia</a>
+        <a href="./continents/antarctica/antarctica.html">❄️ Antarctica</a>
+      </section>
+
+      <!-- Continent Cards -->
+      <section class="card-grid">
+        <button class="card" data-sound="tom-1.mp3" data-players="30">
+          Africa
+        </button>
+        <button class="card" data-sound="tom-2.mp3" data-players="5">
+          Antarctica
+        </button>
+        <button class="card" data-sound="snare.mp3" data-players="80">
+          Asia
+        </button>
+        <button class="card" data-sound="crash.mp3" data-players="20">
+          Australia
+        </button>
+        <button class="card" data-sound="kick-bass.mp3" data-players="60">
+          Europe
+        </button>
+        <button class="card" data-sound="tom-3.mp3" data-players="50">
+          North America
+        </button>
+        <button class="card" data-sound="tom-4.mp3" data-players="25">
+          South America
+        </button>
+      </section>
+
+      <!-- Players by Continent -->
+      <section class="karma-table">
+        <h2>🌍 Players by Continent</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Continent</th>
+              <th>Players</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Africa</td>
+              <td>
+                <div class="thermometer"><div style="width: 30%"></div></div>
+                <span class="player-count">30</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Antarctica</td>
+              <td>
+                <div class="thermometer"><div style="width: 5%"></div></div>
+                <span class="player-count">5</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Asia</td>
+              <td>
+                <div class="thermometer"><div style="width: 80%"></div></div>
+                <span class="player-count">80</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Australia</td>
+              <td>
+                <div class="thermometer"><div style="width: 20%"></div></div>
+                <span class="player-count">20</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Europe</td>
+              <td>
+                <div class="thermometer"><div style="width: 60%"></div></div>
+                <span class="player-count">60</span>
+              </td>
+            </tr>
+            <tr>
+              <td>North America</td>
+              <td>
+                <div class="thermometer"><div style="width: 50%"></div></div>
+                <span class="player-count">50</span>
+              </td>
+            </tr>
+            <tr>
+              <td>South America</td>
+              <td>
+                <div class="thermometer"><div style="width: 25%"></div></div>
+                <span class="player-count">25</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Leaderboard -->
+      <section class="leaderboard">
+        <h2>🏆 Alliances by Continent</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Alliance</th>
+              <th>Continent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Player1</td>
+              <td>Asia</td>
+            </tr>
+            <tr>
+              <td>GeoMaster</td>
+              <td>Europe</td>
+            </tr>
+            <tr>
+              <td>ExplorerZ</td>
+              <td>South America</td>
+            </tr>
+            <tr>
+              <td>Newbie</td>
+              <td>Antarctica</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer>
+      <p>🔻 INSERT COIN TO BEGIN | © 2025 Destiny QUEST CORP 🔺</p>
+    </footer>
+
+    <script>
+      const buttons = document.querySelectorAll(".card");
+      const scoreDisplay = document.getElementById("score");
+      let score = 0;
+
+      const newPlayerSound = document.getElementById("new-player-sound");
+
+      // Card click logic
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const soundFile = button.dataset.sound;
+          if (soundFile) {
+            const sound = new Audio(`sounds/${soundFile}`);
+            sound
+              .play()
+              .catch((err) => console.warn("Sound play blocked:", err));
+          }
+
+          score += 100;
+          scoreDisplay.textContent = score;
+
+          button.classList.add("pressed");
+          setTimeout(() => button.classList.remove("pressed"), 100);
+        });
+      });
+
+      // Update player table dynamically
+      function updatePlayerTable(continentName, players) {
+        const rows = document.querySelectorAll(".karma-table tbody tr");
+        rows.forEach((row) => {
+          if (row.cells[0].textContent === continentName) {
+            const bar = row.querySelector(".thermometer div");
+            bar.style.width = Math.min(players, 100) + "%";
+            row.querySelector(".player-count").textContent = players;
+          }
+        });
+      }
+
+      // New player joins
+      function newPlayerJoined(continentButton) {
+        continentButton.classList.add("blink");
+        setTimeout(() => continentButton.classList.remove("blink"), 1500);
+
+        newPlayerSound
+          .play()
+          .catch((err) => console.warn("Sound play blocked:", err));
+
+        let players = parseInt(continentButton.dataset.players);
+        players++;
+        continentButton.dataset.players = players;
+
+        updatePlayerTable(continentButton.textContent, players);
+      }
+
+      // Simulate random new players every 3–6 seconds
+      function simulateRandomNewPlayers() {
+        const randomIndex = Math.floor(Math.random() * buttons.length);
+        const randomButton = buttons[randomIndex];
+        newPlayerJoined(randomButton);
+      }
+      setInterval(
+        simulateRandomNewPlayers,
+        Math.floor(Math.random() * 3000) + 3000
+      );
+    </script>
+  </body>
+</html>
