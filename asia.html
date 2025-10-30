@@ -5,6 +5,44 @@
     <meta charset="UTF-8" />
     <title>Asia</title>
   </head>
+  <style>.btn-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.btn {
+  background: #333;
+  color: #fff;
+  border: 2px solid #555;
+  margin: 0.5rem;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.btn.pressed {
+  transform: scale(0.95);
+  border-color: yellow;
+}
+
+.blink {
+  animation: blink-animation 0.5s ease-in-out 3;
+}
+
+@keyframes blink-animation {
+  0%,
+  100% {
+    background-color: #333;
+  }
+  50% {
+    background-color: yellow;
+    color: black;
+  }
+}
+</style>
   <body>
     <h1>Asia</h1>
     <p>
@@ -18,13 +56,13 @@
       >🏠 Cambodia</a
     >
        <div class="holiday-actions">
-          <button class="n.america-btn" id="aim-calendar">
+          <button class="btn" id="aim-calendar">
             🎯 Aim for Holiday Calendar
           </button>
-          <button class="NomNomindex.html" id="learn-tradition">
+          <button class="btn" id="learn-tradition">
             📚 Profile
           </button>
-          <button class="n.america-btn" id="festival-mode">
+          <button class="btn" id="festival-mode">
             🏮 Enter Festival Mode
           </button>
         </div>
@@ -35,5 +73,6 @@
     </main>
   </body>
 </html>
+
 
 
