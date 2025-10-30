@@ -32,7 +32,237 @@ body {
   color: var(--neon-blue);
   overflow-x: hidden;
 }
+   body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--primary-color);
+      color: var(--text-color);
+      font-family: var(--font-main);
+    }
 
+    .band-container {
+      padding: 60px 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .band-container h2 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      color: var(--accent-color);
+      letter-spacing: 2px;
+    }
+
+    .band-container em {
+      display: block;
+      margin-bottom: 20px;
+      color: var(--subtext-color);
+      font-style: italic;
+      font-size: 1.1em;
+    }
+
+    .band-container p.description {
+      max-width: 700px;
+      margin: 0 auto 40px auto;
+      line-height: 1.6;
+      color: #ccc;
+    }
+
+    .band-members {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+
+    .member {
+      width: 250px;
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #000;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .member:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 15px var(--accent-color);
+    }
+
+    .member img {
+      width: 100%;
+      height: auto;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      border: 3px solid var(--accent-color);
+    }
+
+    .member h3 {
+      margin: 10px 0 5px;
+      font-size: 1.2em;
+      color: var(--text-color);
+    }
+
+    .member p {
+      font-size: 0.95em;
+      color: var(--subtext-color);
+    }
+
+    @media (max-width: 768px) {
+      .band-members {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Verdana', sans-serif;
+      background: #000;
+      color: #fff;
+      background-image: url('data:image/jpeg;base64,/9j/...'); /* Replace with base64 or solid bg */
+      background-size: cover;
+      background-attachment: fixed;
+    }
+
+    header {
+      background: rgba(0,0,0,0.8);
+      padding: 20px;
+      text-align: center;
+      border-bottom: 3px solid #ff00cc;
+    }
+
+    header h1 {
+      font-size: 2.5em;
+      color: #ff00cc;
+      text-shadow: 0 0 10px #ff00cc;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+      background: rgba(0,0,0,0.85);
+    }
+
+    aside {
+      flex: 1 1 250px;
+      padding: 20px;
+      border-right: 2px solid #ff00cc;
+    }
+
+    aside img {
+      width: 100%;
+      border-radius: 4px;
+      border: 2px solid #ff00cc;
+    }
+
+    .profile-info {
+      margin-top: 15px;
+    }
+
+    .profile-info h2 {
+      color: #00ffff;
+      margin-bottom: 5px;
+    }
+
+    .profile-info p {
+      font-size: 0.9em;
+      line-height: 1.5;
+      color: #ccc;
+    }
+
+    nav {
+      margin-top: 20px;
+    }
+
+    nav a {
+      display: block;
+      text-decoration: none;
+      color: #0ff;
+      padding: 8px 0;
+      border-bottom: 1px solid #222;
+      transition: 0.2s;
+    }
+
+    nav a:hover {
+      color: #ff0;
+    }
+
+    main {
+      flex: 2 1 600px;
+      padding: 20px;
+    }
+
+    section {
+      margin-bottom: 40px;
+    }
+
+    section h2 {
+      color: #ff00cc;
+      border-bottom: 1px dashed #555;
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+    }
+
+    .music-track {
+      background: #111;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-left: 4px solid #00ffff;
+    }
+
+    .music-track:hover {
+      background: #1a1a1a;
+    }
+
+    .comments {
+      background: #111;
+      padding: 15px;
+      border: 1px solid #444;
+    }
+
+    .comment {
+      border-bottom: 1px dotted #444;
+      padding: 10px 0;
+    }
+
+    .comment:last-child {
+      border-bottom: none;
+    }
+
+    .comment h4 {
+      margin: 0 0 5px;
+      color: #00ffff;
+    }
+
+    .comment p {
+      font-size: 0.9em;
+      color: #ddd;
+    }
+
+    footer {
+      text-align: center;
+      background: #111;
+      padding: 20px;
+      border-top: 2px solid #ff00cc;
+      font-size: 0.8em;
+      color: #888;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      aside {
+        border-right: none;
+        border-bottom: 2px solid #ff00cc;
+      }
+    }
 /* Magical Particle Effects */
 .sparkle {
   position: fixed;
@@ -321,6 +551,7 @@ footer {
     <script src="./server.js"></script>
   </body>
 </html>
+
 
 
 
