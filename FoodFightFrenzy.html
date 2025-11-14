@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Food Fight Frenzy</title>
+
+    <!-- Phaser -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        background: #1c1206;
+        font-family: Arial, sans-serif;
+        color: #ffd37c;
+        overflow: hidden;
+      }
+      #gameContainer {
+        width: 800px;
+        height: 600px;
+        margin: 0 auto;
+        border: 4px solid #d19c46;
+        background: #25190b;
+        position: relative;
+      }
+      #popup {
+        position: absolute;
+        top: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #3b2e15;
+        padding: 20px;
+        border-radius: 10px;
+        color: #ffd78a;
+        text-align: center;
+        display: none;
+        border: 3px solid #ffcc66;
+        width: 270px;
+        box-shadow: 0 0 20px #ffae00;
+        z-index: 10;
+      }
+      #popup img {
+        max-width: 100%;
+        border-radius: 6px;
+        margin-top: 10px;
+      }
+
+      /* Mobile Buttons */
+      .btn {
+        position: absolute;
+        bottom: 20px;
+        background: rgba(255, 200, 100, 0.6);
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 70px;
+        font-size: 26px;
+        color: #000;
+        font-weight: bold;
+        user-select: none;
+      }
+      #leftBtn {
+        left: 20px;
+      }
+      #rightBtn {
+        left: 110px;
+      }
+      #jumpBtn {
+        right: 20px;
+      }
+      #throwBtn {
+        right: 110px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="gameContainer"></div>
+
+    <!-- Pop-up -->
+    <div id="popup">
+      <strong id="pTitle"></strong>
+      <p id="pText"></p>
+      <img id="pImg" />
+    </div>
+
+    <!-- Mobile buttons -->
+    <div id="leftBtn" class="btn">⟵</div>
+    <div id="rightBtn" class="btn">⟶</div>
+    <div id="jumpBtn" class="btn">⤒</div>
+    <div id="throwBtn" class="btn">🍗</div>
+
+    <script>
+      /* ===============================================================
+       FOOD FIGHT FRENZY - Single File Phaser Game
+================================================================ */
+
+      let game;
+      let player, cursors;
+      let crates, enemies, foodShots;
+      let level = 1;
+      let speed = 200;
+      let ground;
+
+      let mobileLeft = false;
+      let mobileRight = false;
+      let mobileJump = false;
+
+      const foodFacts = [
+        {
+          title: "🍕 Pizza Origin",
+          text: "Flatbreads with toppings existed in ancient Rome.",
+          img: "https://i.imgur.com/nQnZQfF.png",
+        },
+        {
+          title: "🍔 Burger History",
+          text: "The hamburger evolved from Hamburg steak.",
+          img: "https://i.imgur.com/E6hZCzj.png",
+        },
+        {
+          title: "🍩 Donut Trivia",
+          text: "Center holes helped early donuts fry evenly.",
+          img: "https://i.imgur.com/uxN1m6S.png",
+        },
+      ];
+
+      const config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 600,
+        parent: "gameContainer",
+        backgroundColor: "#2b1e10",
+        physics: {
+          default: "arcade",
+          arcade: { gravity: { y: 600 }, debug: false },
+        },
+        scene: { preload, create, update },
+      };
+
+      game = new Phaser.Game(config);
+
+      function preload() {
+        this.load.image(
+          "ground",
+          "https://labs.phaser.io/assets/sprites/platform.png"
+        );
+        this.load.image("crate", "https://i.imgur.com/p3Jg7Jg.png");
+        this.load.image("enemy", "https://i.imgur.com/QkvYw8j.png");
+        this.load.image("food", "https://i.imgur.com/LRmgGwX.png");
+        this.load.spritesheet(
+          "chef",
+          "https://labs.phaser.io/assets/sprites/dude.png",
+          {
+            frameWidth: 32,
+            frameHeight: 48,
+          }
+        );
+
+        // Sounds
+        this.load.audio(
+          "throw",
+          "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"
+        );
+        this.load.audio(
+          "eat",
+          "https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"
+        );
+      }
+
+      function create() {
+        const scene = this;
+
+        // Ground
+        ground = this.physics.add.staticGroup();
+        ground.create(400, 580, "ground").setScale(2).refreshBody();
+
+        // Player
+        player = this.physics.add.sprite(100, 450, "chef");
+        player.setCollideWorldBounds(true);
+
+        // Player animations
+        scene.anims.create({
+          key: "run",
+          frames: scene.anims.generateFrameNumbers("chef", {
+            start: 5,
+            end: 8,
+          }),
+          frameRate: 10,
+          repeat: -1,
+        });
+        scene.anims.create({
+          key: "idle",
+          frames: [{ key: "chef", frame: 4 }],
+          frameRate: 20,
+        });
+
+        // Groups
+        crates = this.physics.add.group();
+        enemies = this.physics.add.group();
+        foodShots = this.physics.add.group();
+
+        spawnLevel(scene);
+
+        this.physics.add.collider(player, ground);
+        this.physics.add.collider(crates, ground);
+        this.physics.add.collider(enemies, ground);
+
+        this.physics.add.collider(player, crates, hitCrate, null, this);
+        this.physics.add.collider(player, enemies, hitEnemy, null, this);
+        this.physics.add.collider(
+          foodShots,
+          enemies,
+          hitEnemyWithFood,
+          null,
+          this
+        );
+
+        cursors = this.input.keyboard.createCursorKeys();
+
+        // Mobile buttons
+        setupMobileButtons();
+      }
+
+      function update() {
+        const left = cursors.left.isDown || mobileLeft;
+        const right = cursors.right.isDown || mobileRight;
+        const jump = cursors.up.isDown || cursors.space.isDown || mobileJump;
+
+        if (left) {
+          player.setVelocityX(-speed);
+          player.flipX = true;
+          player.anims.play("run", true);
+        } else if (right) {
+          player.setVelocityX(speed);
+          player.flipX = false;
+          player.anims.play("run", true);
+        } else {
+          player.setVelocityX(0);
+          player.anims.play("idle", true);
+        }
+
+        if (jump && player.body.touching.down) {
+          player.setVelocityY(-420);
+        }
+
+        if (player.y > 610) resetPlayer();
+      }
+
+      /* ===============================================================
+                          GAME LOGIC
+================================================================ */
+
+      function spawnLevel(scene) {
+        crates.clear(true, true);
+        enemies.clear(true, true);
+
+        // Crates
+        for (let i = 0; i < level + 1; i++) {
+          const crate = crates.create(300 + i * 200, 0, "crate");
+          crate.setBounce(0.6);
+          crate.setData("factIndex", i % foodFacts.length);
+        }
+
+        // Enemies
+        for (let i = 0; i < level; i++) {
+          const e = enemies.create(500 + i * 150, 540, "enemy");
+          e.setBounce(1);
+          e.setVelocityX(120 + level * 20);
+          e.setCollideWorldBounds(true);
+        }
+      }
+
+      function hitCrate(player, crate) {
+        const fact = foodFacts[crate.getData("factIndex")];
+        showPopup(fact);
+        crate.disableBody(true, true);
+      }
+
+      function hitEnemy() {
+        resetPlayer();
+      }
+
+      function hitEnemyWithFood(shot, enemy) {
+        shot.destroy();
+        enemy.destroy();
+
+        game.sound.play("eat");
+
+        if (enemies.countActive() === 0) {
+          level++;
+          spawnLevel(game.scene.scenes[0]);
+        }
+      }
+
+      function resetPlayer() {
+        player.setVelocity(0);
+        player.setPosition(100, 450);
+      }
+
+      function throwFood() {
+        const scene = game.scene.scenes[0];
+        const food = foodShots.create(player.x, player.y, "food");
+        food.setVelocityX(player.flipX ? -400 : 400);
+        game.sound.play("throw");
+      }
+
+      /* ===============================================================
+                          POPUP
+================================================================ */
+
+      function showPopup(fact) {
+        const popup = document.getElementById("popup");
+        document.getElementById("pTitle").textContent = fact.title;
+        document.getElementById("pText").textContent = fact.text;
+        document.getElementById("pImg").src = fact.img;
+
+        popup.style.display = "block";
+        setTimeout(() => (popup.style.display = "none"), 4000);
+      }
+
+      /* ===============================================================
+                    MOBILE BUTTON HANDLING
+================================================================ */
+
+      function setupMobileButtons() {
+        const left = document.getElementById("leftBtn");
+        const right = document.getElementById("rightBtn");
+        const jump = document.getElementById("jumpBtn");
+        const throwB = document.getElementById("throwBtn");
+
+        left.onpointerdown = () => (mobileLeft = true);
+        left.onpointerup = () => (mobileLeft = false);
+
+        right.onpointerdown = () => (mobileRight = true);
+        right.onpointerup = () => (mobileRight = false);
+
+        jump.onpointerdown = () => {
+          mobileJump = true;
+          setTimeout(() => (mobileJump = false), 200);
+        };
+
+        throwB.onpointerdown = () => throwFood();
+      }
+    </script>
+  </body>
+</html>
