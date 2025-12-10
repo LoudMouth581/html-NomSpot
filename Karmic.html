@@ -233,8 +233,6 @@
     </div>
 
     <script>
-      // ====================== Config ======================
-      // Add or remove people here — and optionally fill lunar profile values.
       const people = [
         {
           name: "Elon Musk",
@@ -560,7 +558,6 @@
           card.className = "leader-card";
           card.dataset.idx = idx;
 
-          // Image
           const img = document.createElement("img");
           img.className = "leader-img";
           img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(
@@ -572,13 +569,11 @@
           const info = document.createElement("div");
           info.className = "info";
 
-          // Name
           const nameDiv = document.createElement("div");
           nameDiv.className = "name";
           nameDiv.textContent = leader.name;
           info.appendChild(nameDiv);
 
-          // === Section 1: Karma ===
           const karmaLoop = document.createElement("div");
           karmaLoop.className = "karma-loop";
           karmaLoop.textContent = `Karma: ${leader.karma}`;
@@ -597,7 +592,6 @@
           karmaImpactText.textContent = `Impact: ${leader.karma}%`;
           info.appendChild(karmaImpactText);
 
-          // === Section 2: Houses ===
           const housesLoopDiv = document.createElement("div");
           housesLoopDiv.className = "houses-loop";
           houseLoop.forEach((h, hi) => {
@@ -609,7 +603,6 @@
           });
           info.appendChild(housesLoopDiv);
 
-          // === Section 3: Chakras ===
           const chakraMeter = document.createElement("div");
           chakraMeter.className = "chakra-meter";
           chakraNames.forEach((cname, ci) => {
@@ -623,29 +616,27 @@
           });
           info.appendChild(chakraMeter);
 
-          // === Lunar / Vedic Profile ===
           const lunar = leader.lunar || {};
           const lunarDiv = document.createElement("div");
           lunarDiv.className = "lunar-profile";
           lunarDiv.innerHTML = `
-          <div class="field"><label>Moon Sign:</label> ${
-            lunar.moonSign || "—"
-          }</div>
-          <div class="field"><label>Nakshatra:</label> ${
-            lunar.nakshatra || "—"
-          }</div>
-          <div class="field"><label>Pada:</label> ${lunar.pada || "—"}</div>
-          <div class="field"><label>Moon Lord:</label> ${
-            lunar.moonLord || "—"
-          }</div>
-          <div class="field"><label>Aura Color:</label> ${
-            lunar.auraColor || "—"
-          }</div>
-          <div class="field"><label>Notes:</label> ${lunar.notes || ""}</div>
-        `;
+            <div class="field"><label>Moon Sign:</label> ${
+              lunar.moonSign || "—"
+            }</div>
+            <div class="field"><label>Nakshatra:</label> ${
+              lunar.nakshatra || "—"
+            }</div>
+            <div class="field"><label>Pada:</label> ${lunar.pada || "—"}</div>
+            <div class="field"><label>Moon Lord:</label> ${
+              lunar.moonLord || "—"
+            }</div>
+            <div class="field"><label>Aura Color:</label> ${
+              lunar.auraColor || "—"
+            }</div>
+            <div class="field"><label>Notes:</label> ${lunar.notes || ""}</div>
+          `;
           info.appendChild(lunarDiv);
 
-          // Overlays
           const ov = document.createElement("div");
           ov.className = "overlay";
           ov.textContent = `${leader.zodiac}, ${leader.planet}`;
@@ -659,7 +650,6 @@
           card.appendChild(info);
           leadersContainer.appendChild(card);
 
-          // Click to increment karma
           card.addEventListener("click", () => {
             leader.karma = Math.min(leader.karma + 2, 100);
             renderLeaders();
@@ -692,8 +682,6 @@
         renderLeaders();
         setInterval(cycleAnimation, 5000);
       })();
-
-      //How this works.The main people array now includes a lunar sub‑object for every person.For each person you can fill:moonSign — e.g., "Cancer"nakshatra — e.g., "Ashlesha"pada — e.g., "3"moonLord — e.g., "Mercury"auraColor — e.g., "#8b00ff"notes — any extra description (e.g., karmic alignment description)The UI will automatically render these fields in a “Lunar / Vedic Profile” section for each card.You can still add or remove people just by editing the people array — the script handles everything dynamically.All existing features — Karma bar, Chakra meter, House loop, Tarot overlay, animations, sorting — remain intact.
     </script>
   </body>
 </html>
