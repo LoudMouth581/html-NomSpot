@@ -1,334 +1,685 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Karmic Cosmic Loop</title>
-<style>
-  body {
-    background: #0b0c1a;
-    color: #eee;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    padding: 20px;
-    overflow-x: hidden;
-  }
-  h1 {
-    text-align: center;
-    color: #ff5555;
-    text-shadow: 0 0 10px #ff5555;
-    margin-bottom: 40px;
-  }
-  .container {
-    max-width: 1000px;
-    margin: 0 auto;
-    position: relative;
-  }
-  .leader-card {
-    background: #1a1a2e;
-    border-radius: 15px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 0 30px #aa2244 inset;
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    position: relative;
-    overflow: visible;
-  }
-  .leader-img {
-    border-radius: 15px;
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    box-shadow: 0 0 15px #ff5577;
-    border: 3px solid #ff5577;
-  }
-  .info {
-    flex: 1;
-  }
-  .name {
-    font-size: 1.8em;
-    font-weight: 700;
-    color: #ff8899;
-    margin-bottom: 6px;
-    letter-spacing: 1.2px;
-  }
-  .karma-loop {
-    font-style: italic;
-    color: #bbb;
-    margin-bottom: 8px;
-  }
-  .houses-loop {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 10px;
-  }
-  .house {
-    flex: 1;
-    background: #330000;
-    padding: 12px;
-    border-radius: 12px;
-    box-shadow: 0 0 14px #bb4444;
-    text-align: center;
-    font-weight: 600;
-    color: #ffbbbb;
-    transition: background 0.4s ease, box-shadow 0.4s ease;
-  }
-  .house.active {
-    background: #bb4444;
-    color: #fff;
-    box-shadow: 0 0 24px #ff6666;
-    font-weight: 700;
-  }
-  .chakra-meter {
-    display: flex;
-    justify-content: space-between;
-    max-width: 280px;
-    margin-top: 10px;
-    user-select: none;
-  }
-  .chakra {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: #333355;
-    box-shadow: 0 0 8px #222266 inset;
-    position: relative;
-    transition: all 0.4s ease;
-    cursor: default;
-  }
-  .chakra.active {
-    box-shadow: 0 0 15px 5px #ff6699;
-    background: #ff6699 !important;
-  }
-  .chakra::after {
-    content: attr(data-name);
-    position: absolute;
-    bottom: -18px;
-    font-size: 9px;
-    color: #ff99bbaa;
-    width: 100%;
-    text-align: center;
-    font-weight: 600;
-  }
-  .karma-impact-container {
-    margin-top: 10px;
-    background: #440000;
-    border-radius: 10px;
-    width: 100%;
-    height: 18px;
-    box-shadow: inset 0 0 8px #bb4444;
-  }
-  .karma-impact-bar {
-    height: 100%;
-    border-radius: 10px;
-    background: linear-gradient(90deg, #ff4444, #ff9999);
-    box-shadow: 0 0 10px #ff5555;
-    width: 0;
-    transition: width 1.2s ease;
-  }
-  .karma-impact-text {
-    margin-top: 4px;
-    font-size: 0.9em;
-    color: #ffbbbb;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-  }
-  svg.constellation {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-  line.star-line {
-    stroke: url(#lineGradient);
-    stroke-width: 2;
-    stroke-dasharray: 6;
-    stroke-dashoffset: 0;
-    opacity: 0.7;
-    animation: dashFlow 4s linear infinite;
-  }
-  circle.star-point {
-    fill: #88ccff;
-    stroke: #ffffff;
-    stroke-width: 1;
-    r: 5;
-    filter: drop-shadow(0 0 6px #88ccff);
-    animation: pulse 2s infinite alternate;
-  }
-  @keyframes pulse {
-    0% { r: 4; filter: drop-shadow(0 0 6px #88ccff);}
-    50% { r: 6; filter: drop-shadow(0 0 15px #88ccff);}
-    100% { r: 5; filter: drop-shadow(0 0 10px #88ccff);}
-  }
-  @keyframes dashFlow {
-    to { stroke-dashoffset: 12; }
-  }
-  @media (max-width: 768px) {
-    .leader-card { flex-direction: column; align-items: flex-start; }
-    .leader-img { width: 100%; height: auto; }
-  }
-</style>
-</head>
-<body>
-<div class="container" id="container">
-  <h1>Karmic Cosmic Loop</h1>
-  <svg class="constellation" id="constellation">
-    <defs>
-      <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#88ccff">
-          <animate attributeName="stop-color" values="#88ccff;#ff88cc;#88ccff" dur="6s" repeatCount="indefinite"/>
-        </stop>
-        <stop offset="100%" stop-color="#ff88cc">
-          <animate attributeName="stop-color" values="#ff88cc;#88ccff;#ff88cc" dur="6s" repeatCount="indefinite"/>
-        </stop>
-      </linearGradient>
-    </defs>
-  </svg>
-  <div id="leaders"></div>
-</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Angkor Wat</title>
+    <style>
+      /* Base styling */
+      body {
+        margin: 0;
+        padding: 0;
+        background: #0b0c1a;
+        color: #eee;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        overflow-x: hidden;
+        position: relative;
+        min-height: 100vh;
+      }
+      h1,
+      h2 {
+        text-align: center;
+        color: #ff5555;
+        text-shadow: 0 0 10px #ff5555;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 30px 20px 80px 20px;
+        position: relative;
+        z-index: 10;
+      }
+      .leader-card {
+        background: rgba(26, 26, 46, 0.8);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 0 30px #aa2244 inset;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        position: relative;
+        color: #ffbbbb;
+      }
+      /* Circle with initials instead of image */
+      .leader-img {
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        background: #330000;
+        box-shadow: 0 0 15px #ff5577;
+        border: 3px solid #ff5577;
+        font-weight: 700;
+        font-size: 2.5em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #ffbbbb;
+        user-select: none;
+      }
+      .info {
+        flex: 1;
+      }
+      .name {
+        font-size: 1.8em;
+        font-weight: 700;
+        color: #ff8899;
+        margin-bottom: 6px;
+        letter-spacing: 1.2px;
+      }
+      .karma-loop {
+        font-style: italic;
+        color: #bbb;
+        margin-bottom: 8px;
+      }
+      .houses-loop {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 10px;
+      }
+      .house {
+        flex: 1;
+        background: #330000;
+        padding: 12px;
+        border-radius: 12px;
+        box-shadow: 0 0 14px #bb4444;
+        text-align: center;
+        font-weight: 600;
+        color: #ffbbbb;
+        transition: background 0.4s ease, box-shadow 0.4s ease;
+        user-select: none;
+      }
+      .house.active {
+        background: #bb4444;
+        color: #fff;
+        box-shadow: 0 0 24px #ff6666;
+        font-weight: 700;
+      }
+      .chakra-meter {
+        display: flex;
+        justify-content: space-between;
+        max-width: 280px;
+        margin-top: 10px;
+        user-select: none;
+      }
+      .chakra {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #333355;
+        box-shadow: 0 0 8px #222266 inset;
+        position: relative;
+        transition: all 0.4s ease;
+        cursor: default;
+      }
+      .chakra.active {
+        box-shadow: 0 0 15px 5px #ff6699;
+        background: #ff6699 !important;
+      }
+      .chakra::after {
+        content: attr(data-name);
+        position: absolute;
+        bottom: -18px;
+        font-size: 9px;
+        color: #ff99bbaa;
+        width: 100%;
+        text-align: center;
+        font-weight: 600;
+      }
+      .karma-impact-container {
+        margin-top: 10px;
+        background: #440000;
+        border-radius: 10px;
+        width: 100%;
+        height: 18px;
+        box-shadow: inset 0 0 8px #bb4444;
+      }
+      .karma-impact-bar {
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #ff4444, #ff9999);
+        box-shadow: 0 0 10px #ff5555;
+        width: 0;
+        transition: width 1.2s ease;
+      }
+      .karma-impact-text {
+        margin-top: 4px;
+        font-size: 0.9em;
+        color: #ffbbbb;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+      }
+      .activation {
+        margin-top: 12px;
+        font-weight: 700;
+        color: #ff4444;
+        text-shadow: 0 0 10px #ff2222;
+      }
+      /* Puppet strings decorative lines */
+      .puppet-strings {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        background: linear-gradient(
+            to bottom,
+            transparent 5px,
+            #ff4455 6px,
+            transparent 7px
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 15px,
+            #ff4455 16px,
+            transparent 17px
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 25px,
+            #ff4455 26px,
+            transparent 27px
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 35px,
+            #ff4455 36px,
+            transparent 37px
+          );
+        background-repeat: repeat-x;
+        background-size: 4px 40px;
+        opacity: 0.15;
+      }
+      /* Responsive */
+      @media (max-width: 768px) {
+        .leader-card {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .leader-img {
+          width: 100%;
+          height: auto;
+          border-radius: 15px;
+          font-size: 3em;
+        }
+      }
 
-<script>
-const chakraNames = ["Root","Sacral","Solar","Heart","Throat","Third Eye","Crown"];
-const chakraColors = ["#ff0000","#ff7f00","#ffff00","#00ff00","#0000ff","#4b0082","#9400d3"];
-const houseLoop = [6,8];
+      /* --------- COSMIC THEMES --------- */
 
-const leaders = [
-  {name:"Elon Musk",birth:"1971-06-28",karma:92,chakraActiveIndex:0,currentHouseIndex:0},
-  {name:"Peter Thiel",birth:"1967-10-11",karma:87,chakraActiveIndex:1,currentHouseIndex:0},
-  {name:"Jeff Bezos",birth:"1964-01-12",karma:78,chakraActiveIndex:2,currentHouseIndex:0},
-  {name:"Mark Zuckerberg",birth:"1984-05-14",karma:89,chakraActiveIndex:3,currentHouseIndex:0},
-  {name:"Gavin Newsom",birth:"1967-10-10",karma:83,chakraActiveIndex:4,currentHouseIndex:0},
-  {name:"Donald Trump",birth:"1946-06-14",karma:85,chakraActiveIndex:5,currentHouseIndex:0},
-  {name:"Kim Jong Un",birth:"1984-01-08",karma:90,chakraActiveIndex:6,currentHouseIndex:0},
-  {name:"Vladimir Putin",birth:"1952-10-07",karma:75,chakraActiveIndex:0,currentHouseIndex:0},
-  {name:"Xi Jinping",birth:"1953-06-15",karma:88,chakraActiveIndex:1,currentHouseIndex:0},
-  {name:"Mohammed bin Salman",birth:"1985-08-31",karma:70,chakraActiveIndex:2,currentHouseIndex:0},
-  {name:"Hun Sen",birth:"1952-08-05",karma:88,chakraActiveIndex:3,currentHouseIndex:0},
-  {name:"Hun Manet",birth:"1977-10-20",karma:84,chakraActiveIndex:4,currentHouseIndex:0},
-  {name:"Vannda Mann",birth:"1997-01-22",karma:76,chakraActiveIndex:5,currentHouseIndex:0},
-  {name:"Laura Mam",birth:"1984-10-31",karma:71,chakraActiveIndex:6,currentHouseIndex:0},
-  {name:"Sam Altman",birth:"1985-04-22",karma:95,chakraActiveIndex:0,currentHouseIndex:0},
-  {name:"Alex Pham",birth:"1992-10-03",karma:95,chakraActiveIndex:1,currentHouseIndex:0},
-  {name:"Andrew Tevuth Mam",birth:"1988-01-01",karma:88,chakraActiveIndex:2,currentHouseIndex:0}
-];
+      /* Northern Lights background animation */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(270deg, #004d4d, #006666, #008080, #004d4d);
+        background-size: 600% 600%;
+        animation: auroraMove 15s ease-in-out infinite;
+        filter: brightness(0.7) contrast(1.3);
+        z-index: 0;
+        opacity: 0.45;
+      }
+      @keyframes auroraMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
 
-const leadersContainer = document.getElementById("leaders");
-const constellationSVG = document.getElementById("constellation");
+      /* Super Moon glowing orb */
+      #super-moon {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(
+          circle,
+          #fff7e6 30%,
+          #ffc36d 60%,
+          #ff9a00 100%
+        );
+        border-radius: 50%;
+        box-shadow: 0 0 40px 10px #ffbb66, 0 0 70px 20px #ffdd99 inset,
+          0 0 100px 40px #ffaa00;
+        z-index: 5;
+        animation: superMoonPulse 3s ease-in-out infinite;
+      }
+      @keyframes superMoonPulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
 
-// Build leader cards
-leaders.forEach(l=>{
-  const card=document.createElement("div");
-  card.className="leader-card";
+      /* Canvas container */
+      #constellation-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="super-moon" title="Super Moon"></div>
+    <canvas id="constellation-canvas"></canvas>
 
-  const img=document.createElement("img");
-  img.className="leader-img";
-  img.src=`https://ui-avatars.com/api/?name=${encodeURIComponent(l.name)}&background=330000&color=ffbbbb&size=128`;
-  img.alt=l.name;
-  card.appendChild(img);
+    <div class="container">
+      <h1>Karmic Cosmic Loop</h1>
 
-  const info=document.createElement("div");
-  info.className="info";
+      <div id="leaders"></div>
 
-  const nameDiv=document.createElement("div");
-  nameDiv.className="name";
-  nameDiv.textContent=l.name;
-  info.appendChild(nameDiv);
+      <h2>28 Nakshatras</h2>
+      <div class="nakshatra-list" id="nakshatra-list"></div>
+    </div>
 
-  const karmaLoop=document.createElement("div");
-  karmaLoop.className="karma-loop";
-  karmaLoop.textContent=`Karmic Score: ${l.karma}`;
-  info.appendChild(karmaLoop);
+    <script>
+      // Basic data
+      const chakraNames = [
+        "Root",
+        "Sacral",
+        "Solar",
+        "Heart",
+        "Throat",
+        "Third Eye",
+        "Crown",
+      ];
+      const chakraColors = [
+        "#ff0000",
+        "#ff7f00",
+        "#ffff00",
+        "#00ff00",
+        "#0000ff",
+        "#4b0082",
+        "#9400d3",
+      ];
+      const nakshatras = [
+        "Ashwini",
+        "Bharani",
+        "Krittika",
+        "Rohini",
+        "Mrigashira",
+        "Ardra",
+        "Punarvasu",
+        "Pushya",
+        "Ashlesha",
+        "Magha",
+        "Purva Phalguni",
+        "Uttara Phalguni",
+        "Hasta",
+        "Chitra",
+        "Swati",
+        "Vishakha",
+        "Anuradha",
+        "Jyeshtha",
+        "Mula",
+        "Purva Ashadha",
+        "Uttara Ashadha",
+        "Shravana",
+        "Dhanishta",
+        "Shatabhisha",
+        "Purva Bhadrapada",
+        "Uttara Bhadrapada",
+        "Revati",
+        "Abhijit",
+      ];
+      const negativeNakshatra = "Ardra";
+      const houseLoop = [6, 8];
 
-  const housesLoopDiv=document.createElement("div");
-  housesLoopDiv.className="houses-loop";
-  houseLoop.forEach((h,i)=>{
-    const houseDiv=document.createElement("div");
-    houseDiv.className="house";
-    houseDiv.textContent=`${h}th House`;
-    if(i===l.currentHouseIndex) houseDiv.classList.add("active");
-    housesLoopDiv.appendChild(houseDiv);
-  });
-  info.appendChild(housesLoopDiv);
+      // Leaders data with karma and birth info
+      const leaders = [
+        {
+          name: "Elon Musk",
+          karma: 92,
+          chakraActiveIndex: 2,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Peter Thiel",
+          karma: 87,
+          chakraActiveIndex: 3,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Jeff Bezos",
+          karma: 78,
+          chakraActiveIndex: 1,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Mark Zuckerberg",
+          karma: 89,
+          chakraActiveIndex: 4,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Gavin Newsom",
+          karma: 83,
+          chakraActiveIndex: 5,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Donald Trump",
+          karma: 85,
+          chakraActiveIndex: 0,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Kim Jong Un",
+          karma: 90,
+          chakraActiveIndex: 6,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Vladimir Putin",
+          karma: 75,
+          chakraActiveIndex: 1,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Xi Jinping",
+          karma: 88,
+          chakraActiveIndex: 3,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Mohammed bin Salman",
+          karma: 70,
+          chakraActiveIndex: 4,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Hun Sen",
+          karma: 88,
+          chakraActiveIndex: 2,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Hun Manet",
+          karma: 84,
+          chakraActiveIndex: 0,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Vannda Mann",
+          karma: 76,
+          chakraActiveIndex: 3,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Laura Mam",
+          karma: 71,
+          chakraActiveIndex: 1,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Sam Altman",
+          karma: 95,
+          chakraActiveIndex: 5,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Alex Pham",
+          karma: 95,
+          chakraActiveIndex: 4,
+          currentHouseIndex: 0,
+        },
+        {
+          name: "Andrew Tevuth Mam",
+          karma: 88,
+          chakraActiveIndex: 6,
+          currentHouseIndex: 0,
+        },
+      ];
 
-  const chakraMeter=document.createElement("div");
-  chakraMeter.className="chakra-meter";
-  chakraNames.forEach((ch,idx)=>{
-    const chDiv=document.createElement("div");
-    chDiv.className="chakra";
-    chDiv.dataset.name=ch;
-    chDiv.style.backgroundColor=chakraColors[idx];
-    if(idx===l.chakraActiveIndex) chDiv.classList.add("active");
-    chakraMeter.appendChild(chDiv);
-  });
-  info.appendChild(chakraMeter);
+      // Attach leaders to DOM with initials instead of images
+      const leadersContainer = document.getElementById("leaders");
+      const nakshatraListDiv = document.getElementById("nakshatra-list");
 
-  const karmaImpactContainer=document.createElement("div");
-  karmaImpactContainer.className="karma-impact-container";
-  const karmaImpactBar=document.createElement("div");
-  karmaImpactBar.className="karma-impact-bar";
-  karmaImpactBar.style.width=l.karma+"%";
-  karmaImpactContainer.appendChild(karmaImpactBar);
-  info.appendChild(karmaImpactContainer);
+      nakshatras.forEach((nak) => {
+        const span = document.createElement("span");
+        span.textContent = nak;
+        span.className = "nakshatra";
+        if (nak === negativeNakshatra) span.classList.add("negative");
+        nakshatraListDiv.appendChild(span);
+      });
 
-  const karmaImpactText=document.createElement("div");
-  karmaImpactText.className="karma-impact-text";
-  karmaImpactText.textContent=`Cosmic Loop Progress: ${l.karma}%`;
-  info.appendChild(karmaImpactText);
+      leaders.forEach((leader) => {
+        const card = document.createElement("div");
+        card.className = "leader-card";
 
-  l.houseEls=housesLoopDiv.querySelectorAll(".house");
-  l.chakraEls=chakraMeter.querySelectorAll(".chakra");
-  l.karmaBarEl=karmaImpactBar;
-  l.el=card;
+        const puppetStrings = document.createElement("div");
+        puppetStrings.className = "puppet-strings";
+        card.appendChild(puppetStrings);
 
-  leadersContainer.appendChild(card);
-});
+        const imgDiv = document.createElement("div");
+        imgDiv.className = "leader-img";
+        imgDiv.textContent = leader.name
+          .split(" ")
+          .map((n) => n[0])
+          .join("");
+        card.appendChild(imgDiv);
 
-// Cycle karma/chakras/houses
-function cycleLeaders(){
-  leaders.forEach(l=>{
-    l.chakraActiveIndex=(l.chakraActiveIndex+1)%chakraNames.length;
-    l.chakraEls.forEach((el,i)=>el.classList.toggle("active",i===l.chakraActiveIndex));
-    l.currentHouseIndex=(l.currentHouseIndex+1)%houseLoop.length;
-    l.houseEls.forEach((el,i)=>el.classList.toggle("active",i===l.currentHouseIndex));
-    l.karmaBarEl.style.transition='width 0.8s ease-in-out';
-    l.karmaBarEl.style.width=(l.karma-10)+"%";
-    setTimeout(()=>{l.karmaBarEl.style.width=l.karma+"%";},900);
-  });
-  drawConstellation();
-}
+        const info = document.createElement("div");
+        info.className = "info";
 
-// Draw constellation
-function drawConstellation(){
-  constellationSVG.innerHTML='<defs><linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#88ccff"><animate attributeName="stop-color" values="#88ccff;#ff88cc;#88ccff" dur="6s" repeatCount="indefinite"/></stop><stop offset="100%" stop-color="#ff88cc"><animate attributeName="stop-color" values="#ff88cc;#88ccff;#ff88cc" dur="6s" repeatCount="indefinite"/></stop></linearGradient></defs>';
-  const positions=leaders.map(l=>{
-    const rect=l.el.getBoundingClientRect();
-    const containerRect=leadersContainer.getBoundingClientRect();
-    return {x:rect.left+rect.width/2-containerRect.left, y:rect.top+rect.height/2-containerRect.top};
-  });
-  for(let i=0;i<positions.length-1;i++){
-    const line=document.createElementNS("http://www.w3.org/2000/svg","line");
-    line.classList.add("star-line");
-    line.setAttribute("x1",positions[i].x);
-    line.setAttribute("y1",positions[i].y);
-    line.setAttribute("x2",positions[i+1].x);
-    line.setAttribute("y2",positions[i+1].y);
-    constellationSVG.appendChild(line);
-  }
-  positions.forEach(pos=>{
-    const circle=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    circle.classList.add("star-point");
-    circle.setAttribute("cx",pos.x);
-    circle.setAttribute("cy",pos.y);
-    constellationSVG.appendChild(circle);
-  });
-}
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = leader.name;
+        info.appendChild(name);
 
-window.addEventListener('resize',drawConstellation);
-setInterval(cycleLeaders,3000);
-window.onload=drawConstellation;
-</script>
-</body>
+        const karmaLoop = document.createElement("div");
+        karmaLoop.className = "karma-loop";
+        karmaLoop.textContent = `Karma Score: ${leader.karma}`;
+        info.appendChild(karmaLoop);
+
+        const housesLoopDiv = document.createElement("div");
+        housesLoopDiv.className = "houses-loop";
+        houseLoop.forEach((houseNum, i) => {
+          const houseDiv = document.createElement("div");
+          houseDiv.className = "house";
+          houseDiv.textContent = `${houseNum}th House`;
+          if (i === leader.currentHouseIndex) {
+            houseDiv.classList.add("active");
+          }
+          housesLoopDiv.appendChild(houseDiv);
+        });
+        info.appendChild(housesLoopDiv);
+
+        const chakraMeter = document.createElement("div");
+        chakraMeter.className = "chakra-meter";
+        chakraNames.forEach((chakra, idx) => {
+          const chakraDiv = document.createElement("div");
+          chakraDiv.className = "chakra";
+          chakraDiv.dataset.name = chakra;
+          chakraDiv.style.backgroundColor = chakraColors[idx];
+          if (idx === leader.chakraActiveIndex) {
+            chakraDiv.classList.add("active");
+          }
+          chakraMeter.appendChild(chakraDiv);
+        });
+        info.appendChild(chakraMeter);
+
+        const karmaImpactContainer = document.createElement("div");
+        karmaImpactContainer.className = "karma-impact-container";
+        const karmaImpactBar = document.createElement("div");
+        karmaImpactBar.className = "karma-impact-bar";
+        karmaImpactBar.style.width = leader.karma + "%";
+        karmaImpactContainer.appendChild(karmaImpactBar);
+        info.appendChild(karmaImpactContainer);
+
+        const karmaImpactText = document.createElement("div");
+        karmaImpactText.className = "karma-impact-text";
+        karmaImpactText.textContent = `Karma Impact: ${leader.karma}%`;
+        info.appendChild(karmaImpactText);
+
+        card.appendChild(info);
+        leadersContainer.appendChild(card);
+
+        leader.houseEls = housesLoopDiv.querySelectorAll(".house");
+        leader.chakraEls = chakraMeter.querySelectorAll(".chakra");
+        leader.karmaBarEl = karmaImpactBar;
+      });
+
+      // Cycle animation for chakras and houses
+      function cycleLeaders() {
+        leaders.forEach((leader) => {
+          leader.chakraActiveIndex =
+            (leader.chakraActiveIndex + 1) % chakraNames.length;
+          leader.chakraEls.forEach((el, i) => {
+            el.classList.toggle("active", i === leader.chakraActiveIndex);
+          });
+
+          leader.currentHouseIndex =
+            (leader.currentHouseIndex + 1) % houseLoop.length;
+          leader.houseEls.forEach((el, i) => {
+            el.classList.toggle("active", i === leader.currentHouseIndex);
+          });
+
+          // Animate karma bar flicker
+          leader.karmaBarEl.style.transition = "width 0.8s ease-in-out";
+          leader.karmaBarEl.style.width = leader.karma - 10 + "%";
+          setTimeout(() => {
+            leader.karmaBarEl.style.width = leader.karma + "%";
+          }, 900);
+        });
+      }
+      setInterval(cycleLeaders, 3000);
+
+      /* ------- CONSTELLATION CANVAS ANIMATION -------- */
+
+      const canvas = document.getElementById("constellation-canvas");
+      const ctx = canvas.getContext("2d");
+      let width, height;
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      // Draco constellation points (rough approximate coords normalized)
+      const dracoPoints = [
+        { x: 0.3, y: 0.2 },
+        { x: 0.35, y: 0.3 },
+        { x: 0.4, y: 0.35 },
+        { x: 0.45, y: 0.3 },
+        { x: 0.5, y: 0.25 },
+        { x: 0.55, y: 0.3 },
+        { x: 0.6, y: 0.35 },
+        { x: 0.65, y: 0.4 },
+        { x: 0.7, y: 0.45 },
+        { x: 0.75, y: 0.5 },
+      ];
+      // Draco constellation lines by index pairs
+      const dracoLines = [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [3, 4],
+        [4, 5],
+        [5, 6],
+        [6, 7],
+        [7, 8],
+        [8, 9],
+      ];
+
+      // Simple star class
+      class Star {
+        constructor(x, y, radius, twinkleSpeed) {
+          this.x = x;
+          this.y = y;
+          this.radius = radius;
+          this.twinkleSpeed = twinkleSpeed;
+          this.twinklePhase = Math.random() * Math.PI * 2;
+        }
+        draw(ctx, time) {
+          const opacity =
+            0.5 + 0.5 * Math.sin(time * this.twinkleSpeed + this.twinklePhase);
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+          ctx.fillStyle = `rgba(255,255,255,${opacity.toFixed(2)})`;
+          ctx.shadowColor = "rgba(255,255,255,0.8)";
+          ctx.shadowBlur = 6;
+          ctx.fill();
+        }
+      }
+
+      // Create stars for Draco
+      let dracoStars = [];
+      dracoPoints.forEach((p) => {
+        dracoStars.push(
+          new Star(p.x * width, p.y * height, 3, 2 + Math.random())
+        );
+      });
+
+      function drawConstellation(time) {
+        ctx.clearRect(0, 0, width, height);
+
+        // Draw Draco constellation lines
+        ctx.strokeStyle = "rgba(255, 100, 100, 0.6)";
+        ctx.lineWidth = 2;
+        dracoLines.forEach(([a, b]) => {
+          ctx.beginPath();
+          ctx.moveTo(dracoStars[a].x, dracoStars[a].y);
+          ctx.lineTo(dracoStars[b].x, dracoStars[b].y);
+          ctx.stroke();
+        });
+
+        // Draw stars
+        dracoStars.forEach((star) => star.draw(ctx, time));
+
+        // Draw Angkor Wat - use a simple triangle shape near bottom right
+        ctx.beginPath();
+        ctx.moveTo(width * 0.75, height * 0.75);
+        ctx.lineTo(width * 0.8, height * 0.65);
+        ctx.lineTo(width * 0.85, height * 0.75);
+        ctx.closePath();
+        ctx.strokeStyle = "rgba(255, 200, 150, 0.5)";
+        ctx.lineWidth = 3;
+        ctx.shadowColor = "rgba(255, 180, 120, 0.9)";
+        ctx.shadowBlur = 15;
+        ctx.stroke();
+
+        // Draw Northern Lights stripes (soft glow bands)
+        for (let i = 0; i < 3; i++) {
+          const grad = ctx.createLinearGradient(
+            0,
+            height * 0.2 * i + ((time * 20) % height),
+            width,
+            height * 0.2 * i + 100 + ((time * 20) % height)
+          );
+          grad.addColorStop(0, `rgba(0,${100 + i * 50},100,0.1)`);
+          grad.addColorStop(1, `rgba(0,${255 - i * 100},255,0.05)`);
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, height * 0.2 * i + ((time * 20) % height), width, 60);
+        }
+      }
+
+      // Animate the canvas
+      function animate(time = 0) {
+        drawConstellation(time / 1000);
+        requestAnimationFrame(animate);
+      }
+      animate();
+    </script>
+  </body>
 </html>
