@@ -1,308 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Angkor Wat - Tarot & Chakras</title>
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: #0b0c1a;
-    color: #eee;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    overflow-x: hidden;
-    position: relative;
-    min-height: 100vh;
-  }
-  h1 { text-align: center; color: #ff5555; text-shadow: 0 0 10px #ff5555; }
-  .container { max-width: 1000px; margin: 0 auto; padding: 30px 20px 80px 20px; position: relative; z-index: 10; }
-  .leader-card {
-    background: rgba(26,26,46,0.8);
-    border-radius: 15px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 0 30px #aa2244 inset;
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-    position: relative;
-    color: #ffbbbb;
-  }
-  .leader-img {
-    border-radius: 50%;
-    width: 100px; height: 100px;
-    background: #330000;
-    box-shadow: 0 0 15px #ff5577;
-    border: 3px solid #ff5577;
-    font-weight: 700;
-    font-size: 2.5em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #ffbbbb;
-    user-select: none;
-  }
-  .info { flex: 1; }
-  .name { font-size: 1.8em; font-weight: 700; color: #ff8899; margin-bottom: 6px; letter-spacing: 1.2px; }
-  .karma-loop { font-style: italic; color: #bbb; margin-bottom: 8px; }
-  .houses-loop { display: flex; gap: 15px; margin-bottom: 10px; }
-  .house {
-    flex: 1;
-    background: #330000;
-    padding: 12px;
-    border-radius: 12px;
-    box-shadow: 0 0 14px #bb4444;
-    text-align: center;
-    font-weight: 600;
-    color: #ffbbbb;
-    transition: background 0.4s ease, box-shadow 0.4s ease;
-    user-select: none;
-  }
-  .house.active {
-    background: #bb4444;
-    color: #fff;
-    box-shadow: 0 0 24px #ff6666;
-    font-weight: 700;
-  }
-  .chakra-meter { display: flex; justify-content: space-between; max-width: 280px; margin-top: 10px; user-select: none; }
-  .chakra {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: #333355; box-shadow: 0 0 8px #222266 inset;
-    position: relative; transition: all 0.4s ease; cursor: default;
-  }
-  .chakra.active { background: #ff6699 !important; }
-  .chakra::after {
-    content: attr(data-name);
-    position: absolute; bottom: -18px; font-size: 9px;
-    color: #ff99bbaa; width: 100%; text-align: center; font-weight: 600;
-  }
-  .karma-impact-container {
-    margin-top: 10px; background: #440000; border-radius: 10px; width: 100%; height: 18px;
-    box-shadow: inset 0 0 8px #bb4444;
-  }
-  .karma-impact-bar {
-    height: 100%; border-radius: 10px;
-    background: linear-gradient(90deg, #ff4444, #ff9999);
-    box-shadow: 0 0 10px #ff5555;
-    width: 0; transition: width 1.2s ease;
-  }
-  .karma-impact-text {
-    margin-top: 4px; font-size: 0.9em; color: #ffbbbb; font-weight: 700; letter-spacing: 0.8px;
-  }
-  .tarot-container { display: flex; gap: 8px; margin-top: 10px; overflow-x:auto; }
-  .tarot-card {
-    width: 60px; height: 90px;
-    border-radius: 6px;
-    background: #222233; color: #ffccaa;
-    display:flex; justify-content:center; align-items:center;
-    font-size: 0.8em; font-weight:700; box-shadow: 0 0 6px #aa5555;
-    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
-    user-select: none;
-    flex-shrink:0;
-  }
-  .tarot-indicator {
-    margin-top: 4px; font-size: 0.9em; font-weight:700; color:#ff8888;
-  }
-</style>
-</head>
-<body>
-<div id="super-moon" title="Super Moon"></div>
-<div class="container">
-  <h1>Angkor Wat - Tarot & Chakras</h1>
-  <div id="leaders"></div>
-</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Angkor Wat - Tarot & Chakras</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #0b0c1a;
+        color: #eee;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        overflow-x: hidden;
+      }
+      h1 {
+        text-align: center;
+        color: #ff5555;
+        text-shadow: 0 0 10px #ff5555;
+      }
+      .container {
+        max-width: 1000px;
+        margin: auto;
+        padding: 30px 20px;
+      }
 
-<script>
-/* UPDATED PEOPLE LIST */
-const people = [
-  { name:"Elon Musk", karma:92 },
-  { name:"Peter Thiel", karma:87 },
-  { name:"Jeff Bezos", karma:78 },
-  { name:"Mark Zuckerberg", karma:89 },
-  { name:"Gavin Newsom", karma:83 },
-  { name:"Donald Trump", karma:85 },
-  { name:"Kim Jong Un", karma:90 },
-  { name:"Vladimir Putin", karma:75 },
-  { name:"Xi Jinping", karma:88 },
-  { name:"Mohammed bin Salman", karma:70 },
-  { name:"Hun Sen", karma:88 },
-  { name:"Hun Manet", karma:84 },
-  { name:"Vannda Mann", karma:76 },
-  { name:"Laura Mam", karma:71 },
-  { name:"Sam Altman", karma:95 },
-  { name:"Alex Pham", karma:95 },
-  { name:"Andrew Tevuth Mam", karma:88 },
+      .leader-card {
+        background: rgba(26, 26, 46, 0.9);
+        border-radius: 15px;
+        padding: 18px;
+        margin: 18px 0;
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        position: relative;
+        transition: box-shadow 0.6s ease;
+      }
 
-  /* Preap Sovath */
-  { 
-    name:"Preap Sovath",
-    karma:88,
-  },
+      .leader-img {
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        background: #330000;
+        border: 3px solid #ff5577;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.4em;
+        color: #ffbbbb;
+      }
 
-  /* Ton Chanseyma */
-  {
-    name:"Ton Chanseyma",
-    karma:82,
-`
-  },
+      .info {
+        flex: 1;
+      }
+      .name {
+        font-size: 1.8em;
+        font-weight: 700;
+        color: #ff8899;
+        margin-bottom: 4px;
+      }
+      .karma-loop {
+        font-style: italic;
+        color: #bbb;
+        margin-bottom: 6px;
+      }
 
-  /* Thida Mam */
-  {
-    name:"Thida Mam",
-    karma:86,
-  }
-];
+      .bio {
+        margin-top: 8px;
+        color: #dd9999;
+        font-size: 0.92em;
+        white-space: pre-line;
+      }
 
-const chakraNames=["Root","Sacral","Solar","Heart","Throat","Third Eye","Crown"];
-const chakraColors=["#ff0000","#ff7f00","#ffff00","#00ff00","#0000ff","#4b0082","#9400d3"];
-const houseLoop=[6,8];
-const tarotDeck=["The Fool","The Magician","The High Priestess","The Empress","The Emperor",
-                 "The Hierophant","The Lovers","The Chariot","Strength","The Hermit",
-                 "Wheel of Fortune","Justice","The Hanged Man","Death","Temperance",
-                 "The Devil","The Tower","The Star","The Moon","The Sun","Judgement","The World"];
+      .chakra-meter {
+        display: flex;
+        gap: 6px;
+        margin: 10px 0;
+      }
+      .chakra {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #333355;
+        position: relative;
+      }
+      .chakra.active {
+        background: #ff6699;
+        box-shadow: 0 0 8px #ff77aa;
+      }
+      .chakra::after {
+        content: attr(data-name);
+        font-size: 9px;
+        position: absolute;
+        bottom: -18px;
+        width: 100%;
+        text-align: center;
+        color: #ff99bbaa;
+      }
 
-const leadersContainer=document.getElementById("leaders");
-const leaderCards=[];
+      .tarot-container {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        margin-top: 8px;
+      }
+      .tarot-card {
+        width: 60px;
+        height: 90px;
+        background: #222233;
+        color: #ffccaa;
+        border-radius: 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 0.8em;
+        font-weight: bold;
+        padding: 4px;
+      }
+      .tarot-indicator {
+        margin-top: 6px;
+        font-size: 0.9em;
+        color: #ff8888;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Angkor Wat - Tarot & Chakras</h1>
+      <div id="leaders"></div>
+    </div>
 
-people.forEach(ld=>{
-  const card=document.createElement("div"); 
-  card.classList.add("leader-card");
+    <script>
+      /* PEOPLE LIST */
+      const people = [
+        { name: "Elon Musk", karma: 92 },
+        { name: "Peter Thiel", karma: 87 },
+        { name: "Jeff Bezos", karma: 78 },
+        { name: "Mark Zuckerberg", karma: 89 },
+        { name: "Gavin Newsom", karma: 83 },
+        { name: "Donald Trump", karma: 85 },
+        { name: "Kim Jong Un", karma: 90 },
+        { name: "Vladimir Putin", karma: 75 },
+        { name: "Xi Jinping", karma: 88 },
+        { name: "Mohammed bin Salman", karma: 70 },
+        { name: "Hun Sen", karma: 88 },
+        { name: "Hun Manet", karma: 84 },
+        { name: "Vannda Mann", karma: 76 },
+        { name: "Laura Mam", karma: 71 },
 
-  const img=document.createElement("div"); 
-  img.classList.add("leader-img");
-  img.textContent=ld.name.split(" ").map(n=>n[0]).join(""); 
-  card.appendChild(img);
+        { name: "Sam Altman", karma: 95 },
 
-  const info=document.createElement("div"); 
-  info.classList.add("info");
+        /* ⭐ Balanced placement */
+        {
+          name: "Kris Newton",
+          karma: 89,
+        },
 
-  const nameEl=document.createElement("div"); 
-  nameEl.classList.add("name"); 
-  nameEl.textContent=ld.name; 
-  info.appendChild(nameEl);
+        { name: "Alex Pham", karma: 95 },
+        { name: "Andrew Tevuth Mam", karma: 88 },
 
-  const karmaLoop=document.createElement("div"); 
-  karmaLoop.classList.add("karma-loop"); 
-  karmaLoop.textContent=`Karma: ${ld.karma}`; 
-  info.appendChild(karmaLoop);
+        {
+          name: "Preap Sovath",
+          karma: 88,
+        },
 
-  const housesDiv=document.createElement("div"); 
-  housesDiv.classList.add("houses-loop"); 
-  const houseEls=[];
-  houseLoop.forEach((h,i)=>{
-    const hh=document.createElement("div"); 
-    hh.classList.add("house"); 
-    if(i===0) hh.classList.add("active"); 
-    hh.textContent=`House ${h}`; 
-    housesDiv.appendChild(hh); 
-    houseEls.push(hh);
-  });
-  info.appendChild(housesDiv);
+        {
+          name: "Ton Chanseyma",
+          karma: 82,
+        },
 
-  const chakraMeter=document.createElement("div"); 
-  chakraMeter.classList.add("chakra-meter"); 
-  const chakraEls=[];
-  chakraNames.forEach((c,i)=>{
-    const ch=document.createElement("div"); 
-    ch.classList.add("chakra"); 
-    ch.style.backgroundColor=chakraColors[i]; 
-    ch.setAttribute("data-name",c); 
-    if(i===0) ch.classList.add("active"); 
-    chakraMeter.appendChild(ch); 
-    chakraEls.push(ch);
-  });
-  info.appendChild(chakraMeter);
+        {
+          name: "Tep Boprek",
+          karma: 84,
+        },
 
-  const karmaImpactContainer=document.createElement("div"); 
-  karmaImpactContainer.classList.add("karma-impact-container");
-  const karmaBar=document.createElement("div"); 
-  karmaBar.classList.add("karma-impact-bar"); 
-  karmaBar.style.width=`${ld.karma}%`;
-  karmaImpactContainer.appendChild(karmaBar); 
-  info.appendChild(karmaImpactContainer);
+        {
+          name: "Thida Mam",
+          karma: 86,
+        },
+      ];
 
-  const karmaText=document.createElement("div"); 
-  karmaText.classList.add("karma-impact-text"); 
-  karmaText.textContent=`Impact: ${ld.karma}%`; 
-  info.appendChild(karmaText);
+      const chakraNames = [
+        "Root",
+        "Sacral",
+        "Solar",
+        "Heart",
+        "Throat",
+        "Third Eye",
+        "Crown",
+      ];
+      const chakraColors = [
+        "#ff0000",
+        "#ff7f00",
+        "#ffff00",
+        "#00ff00",
+        "#0000ff",
+        "#4b0082",
+        "#9400d3",
+      ];
+      const tarotDeck = [
+        "The Fool",
+        "The Magician",
+        "The High Priestess",
+        "The Empress",
+        "The Emperor",
+        "Strength",
+        "The Hermit",
+        "Wheel of Fortune",
+        "Justice",
+        "Temperance",
+        "The Devil",
+        "The Tower",
+        "The Star",
+        "The Moon",
+        "The Sun",
+        "Judgement",
+        "The World",
+      ];
 
-  /* BIO SECTION */
-  if (ld.info) {
-    const bioEl=document.createElement("div");
-    bioEl.style.marginTop="10px";
-    bioEl.style.color="#dd9999";
-    bioEl.style.whiteSpace="pre-line";
-    bioEl.style.fontSize="0.9em";
-    bioEl.textContent=ld.info;
-    info.appendChild(bioEl);
-  }
+      const leadersContainer = document.getElementById("leaders");
+      const leaderCards = [];
 
-  const tarotContainer=document.createElement("div"); 
-  tarotContainer.classList.add("tarot-container"); 
-  const tarotEls=[];
-  for(let t=0;t<5;t++){
-    const cardEl=document.createElement("div"); 
-    cardEl.classList.add("tarot-card");
-    cardEl.textContent=tarotDeck[Math.floor(Math.random()*tarotDeck.length)];
-    tarotContainer.appendChild(cardEl); 
-    tarotEls.push(cardEl);
-  }
-  info.appendChild(tarotContainer);
+      people.forEach((ld) => {
+        const card = document.createElement("div");
+        card.classList.add("leader-card");
 
-  const tarotIndicator=document.createElement("div"); 
-  tarotIndicator.classList.add("tarot-indicator"); 
-  tarotIndicator.textContent=`Active Tarot: ${tarotEls[0].textContent}`; 
-  info.appendChild(tarotIndicator);
+        const img = document.createElement("div");
+        img.classList.add("leader-img");
+        img.textContent = ld.name
+          .split(" ")
+          .map((n) => n[0])
+          .join("");
+        card.appendChild(img);
 
-  card.appendChild(info);
-  leadersContainer.appendChild(card);
+        const info = document.createElement("div");
+        info.classList.add("info");
 
-  leaderCards.push({houseEls, chakraEls, tarotEls, tarotIndicator});
-});
+        const nameEl = document.createElement("div");
+        nameEl.classList.add("name");
+        nameEl.textContent = ld.name;
+        info.appendChild(nameEl);
 
-/* Animations */
-function pulseElement(el, minScale=1, maxScale=1.25, duration=1500, delay=0){
-  let growing=true;
-  setTimeout(()=>{
-    setInterval(()=>{
-      const scale=growing?maxScale:minScale;
-      el.style.transform=`scale(${scale})`;
-      el.style.boxShadow=growing
-        ?"0 0 18px 6px #ff8888, 0 0 30px 10px #ff4444 inset"
-        :"0 0 12px 3px #ff5555, 0 0 20px 5px #aa3333 inset";
-      growing=!growing;
-    },duration);
-  },delay);
-}
+        const karmaLoop = document.createElement("div");
+        karmaLoop.classList.add("karma-loop");
+        karmaLoop.textContent = `Karma: ${ld.karma}`;
+        info.appendChild(karmaLoop);
 
-leaderCards.forEach((lc,i)=>{
-  lc.chakraEls.forEach((ch,idx)=>pulseElement(ch,1,1.3,1200+Math.random()*400,idx*200));
-  lc.tarotEls.forEach((tc,idx)=>pulseElement(tc,1,1.25,1500+Math.random()*500,idx*300));
-});
+        if (ld.info) {
+          const bio = document.createElement("div");
+          bio.classList.add("bio");
+          bio.textContent = ld.info;
+          info.appendChild(bio);
+        }
 
-setInterval(()=>{
-  leaderCards.forEach(lc=>{
-    const activeHouse=lc.houseEls.find(h=>h.classList.contains("active"));
-    let idx=lc.houseEls.indexOf(activeHouse); 
-    activeHouse.classList.remove("active");
-    idx=(idx+1)%lc.houseEls.length; 
-    lc.houseEls[idx].classList.add("active");
+        const chakraMeter = document.createElement("div");
+        chakraMeter.classList.add("chakra-meter");
+        chakraNames.forEach((c, i) => {
+          const ch = document.createElement("div");
+          ch.classList.add("chakra");
+          ch.style.backgroundColor = chakraColors[i];
+          ch.setAttribute("data-name", c);
+          chakraMeter.appendChild(ch);
+        });
+        info.appendChild(chakraMeter);
 
-    const activeChakra=lc.chakraEls.find(c=>c.classList.contains("active"));
-    let cidx=lc.chakraEls.indexOf(activeChakra); 
-    activeChakra.classList.remove("active");
-    cidx=(cidx+1)%lc.chakraEls.length; 
-    lc.chakraEls[cidx].classList.add("active");
+        const tarotContainer = document.createElement("div");
+        tarotContainer.classList.add("tarot-container");
+        const tarotEls = [];
+        for (let t = 0; t < 5; t++) {
+          const tcard = document.createElement("div");
+          tcard.classList.add("tarot-card");
+          tcard.textContent =
+            tarotDeck[Math.floor(Math.random() * tarotDeck.length)];
+          tarotContainer.appendChild(tcard);
+          tarotEls.push(tcard);
+        }
+        info.appendChild(tarotContainer);
 
-    const activeTarot=lc.tarotEls.find(t=>t.classList.contains("active"));
-    let tidx=lc.tarotEls.indexOf(activeTarot);
-    if(activeTarot) activeTarot.classList.remove("active");
-    tidx=(tidx+1)%lc.tarotEls.length; 
-    lc.tarotEls[tidx].classList.add("active");
-    lc.tarotIndicator.textContent=`Active Tarot: ${lc.tarotEls[tidx].textContent}`;
-  });
-},2000);
-</script>
-</body>
+        const tarotIndicator = document.createElement("div");
+        tarotIndicator.classList.add("tarot-indicator");
+        tarotIndicator.textContent = `Active Tarot: ${tarotEls[0].textContent}`;
+        info.appendChild(tarotIndicator);
+
+        card.appendChild(info);
+        leadersContainer.appendChild(card);
+
+        leaderCards.push({ card, tarotEls, tarotIndicator });
+      });
+
+      /* ⭐ Glowing borders based on tarot resonance */
+      function updateGlow(cardEl, text) {
+        const intensity = Math.min(40 + text.length * 2, 120);
+        cardEl.style.boxShadow = `0 0 ${intensity}px ${
+          intensity / 3
+        }px rgba(255,100,150,0.6)`;
+      }
+
+      /* Tarot cycling */
+      setInterval(() => {
+        leaderCards.forEach((lc) => {
+          const first = lc.tarotEls.shift();
+          lc.tarotEls.push(first);
+          lc.tarotIndicator.textContent = `Active Tarot: ${lc.tarotEls[0].textContent}`;
+          updateGlow(lc.card, lc.tarotEls[0].textContent);
+        });
+      }, 2600);
+    </script>
+  </body>
 </html>
