@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Angkor Wat Cosmic & Karmic Dashboard</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        background: #0b0c1a;
+        color: #fff;
+        overflow: hidden;
+      }
+      #canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+      .dashboard {
+        display: flex;
+        flex-wrap: wrap;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        z-index: 10;
+        overflow: auto;
+      }
+      .section {
+        flex: 1 1 320px;
+        margin: 10px;
+        background: rgba(20, 20, 40, 0.85);
+        border-radius: 8px;
+        padding: 10px;
+        max-height: 45%;
+        overflow: auto;
+      }
+      .section h3 {
+        margin: 5px 0;
+        font-size: 16px;
+        text-align: center;
+      }
+      .active-sign {
+        color: #ffcc00;
+        font-weight: bold;
+        display: inline-block;
+        margin: 2px;
+      }
+      .element-cell {
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        text-align: center;
+        line-height: 22px;
+        margin: 1px;
+        font-size: 10px;
+        border-radius: 3px;
+        color: #000;
+      }
+      .tao-meter,
+      .vedic-meter,
+      .buddha-meter {
+        height: 10px;
+        background: #444;
+        border-radius: 5px;
+        margin: 2px 0;
+        position: relative;
+      }
+      .tao-meter-fill,
+      .vedic-meter-fill,
+      .buddha-meter-fill {
+        height: 100%;
+        width: 0;
+        border-radius: 5px;
+        background: #0ff;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+
+    <div class="dashboard">
+      <div class="section">
+        <h3>Karmic Energy Flow</h3>
+        <div>Total People: <span id="totalPeople">0</span></div>
+        <div>Absorber Karma: <span id="absorberKarma">0</span></div>
+        <div>Tao Balance: <span id="taoBalance">0</span></div>
+      </div>
+
+      <div class="section">
+        <h3>Western Zodiac</h3>
+        <div id="westernZodiac"></div>
+      </div>
+
+      <div class="section">
+        <h3>Chinese Zodiac</h3>
+        <div id="chineseZodiac"></div>
+      </div>
+
+      <div class="section">
+        <h3>Vedic Astrology (12 Houses)</h3>
+        <div id="vedicHouses"></div>
+      </div>
+
+      <div class="section">
+        <h3>Nakshatras (28)</h3>
+        <div id="nakshatras"></div>
+      </div>
+
+      <div class="section">
+        <h3>Taoism Elements</h3>
+        <div id="taoism"></div>
+      </div>
+
+      <div class="section">
+        <h3>Buddhism Divine Energy</h3>
+        <div class="buddha-meter">
+          <div class="buddha-meter-fill" id="buddhaEnergy"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Science Periodic Table</h3>
+        <div id="scienceElements"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+    <script>
+      // Canvas setup
+      const canvas = document.getElementById("canvas"),
+        ctx = canvas.getContext("2d");
+      let width = (canvas.width = window.innerWidth),
+        height = (canvas.height = window.innerHeight);
+      window.addEventListener("resize", () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      // Cosmic & karmic variables
+      let cosmicIntensity = 0.5;
+      let absorber = { x: width / 2, y: height / 2, karma: 0 };
+      let taoBalance = 0;
+
+      // People for karmic flow
+      const people = [
+        { name: "Elon Musk", karma: 92, aura: "#4A90E2" },
+        { name: "Peter Thiel", karma: 87, aura: "#FFD700" },
+        { name: "Jeff Bezos", karma: 78, aura: "#778899" },
+        { name: "Mark Zuckerberg", karma: 89, aura: "#FF4500" },
+        { name: "Gavin Newsom", karma: 83, aura: "#FF6347" },
+        { name: "Donald Trump", karma: 85, aura: "#4682B4" },
+        { name: "Kim Jong Un", karma: 90, aura: "#778899" },
+        { name: "Vladimir Putin", karma: 75, aura: "#87CEEB" },
+        { name: "Xi Jinping", karma: 88, aura: "#FF69B4" },
+        { name: "Mohammed bin Salman", karma: 70, aura: "#FF6347" },
+        { name: "Hun Sen", karma: 88, aura: "#6A5ACD" },
+        { name: "Hun Manet", karma: 84, aura: "#FF8C00" },
+        { name: "Laura Mam", karma: 71, aura: "#483D8B" },
+        { name: "Sam Altman", karma: 95, aura: "#FF4500" },
+        { name: "Alex Pham", karma: 95, aura: "#87CEEB" },
+        { name: "Andrew Tevuth Mam", karma: 88, aura: "#00CED1" },
+        { name: "Ton Chanseyma", karma: 80, aura: "#FF69B4" },
+        { name: "Tep Boprek", karma: 82, aura: "#FF77AA" },
+        { name: "Thida Mam", karma: 79, aura: "#88CCFF" },
+        { name: "Preap Sovath", karma: 85, aura: "#FFAA33" },
+        { name: "Kris Newton", karma: 86, aura: "#AA88FF" },
+      ];
+
+      // Streams from people to absorber
+      const streams = people.map((p) => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        target: absorber,
+        aura: p.aura,
+        speed: 0.01 + Math.random() * 0.02,
+      }));
+
+      // Tarot cards orbiting absorber
+      const tarotCards = [];
+      for (let i = 0; i < 22; i++) {
+        tarotCards.push({
+          angle: Math.random() * Math.PI * 2,
+          radius: 100 + Math.random() * 100,
+          color: `hsl(${Math.random() * 360},70%,60%)`,
+          speed: 0.002 + Math.random() * 0.003,
+        });
+      }
+
+      // Three.js Angkor Wat placeholder
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true });
+      renderer.setSize(width, height);
+      renderer.domElement.style.position = "absolute";
+      renderer.domElement.style.top = "0";
+      renderer.domElement.style.left = "0";
+      document.body.appendChild(renderer.domElement);
+      const geometry = new THREE.ConeGeometry(1, 2, 4);
+      const material = new THREE.MeshStandardMaterial({
+        color: 0xffcc99,
+        wireframe: false,
+      });
+      const guardian = new THREE.Mesh(geometry, material);
+      scene.add(guardian);
+      camera.position.z = 5;
+      const light = new THREE.PointLight(0xffffff, 1, 100);
+      light.position.set(5, 5, 5);
+      scene.add(light);
+
+      // Zodiac & astrology setup
+      const westernSigns = [
+        "Aries",
+        "Taurus",
+        "Gemini",
+        "Cancer",
+        "Leo",
+        "Virgo",
+        "Libra",
+        "Scorpio",
+        "Sagittarius",
+        "Capricorn",
+        "Aquarius",
+        "Pisces",
+      ];
+      const chineseSigns = [
+        "Rat",
+        "Ox",
+        "Tiger",
+        "Rabbit",
+        "Dragon",
+        "Snake",
+        "Horse",
+        "Goat",
+        "Monkey",
+        "Rooster",
+        "Dog",
+        "Pig",
+      ];
+      const nakshatras = [
+        "Ashwini",
+        "Bharani",
+        "Krittika",
+        "Rohini",
+        "Mrigashirsha",
+        "Ardra",
+        "Punarvasu",
+        "Pushya",
+        "Ashlesha",
+        "Magha",
+        "Purva Phalguni",
+        "Uttara Phalguni",
+        "Hasta",
+        "Chitra",
+        "Swati",
+        "Vishakha",
+        "Anuradha",
+        "Jyeshtha",
+        "Mula",
+        "Purva Ashadha",
+        "Uttara Ashadha",
+        "Shravana",
+        "Dhanishta",
+        "Shatabhisha",
+        "Purva Bhadrapada",
+        "Uttara Bhadrapada",
+        "Revati",
+      ];
+      const taoismElements = ["Wood", "Fire", "Earth", "Metal", "Water"];
+      const scienceList = [
+        "H",
+        "He",
+        "Li",
+        "Be",
+        "B",
+        "C",
+        "N",
+        "O",
+        "F",
+        "Ne",
+        "Na",
+        "Mg",
+        "Al",
+        "Si",
+        "P",
+        "S",
+        "Cl",
+        "Ar",
+        "K",
+        "Ca",
+      ];
+
+      // DOM containers
+      const westernDiv = document.getElementById("westernZodiac");
+      const chineseDiv = document.getElementById("chineseZodiac");
+      const nakshatraDiv = document.getElementById("nakshatras");
+      const taoDiv = document.getElementById("taoism");
+      const vedicHousesDiv = document.getElementById("vedicHouses");
+      const scienceDiv = document.getElementById("scienceElements");
+      const buddhaFill = document.getElementById("buddhaEnergy");
+      const totalPeopleSpan = document.getElementById("totalPeople");
+      const absorberKarmaSpan = document.getElementById("absorberKarma");
+      const taoBalanceSpan = document.getElementById("taoBalance");
+
+      // Initialize UI
+      westernSigns.forEach((s) => {
+        const span = document.createElement("span");
+        span.className = "active-sign";
+        span.textContent = s;
+        westernDiv.appendChild(span);
+      });
+      chineseSigns.forEach((s) => {
+        const span = document.createElement("span");
+        span.className = "active-sign";
+        span.textContent = s;
+        chineseDiv.appendChild(span);
+      });
+      nakshatras.forEach((n) => {
+        const span = document.createElement("span");
+        span.className = "active-sign";
+        span.textContent = n;
+        nakshatraDiv.appendChild(span);
+      });
+      taoismElements.forEach((t) => {
+        const container = document.createElement("div");
+        container.className = "tao-meter";
+        const fill = document.createElement("div");
+        fill.className = "tao-meter-fill";
+        fill.id = `tao-${t}`;
+        container.appendChild(fill);
+        taoDiv.appendChild(container);
+      });
+      for (let i = 1; i <= 12; i++) {
+        const meter = document.createElement("div");
+        meter.className = "vedic-meter";
+        const fill = document.createElement("div");
+        fill.className = "vedic-meter-fill";
+        fill.id = `house-${i}`;
+        meter.appendChild(fill);
+        vedicHousesDiv.appendChild(meter);
+      }
+      scienceList.forEach((el) => {
+        const div = document.createElement("div");
+        div.className = "element-cell";
+        div.id = `el-${el}`;
+        div.textContent = el;
+        scienceDiv.appendChild(div);
+      });
+
+      // Data update simulation
+      function updateData() {
+        totalPeopleSpan.textContent = people.length;
+        people.forEach((p) => {
+          let flow = (p.karma / 100) * 2;
+          absorber.karma += flow * 0.05;
+          taoBalance += flow * 0.01;
+        });
+        absorber.karma = Math.min(absorber.karma, 100);
+        taoBalance = Math.min(taoBalance, 100);
+        absorberKarmaSpan.textContent = absorber.karma.toFixed(1);
+        taoBalanceSpan.textContent = taoBalance.toFixed(1);
+
+        const wz = Math.floor(Math.random() * 12);
+        westernDiv
+          .querySelectorAll(".active-sign")
+          .forEach((el, i) => (el.style.color = i === wz ? "#ffcc00" : "#888"));
+        const cz = Math.floor(Math.random() * 12);
+        chineseDiv
+          .querySelectorAll(".active-sign")
+          .forEach((el, i) => (el.style.color = i === cz ? "#ffcc00" : "#888"));
+        const nk = Math.floor(Math.random() * 28);
+        nakshatraDiv
+          .querySelectorAll(".active-sign")
+          .forEach((el, i) => (el.style.color = i === nk ? "#ffcc00" : "#888"));
+        taoismElements.forEach((t) => {
+          const val = Math.random() * 100;
+          document.getElementById(`tao-${t}`).style.width = val + "%";
+          document.getElementById(`tao-${t}`).style.background =
+            t == "Fire"
+              ? "#ff3300"
+              : t == "Water"
+              ? "#33ccff"
+              : t == "Wood"
+              ? "#33ff33"
+              : t == "Metal"
+              ? "#cccccc"
+              : "#ffcc00";
+        });
+        for (let i = 1; i <= 12; i++) {
+          document.getElementById(`house-${i}`).style.width =
+            Math.random() * 100 + "%";
+          document.getElementById(`house-${i}`).style.background = "#ff66cc";
+        }
+        buddhaFill.style.width = 50 + 50 * Math.sin(Date.now() * 0.001) + "%";
+        scienceList.forEach((el) => {
+          const val = Math.random() * 100;
+          const color = `hsl(${val * 1.2},70%,60%)`;
+          document.getElementById(`el-${el}`).style.background = color;
+        });
+      }
+
+      // Draw canvas overlays & karma streams
+      function drawCanvas() {
+        ctx.clearRect(0, 0, width, height);
+        // Aurora
+        for (let i = 0; i < 4; i++) {
+          ctx.beginPath();
+          for (let x = 0; x < width; x += 10) {
+            let y = Math.sin(x * 0.01 + Date.now() * 0.002 + i) * 60 + 120 * i;
+            ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = `rgba(${80 + 120 * i},${100 + 80 * i},${180},0.25)`;
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+        // Supermoon
+        let pulse = 1 + 0.2 * Math.sin(Date.now() * 0.002);
+        let r = 50 * pulse;
+        let grad = ctx.createRadialGradient(
+          width * 0.85,
+          height * 0.25,
+          r * 0.1,
+          width * 0.85,
+          height * 0.25,
+          r
+        );
+        grad.addColorStop(0, "rgba(255,255,255,0.9)");
+        grad.addColorStop(1, "rgba(255,220,150,0.2)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(width * 0.85, height * 0.25, r, 0, Math.PI * 2);
+        ctx.fill();
+        // Karma streams
+        streams.forEach((s) => {
+          s.x += (s.target.x - s.x) * s.speed;
+          s.y += (s.target.y - s.y) * s.speed;
+          ctx.beginPath();
+          ctx.moveTo(s.x, s.y);
+          ctx.lineTo(s.target.x, s.target.y);
+          ctx.strokeStyle = s.aura.replace(")", ",0.3)").replace("rgb", "rgba");
+          ctx.lineWidth = 2 + 2 * Math.sin(Date.now() * 0.005);
+          ctx.stroke();
+        });
+        // Absorber
+        ctx.beginPath();
+        ctx.arc(
+          absorber.x,
+          absorber.y,
+          50 + Math.sin(Date.now() * 0.003) * 10,
+          0,
+          Math.PI * 2
+        );
+        ctx.fillStyle = `rgba(255,200,200,0.6)`;
+        ctx.fill();
+        // Tarot cards
+        tarotCards.forEach((card) => {
+          card.angle += card.speed * (0.5 + cosmicIntensity);
+          let x = absorber.x + Math.cos(card.angle) * card.radius;
+          let y = absorber.y + Math.sin(card.angle) * card.radius;
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.rotate(card.angle * 2);
+          ctx.fillStyle = card.color;
+          ctx.fillRect(-10, -15, 20, 30);
+          ctx.restore();
+        });
+      }
+
+      // Three.js update
+      function updateThree() {
+        guardian.rotation.y += 0.002 + 0.002 * Math.cos(cosmicIntensity);
+        light.intensity = 0.5 + absorber.karma / 100;
+        renderer.render(scene, camera);
+      }
+
+      // Main loop
+      function animate() {
+        updateData();
+        drawCanvas();
+        updateThree();
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      //Features included:Full karmic energy simulation (absorber, aura streams, tarot cards).Real-time astrology layers: Western zodiac, Chinese zodiac, 12 Vedic houses, Nakshatra.Taoism energy meters, Buddhism divine energy bar.Science periodic table with simulated percentages and Taoism color coding.Aurora and Supermoon overlay for cosmic synchronization.Flexbox layout, responsive on all devices.
+    </script>
+  </body>
+</html>
