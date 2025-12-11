@@ -1,385 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Angkor Wat - Tarot & Chakras</title>
-    <style>
-      /* --- BODY & CONTAINER --- */
-      body {
-        margin: 0;
-        padding: 0;
-        background: #0b0c1a;
-        color: #eee;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        overflow-x: hidden;
-        perspective: 1200px;
-      }
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karmic Angkor Constellation Dashboard</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #000011;
+    font-family: sans-serif;
+  }
+  canvas {
+    display: block;
+    position: absolute;
+    top: 0; left: 0;
+    z-index: -1;
+  }
+  #info {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: #fff;
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+<div id="info">Angkor Constellation Karma Flow Dashboard</div>
+<canvas id="karmaCanvas"></canvas>
+<script>
+const canvas = document.getElementById("karmaCanvas");
+const ctx = canvas.getContext("2d");
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
 
-      /* Angkor Wat animated background */
-      body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: radial-gradient(
-            ellipse at center,
-            rgba(255, 200, 120, 0.1) 0%,
-            transparent 80%
-          ),
-          url("https://upload.wikimedia.org/wikipedia/commons/e/e3/Angkor_Wat.jpg")
-            no-repeat center center/cover;
-        animation: backgroundPulse 15s ease-in-out infinite alternate;
-        z-index: -1;
-      }
+// Leaders data
+const leaders = [
+  {name: "Elon Musk", karma: 92, aura:"#4A90E2"},
+  {name: "Peter Thiel", karma: 87, aura:"#FFD700"},
+  {name: "Jeff Bezos", karma: 78, aura:"#778899"},
+  {name: "Mark Zuckerberg", karma: 89, aura:"#FF4500"},
+  {name: "Gavin Newsom", karma: 83, aura:"#FF6347"},
+  {name: "Donald Trump", karma: 85, aura:"#4682B4"},
+  {name: "Kim Jong Un", karma: 90, aura:"#778899"},
+  {name: "Vladimir Putin", karma: 75, aura:"#87CEEB"},
+  {name: "Xi Jinping", karma: 88, aura:"#FF69B4"},
+  {name: "Mohammed bin Salman", karma: 70, aura:"#FF6347"},
+  {name: "Hun Sen", karma: 88, aura:"#6A5ACD"},
+  {name: "Hun Manet", karma: 84, aura:"#FF8C00"},
+  {name: "Laura Mam", karma: 71, aura:"#483D8B"},
+  {name: "Sam Altman", karma: 95, aura:"#FF4500"},
+  {name: "Alex Pham", karma: 95, aura:"#87CEEB"},
+  {name: "Andrew Tevuth Mam", karma: 88, aura:"#00CED1"},
+  {name: "Ton Chanseyma", karma: 80, aura:"#FF69B4"},
+  {name: "Tep Boprek", karma: 82, aura:"#FF3399"},
+  {name: "Thida Mam", karma: 79, aura:"#9933FF"},
+  {name: "Preap Sovath", karma: 85, aura:"#FF6600"},
+  {name: "Kris Newton", karma: 90, aura:"#00FFAA"}
+];
 
-      @keyframes backgroundPulse {
-        0% {
-          transform: scale(1) rotate(0deg);
-        }
-        50% {
-          transform: scale(1.02) rotate(0.5deg);
-        }
-        100% {
-          transform: scale(1) rotate(0deg);
-        }
-      }
+// Angkor constellation nodes (mapped arbitrarily on screen)
+const nodes = [
+  {x: width*0.4, y: height*0.3, energy:0},
+  {x: width*0.6, y: height*0.25, energy:0},
+  {x: width*0.5, y: height*0.5, energy:0},
+  {x: width*0.3, y: height*0.6, energy:0},
+  {x: width*0.7, y: height*0.65, energy:0},
+  {x: width*0.4, y: height*0.75, energy:0},
+  {x: width*0.6, y: height*0.8, energy:0},
+  {x: width*0.5, y: height*0.9, energy:0},
+  {x: width*0.2, y: height*0.4, energy:0},
+  {x: width*0.8, y: height*0.35, energy:0},
+  {x: width*0.25, y: height*0.7, energy:0}
+];
 
-      .container {
-        max-width: 1000px;
-        margin: auto;
-        padding: 30px 20px;
-        position: relative;
-        z-index: 10;
-      }
+// Assign leaders to nodes cyclically
+leaders.forEach((leader,i)=>leader.node=nodes[i%nodes.length]);
 
-      h1 {
-        text-align: center;
-        color: #ff5555;
-        text-shadow: 0 0 10px #ff5555;
-      }
+// Stream particles
+class Particle {
+  constructor(leader,node){
+    this.leader = leader;
+    this.node = node;
+    this.reset();
+  }
+  reset(){
+    this.x = Math.random()*width;
+    this.y = Math.random()*height;
+    this.speed = 0.02 + Math.random()*0.02;
+    this.progress = 0;
+    this.size = 2 + Math.random()*2;
+  }
+  update(){
+    this.progress += this.speed * (this.leader.karma/100);
+    if(this.progress >= 1){
+      this.node.energy = Math.min(this.node.energy + this.leader.karma*0.02,100);
+      this.progress = 0;
+      this.reset();
+    }
+    this.currentX = this.x + (this.node.x - this.x)*this.progress;
+    this.currentY = this.y + (this.node.y - this.y)*this.progress;
+  }
+  draw(ctx){
+    const gradient = ctx.createRadialGradient(this.currentX,this.currentY,0,this.currentX,this.currentY,this.size*3);
+    gradient.addColorStop(0, this.leader.aura);
+    gradient.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(this.currentX,this.currentY,this.size,0,Math.PI*2);
+    ctx.fill();
+  }
+}
 
-      /* --- LEADER CARDS --- */
-      .leader-card {
-        background: rgba(26, 26, 46, 0.85);
-        border-radius: 15px;
-        padding: 18px;
-        margin: 18px 0;
-        display: flex;
-        gap: 18px;
-        align-items: flex-start;
-        position: relative;
-        transition: box-shadow 0.6s ease;
-        overflow: hidden;
-      }
+const particles = [];
+leaders.forEach(leader=>{
+  for(let i=0;i<50;i++){
+    particles.push(new Particle(leader,leader.node));
+  }
+});
 
-      /* Aura overlay */
-      .leader-card::before {
-        content: "";
-        position: absolute;
-        top: -30%;
-        left: -30%;
-        right: -30%;
-        bottom: -30%;
-        background: radial-gradient(
-          circle,
-          rgba(255, 100, 150, 0.3),
-          transparent 70%
-        );
-        border-radius: 50%;
-        z-index: 0;
-        filter: blur(40px);
-        animation: auraPulse 3s ease-in-out infinite alternate;
-      }
+// Supermoon/Northern Lights intensity simulation
+let cosmicIntensity = 0.5;
 
-      @keyframes auraPulse {
-        0% {
-          transform: scale(0.9);
-        }
-        50% {
-          transform: scale(1.05);
-        }
-        100% {
-          transform: scale(0.9);
-        }
-      }
+// Background aurora effect
+function drawAurora(){
+  const gradient = ctx.createLinearGradient(0,0,width,height);
+  const color1 = `rgba(${Math.floor(50+cosmicIntensity*205)},0,${Math.floor(150+cosmicIntensity*105)},0.2)`;
+  const color2 = `rgba(0,${Math.floor(100+cosmicIntensity*155)},${Math.floor(50+cosmicIntensity*205)},0.2)`;
+  gradient.addColorStop(0,color1);
+  gradient.addColorStop(1,color2);
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0,0,width,height);
+}
 
-      .leader-img {
-        border-radius: 50%;
-        width: 100px;
-        height: 100px;
-        background: #330000;
-        border: 3px solid #ff5577;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.4em;
-        color: #ffbbbb;
-        z-index: 1;
-        position: relative;
-      }
+// Main draw loop
+function draw(){
+  ctx.clearRect(0,0,width,height);
+  drawAurora();
 
-      .info {
-        flex: 1;
-        z-index: 1;
-        position: relative;
-      }
-      .name {
-        font-size: 1.8em;
-        font-weight: 700;
-        color: #ff8899;
-        margin-bottom: 4px;
-      }
-      .karma-loop {
-        font-style: italic;
-        color: #bbb;
-        margin-bottom: 6px;
-      }
+  // Draw nodes
+  nodes.forEach(node=>{
+    const glow = 10 + node.energy*0.5;
+    ctx.beginPath();
+    ctx.arc(node.x,node.y,12,0,Math.PI*2);
+    ctx.fillStyle = `rgba(255,${200-node.energy},100,0.6)`;
+    ctx.shadowBlur = glow;
+    ctx.shadowColor = "rgba(255,255,200,0.8)";
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
 
-      .bio {
-        margin-top: 8px;
-        color: #dd9999;
-        font-size: 0.92em;
-        white-space: pre-line;
-      }
+  // Update and draw particles
+  particles.forEach(p=>{
+    p.update();
+    p.draw(ctx);
+  });
 
-      /* Chakra meter */
-      .chakra-meter {
-        display: flex;
-        gap: 6px;
-        margin: 10px 0;
-      }
-      .chakra {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: #333355;
-        position: relative;
-      }
-      .chakra.active {
-        background: #ff6699;
-        box-shadow: 0 0 12px #ff77aa;
-      }
-      .chakra::after {
-        content: attr(data-name);
-        font-size: 9px;
-        position: absolute;
-        bottom: -18px;
-        width: 100%;
-        text-align: center;
-        color: #ff99bbaa;
-      }
+  // Simulate cosmic intensity fluctuation
+  cosmicIntensity = 0.4 + 0.6*Math.abs(Math.sin(Date.now()*0.0001));
+  
+  requestAnimationFrame(draw);
+}
 
-      /* Tarot cards 3D */
-      .tarot-container {
-        display: flex;
-        gap: 6px;
-        overflow-x: auto;
-        margin-top: 8px;
-        perspective: 800px;
-      }
-      .tarot-card {
-        width: 60px;
-        height: 90px;
-        background: #222233;
-        color: #ffccaa;
-        border-radius: 6px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        font-size: 0.8em;
-        font-weight: bold;
-        padding: 4px;
-        transform-style: preserve-3d;
-        animation: cardRotate 4s linear infinite alternate;
-        box-shadow: 0 0 6px #ff5577;
-      }
+draw();
 
-      @keyframes cardRotate {
-        0% {
-          transform: rotateY(0deg);
-        }
-        50% {
-          transform: rotateY(20deg);
-        }
-        100% {
-          transform: rotateY(-15deg);
-        }
-      }
-
-      .tarot-indicator {
-        margin-top: 6px;
-        font-size: 0.9em;
-        color: #ff8888;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Angkor Wat - Tarot & Chakras</h1>
-      <div id="leaders"></div>
-    </div>
-
-    <script>
-      /* --- PEOPLE LIST --- */
-      const people = [
-        { name: "Elon Musk", karma: 92 },
-        { name: "Peter Thiel", karma: 87 },
-        { name: "Jeff Bezos", karma: 78 },
-        { name: "Mark Zuckerberg", karma: 89 },
-        { name: "Gavin Newsom", karma: 83 },
-        { name: "Donald Trump", karma: 85 },
-        { name: "Kim Jong Un", karma: 90 },
-        { name: "Vladimir Putin", karma: 75 },
-        { name: "Xi Jinping", karma: 88 },
-        { name: "Mohammed bin Salman", karma: 70 },
-        { name: "Hun Sen", karma: 88 },
-        { name: "Hun Manet", karma: 84 },
-        { name: "Vannda Mann", karma: 76 },
-        { name: "Laura Mam", karma: 71 },
-        { name: "Sam Altman", karma: 95 },
-        {
-          name: "Kris Newton",
-          karma: 89,
-        },
-        { name: "Alex Pham", karma: 95 },
-        { name: "Andrew Tevuth Mam", karma: 88 },
-        { name: "Preap Sovath", karma: 88 },
-        { name: "Ton Chanseyma", karma: 82 },
-        {
-          name: "Tep Boprek",
-          karma: 84,
-        },
-        { name: "Thida Mam", karma: 86 },
-      ];
-
-      const chakraNames = [
-        "Root",
-        "Sacral",
-        "Solar",
-        "Heart",
-        "Throat",
-        "Third Eye",
-        "Crown",
-      ];
-      const chakraColors = [
-        "#ff0000",
-        "#ff7f00",
-        "#ffff00",
-        "#00ff00",
-        "#0000ff",
-        "#4b0082",
-        "#9400d3",
-      ];
-      const tarotDeck = [
-        "The Fool",
-        "The Magician",
-        "The High Priestess",
-        "The Empress",
-        "The Emperor",
-        "Strength",
-        "The Hermit",
-        "Wheel of Fortune",
-        "Justice",
-        "Temperance",
-        "The Devil",
-        "The Tower",
-        "The Star",
-        "The Moon",
-        "The Sun",
-        "Judgement",
-        "The World",
-      ];
-
-      const leadersContainer = document.getElementById("leaders");
-      const leaderCards = [];
-
-      people.forEach((ld) => {
-        const card = document.createElement("div");
-        card.classList.add("leader-card");
-
-        const img = document.createElement("div");
-        img.classList.add("leader-img");
-        img.textContent = ld.name
-          .split(" ")
-          .map((n) => n[0])
-          .join("");
-        card.appendChild(img);
-
-        const info = document.createElement("div");
-        info.classList.add("info");
-
-        const nameEl = document.createElement("div");
-        nameEl.classList.add("name");
-        nameEl.textContent = ld.name;
-        info.appendChild(nameEl);
-
-        const karmaLoop = document.createElement("div");
-        karmaLoop.classList.add("karma-loop");
-        karmaLoop.textContent = `Karma: ${ld.karma}`;
-        info.appendChild(karmaLoop);
-
-        if (ld.info) {
-          const bio = document.createElement("div");
-          bio.classList.add("bio");
-          bio.textContent = ld.info;
-          info.appendChild(bio);
-        }
-
-        const chakraMeter = document.createElement("div");
-        chakraMeter.classList.add("chakra-meter");
-        chakraNames.forEach((c, i) => {
-          const ch = document.createElement("div");
-          ch.classList.add("chakra");
-          ch.style.backgroundColor = chakraColors[i];
-          ch.setAttribute("data-name", c);
-          chakraMeter.appendChild(ch);
-        });
-        info.appendChild(chakraMeter);
-
-        const tarotContainer = document.createElement("div");
-        tarotContainer.classList.add("tarot-container");
-        const tarotEls = [];
-        for (let t = 0; t < 5; t++) {
-          const tcard = document.createElement("div");
-          tcard.classList.add("tarot-card");
-          tcard.textContent =
-            tarotDeck[Math.floor(Math.random() * tarotDeck.length)];
-          tarotContainer.appendChild(tcard);
-          tarotEls.push(tcard);
-        }
-        info.appendChild(tarotContainer);
-
-        const tarotIndicator = document.createElement("div");
-        tarotIndicator.classList.add("tarot-indicator");
-        tarotIndicator.textContent = `Active Tarot: ${tarotEls[0].textContent}`;
-        info.appendChild(tarotIndicator);
-
-        card.appendChild(info);
-        leadersContainer.appendChild(card);
-
-        leaderCards.push({ card, tarotEls, tarotIndicator });
-      });
-
-      /* Tarot cycling with glowing aura effect */
-      function updateGlow(cardEl, text) {
-        const intensity = Math.min(40 + text.length * 2, 120);
-        cardEl.style.boxShadow = `0 0 ${intensity}px ${
-          intensity / 2
-        }px rgba(255,100,150,0.6)`;
-      }
-
-      setInterval(() => {
-        leaderCards.forEach((lc) => {
-          const first = lc.tarotEls.shift();
-          lc.tarotEls.push(first);
-          lc.tarotIndicator.textContent = `Active Tarot: ${lc.tarotEls[0].textContent}`;
-          updateGlow(lc.card, lc.tarotEls[0].textContent);
-        });
-      }, 2600);
-    </script>
-  </body>
+// Handle resize
+window.addEventListener('resize',()=>{
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+});
+</script>
+</body>
 </html>
