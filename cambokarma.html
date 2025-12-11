@@ -114,6 +114,7 @@
 </div>
 
 <script>
+/* UPDATED PEOPLE LIST */
 const people = [
   { name:"Elon Musk", karma:92 },
   { name:"Peter Thiel", karma:87 },
@@ -133,10 +134,23 @@ const people = [
   { name:"Alex Pham", karma:95 },
   { name:"Andrew Tevuth Mam", karma:88 },
 
-  /* ✅ Preap Sovath UPDATED with info/bio */
+  /* Preap Sovath */
   { 
     name:"Preap Sovath",
     karma:88,
+  },
+
+  /* Ton Chanseyma */
+  {
+    name:"Ton Chanseyma",
+    karma:82,
+`
+  },
+
+  /* Thida Mam */
+  {
+    name:"Thida Mam",
+    karma:86,
   }
 ];
 
@@ -213,11 +227,12 @@ people.forEach(ld=>{
   karmaText.textContent=`Impact: ${ld.karma}%`; 
   info.appendChild(karmaText);
 
-  /* ✅ Add bio/info if present */
+  /* BIO SECTION */
   if (ld.info) {
     const bioEl=document.createElement("div");
     bioEl.style.marginTop="10px";
     bioEl.style.color="#dd9999";
+    bioEl.style.whiteSpace="pre-line";
     bioEl.style.fontSize="0.9em";
     bioEl.textContent=ld.info;
     info.appendChild(bioEl);
@@ -246,7 +261,7 @@ people.forEach(ld=>{
   leaderCards.push({houseEls, chakraEls, tarotEls, tarotIndicator});
 });
 
-/* PULSE SYSTEM */
+/* Animations */
 function pulseElement(el, minScale=1, maxScale=1.25, duration=1500, delay=0){
   let growing=true;
   setTimeout(()=>{
@@ -291,4 +306,3 @@ setInterval(()=>{
 </script>
 </body>
 </html>
-
