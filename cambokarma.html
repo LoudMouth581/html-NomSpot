@@ -90,34 +90,6 @@
   .karma-impact-text {
     margin-top: 4px; font-size: 0.9em; color: #ffbbbb; font-weight: 700; letter-spacing: 0.8px;
   }
-  .puppet-strings {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    background: linear-gradient(to bottom, transparent 5px, #ff4455 6px, transparent 7px),
-                linear-gradient(to bottom, transparent 15px, #ff4455 16px, transparent 17px),
-                linear-gradient(to bottom, transparent 25px, #ff4455 26px, transparent 27px),
-                linear-gradient(to bottom, transparent 35px, #ff4455 36px, transparent 37px);
-    background-repeat: repeat-x;
-    background-size: 4px 40px;
-    opacity: 0.15;
-  }
-  #super-moon {
-    position: fixed; top: 20px; right: 20px;
-    width: 120px; height: 120px;
-    background: radial-gradient(circle, #fff7e6 30%, #ffc36d 60%, #ff9a00 100%);
-    border-radius: 50%;
-    box-shadow: 0 0 40px 10px #ffbb66, 0 0 70px 20px #ffdd99 inset, 0 0 100px 40px #ffaa00;
-    z-index: 5;
-    animation: superMoonPulse 3s ease-in-out infinite;
-  }
-  @keyframes superMoonPulse {
-    0%,100% {transform: scale(1);}
-    50% {transform: scale(1.05);}
-  }
-  @media (max-width: 768px){
-    .leader-card { flex-direction: column; align-items: flex-start; }
-    .leader-img { width: 100%; height: auto; border-radius: 15px; font-size: 3em; }
-  }
   .tarot-container { display: flex; gap: 8px; margin-top: 10px; overflow-x:auto; }
   .tarot-card {
     width: 60px; height: 90px;
@@ -159,7 +131,14 @@ const people = [
   { name:"Laura Mam", karma:71 },
   { name:"Sam Altman", karma:95 },
   { name:"Alex Pham", karma:95 },
-  { name:"Andrew Tevuth Mam", karma:88 }
+  { name:"Andrew Tevuth Mam", karma:88 },
+
+  /* ✅ Preap Sovath UPDATED with info/bio */
+  { 
+    name:"Preap Sovath",
+    karma:88,
+    info:`Preap Sovath is a Cambodian singer and actor, widely considered one of Cambodia’s top modern performers. He has appeared in films, concerts, television programs, and served as a judge on major talent shows. His influence spans multiple generations of Cambodian entertainment.`
+  }
 ];
 
 const chakraNames=["Root","Sacral","Solar","Heart","Throat","Third Eye","Crown"];
@@ -174,39 +153,93 @@ const leadersContainer=document.getElementById("leaders");
 const leaderCards=[];
 
 people.forEach(ld=>{
-  const card=document.createElement("div"); card.classList.add("leader-card");
+  const card=document.createElement("div"); 
+  card.classList.add("leader-card");
 
-  const img=document.createElement("div"); img.classList.add("leader-img");
-  img.textContent=ld.name.split(" ").map(n=>n[0]).join(""); card.appendChild(img);
+  const img=document.createElement("div"); 
+  img.classList.add("leader-img");
+  img.textContent=ld.name.split(" ").map(n=>n[0]).join(""); 
+  card.appendChild(img);
 
-  const info=document.createElement("div"); info.classList.add("info");
+  const info=document.createElement("div"); 
+  info.classList.add("info");
 
-  const nameEl=document.createElement("div"); nameEl.classList.add("name"); nameEl.textContent=ld.name; info.appendChild(nameEl);
+  const nameEl=document.createElement("div"); 
+  nameEl.classList.add("name"); 
+  nameEl.textContent=ld.name; 
+  info.appendChild(nameEl);
 
-  const karmaLoop=document.createElement("div"); karmaLoop.classList.add("karma-loop"); karmaLoop.textContent=`Karma: ${ld.karma}`; info.appendChild(karmaLoop);
+  const karmaLoop=document.createElement("div"); 
+  karmaLoop.classList.add("karma-loop"); 
+  karmaLoop.textContent=`Karma: ${ld.karma}`; 
+  info.appendChild(karmaLoop);
 
-  const housesDiv=document.createElement("div"); housesDiv.classList.add("houses-loop"); const houseEls=[];
-  houseLoop.forEach((h,i)=>{ const hh=document.createElement("div"); hh.classList.add("house"); if(i===0) hh.classList.add("active"); hh.textContent=`House ${h}`; housesDiv.appendChild(hh); houseEls.push(hh); });
+  const housesDiv=document.createElement("div"); 
+  housesDiv.classList.add("houses-loop"); 
+  const houseEls=[];
+  houseLoop.forEach((h,i)=>{
+    const hh=document.createElement("div"); 
+    hh.classList.add("house"); 
+    if(i===0) hh.classList.add("active"); 
+    hh.textContent=`House ${h}`; 
+    housesDiv.appendChild(hh); 
+    houseEls.push(hh);
+  });
   info.appendChild(housesDiv);
 
-  const chakraMeter=document.createElement("div"); chakraMeter.classList.add("chakra-meter"); const chakraEls=[];
-  chakraNames.forEach((c,i)=>{ const ch=document.createElement("div"); ch.classList.add("chakra"); ch.style.backgroundColor=chakraColors[i]; ch.setAttribute("data-name",c); if(i===0) ch.classList.add("active"); chakraMeter.appendChild(ch); chakraEls.push(ch); });
+  const chakraMeter=document.createElement("div"); 
+  chakraMeter.classList.add("chakra-meter"); 
+  const chakraEls=[];
+  chakraNames.forEach((c,i)=>{
+    const ch=document.createElement("div"); 
+    ch.classList.add("chakra"); 
+    ch.style.backgroundColor=chakraColors[i]; 
+    ch.setAttribute("data-name",c); 
+    if(i===0) ch.classList.add("active"); 
+    chakraMeter.appendChild(ch); 
+    chakraEls.push(ch);
+  });
   info.appendChild(chakraMeter);
 
-  const karmaImpactContainer=document.createElement("div"); karmaImpactContainer.classList.add("karma-impact-container");
-  const karmaBar=document.createElement("div"); karmaBar.classList.add("karma-impact-bar"); karmaBar.style.width=`${ld.karma}%`;
-  karmaImpactContainer.appendChild(karmaBar); info.appendChild(karmaImpactContainer);
+  const karmaImpactContainer=document.createElement("div"); 
+  karmaImpactContainer.classList.add("karma-impact-container");
+  const karmaBar=document.createElement("div"); 
+  karmaBar.classList.add("karma-impact-bar"); 
+  karmaBar.style.width=`${ld.karma}%`;
+  karmaImpactContainer.appendChild(karmaBar); 
+  info.appendChild(karmaImpactContainer);
 
-  const karmaText=document.createElement("div"); karmaText.classList.add("karma-impact-text"); karmaText.textContent=`Impact: ${ld.karma}%`; info.appendChild(karmaText);
+  const karmaText=document.createElement("div"); 
+  karmaText.classList.add("karma-impact-text"); 
+  karmaText.textContent=`Impact: ${ld.karma}%`; 
+  info.appendChild(karmaText);
 
-  const tarotContainer=document.createElement("div"); tarotContainer.classList.add("tarot-container"); const tarotEls=[];
+  /* ✅ Add bio/info if present */
+  if (ld.info) {
+    const bioEl=document.createElement("div");
+    bioEl.style.marginTop="10px";
+    bioEl.style.color="#dd9999";
+    bioEl.style.fontSize="0.9em";
+    bioEl.textContent=ld.info;
+    info.appendChild(bioEl);
+  }
+
+  const tarotContainer=document.createElement("div"); 
+  tarotContainer.classList.add("tarot-container"); 
+  const tarotEls=[];
   for(let t=0;t<5;t++){
-    const cardEl=document.createElement("div"); cardEl.classList.add("tarot-card");
+    const cardEl=document.createElement("div"); 
+    cardEl.classList.add("tarot-card");
     cardEl.textContent=tarotDeck[Math.floor(Math.random()*tarotDeck.length)];
-    tarotContainer.appendChild(cardEl); tarotEls.push(cardEl);
+    tarotContainer.appendChild(cardEl); 
+    tarotEls.push(cardEl);
   }
   info.appendChild(tarotContainer);
-  const tarotIndicator=document.createElement("div"); tarotIndicator.classList.add("tarot-indicator"); tarotIndicator.textContent=`Active Tarot: ${tarotEls[0].textContent}`; info.appendChild(tarotIndicator);
+
+  const tarotIndicator=document.createElement("div"); 
+  tarotIndicator.classList.add("tarot-indicator"); 
+  tarotIndicator.textContent=`Active Tarot: ${tarotEls[0].textContent}`; 
+  info.appendChild(tarotIndicator);
 
   card.appendChild(info);
   leadersContainer.appendChild(card);
@@ -214,40 +247,45 @@ people.forEach(ld=>{
   leaderCards.push({houseEls, chakraEls, tarotEls, tarotIndicator});
 });
 
-// Asynchronous pulsing function
+/* PULSE SYSTEM */
 function pulseElement(el, minScale=1, maxScale=1.25, duration=1500, delay=0){
   let growing=true;
   setTimeout(()=>{
     setInterval(()=>{
-      const scale = growing ? maxScale : minScale;
+      const scale=growing?maxScale:minScale;
       el.style.transform=`scale(${scale})`;
-      el.style.boxShadow=growing 
-        ? "0 0 18px 6px #ff8888, 0 0 30px 10px #ff4444 inset"
-        : "0 0 12px 3px #ff5555, 0 0 20px 5px #aa3333 inset";
+      el.style.boxShadow=growing
+        ?"0 0 18px 6px #ff8888, 0 0 30px 10px #ff4444 inset"
+        :"0 0 12px 3px #ff5555, 0 0 20px 5px #aa3333 inset";
       growing=!growing;
-    }, duration);
-  }, delay);
+    },duration);
+  },delay);
 }
 
-// Initialize pulses with slight offsets
-leaderCards.forEach((lc, i)=>{
-  lc.chakraEls.forEach((ch, idx)=> pulseElement(ch, 1, 1.3, 1200 + Math.random()*400, idx*200));
-  lc.tarotEls.forEach((tc, idx)=> pulseElement(tc, 1, 1.25, 1500 + Math.random()*500, idx*300));
+leaderCards.forEach((lc,i)=>{
+  lc.chakraEls.forEach((ch,idx)=>pulseElement(ch,1,1.3,1200+Math.random()*400,idx*200));
+  lc.tarotEls.forEach((tc,idx)=>pulseElement(tc,1,1.25,1500+Math.random()*500,idx*300));
 });
 
 setInterval(()=>{
   leaderCards.forEach(lc=>{
     const activeHouse=lc.houseEls.find(h=>h.classList.contains("active"));
-    let idx=lc.houseEls.indexOf(activeHouse); activeHouse.classList.remove("active");
-    idx=(idx+1)%lc.houseEls.length; lc.houseEls[idx].classList.add("active");
+    let idx=lc.houseEls.indexOf(activeHouse); 
+    activeHouse.classList.remove("active");
+    idx=(idx+1)%lc.houseEls.length; 
+    lc.houseEls[idx].classList.add("active");
 
     const activeChakra=lc.chakraEls.find(c=>c.classList.contains("active"));
-    let cidx=lc.chakraEls.indexOf(activeChakra); activeChakra.classList.remove("active");
-    cidx=(cidx+1)%lc.chakraEls.length; lc.chakraEls[cidx].classList.add("active");
+    let cidx=lc.chakraEls.indexOf(activeChakra); 
+    activeChakra.classList.remove("active");
+    cidx=(cidx+1)%lc.chakraEls.length; 
+    lc.chakraEls[cidx].classList.add("active");
 
     const activeTarot=lc.tarotEls.find(t=>t.classList.contains("active"));
-    let tidx=lc.tarotEls.indexOf(activeTarot); activeTarot.classList.remove("active");
-    tidx=(tidx+1)%lc.tarotEls.length; lc.tarotEls[tidx].classList.add("active");
+    let tidx=lc.tarotEls.indexOf(activeTarot);
+    if(activeTarot) activeTarot.classList.remove("active");
+    tidx=(tidx+1)%lc.tarotEls.length; 
+    lc.tarotEls[tidx].classList.add("active");
     lc.tarotIndicator.textContent=`Active Tarot: ${lc.tarotEls[tidx].textContent}`;
   });
 },2000);
