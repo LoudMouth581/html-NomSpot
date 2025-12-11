@@ -3,174 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Karmic Angkor Constellation Dashboard</title>
+<title>Angkor Karmic Dashboard</title>
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background: #000011;
-    font-family: sans-serif;
-  }
-  canvas {
-    display: block;
-    position: absolute;
-    top: 0; left: 0;
-    z-index: -1;
-  }
-  #info {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    color: #fff;
-    z-index: 10;
-  }
+  body { margin:0; padding:0; overflow:hidden; background:#0b0c1a; font-family:sans-serif; color:#fff; }
+  #canvas { position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; }
+  #dashboard { position:absolute; top:10px; left:10px; background:rgba(20,20,40,0.7); padding:15px; border-radius:10px; z-index:10; }
 </style>
 </head>
 <body>
-<div id="info">Angkor Constellation Karma Flow Dashboard</div>
-<canvas id="karmaCanvas"></canvas>
+<canvas id="canvas"></canvas>
+<div id="dashboard">
+  <h2>Karmic Dashboard</h2>
+  <div>Total People: <span id="total">0</span></div>
+  <div>Absorber Karma: <span id="absorberKarma">0</span></div>
+  <div>Tao Balance: <span id="taoBalance">0</span></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
 <script>
-const canvas = document.getElementById("karmaCanvas");
-const ctx = canvas.getContext("2d");
-let width = canvas.width = window.innerWidth;
-let height = canvas.height = window.innerHeight;
+// Canvas setup
+const canvas=document.getElementById('canvas'), ctx=canvas.getContext('2d');
+let width=canvas.width=window.innerWidth, height=canvas.height=window.innerHeight;
+window.addEventListener('resize',()=>{width=canvas.width=window.innerWidth;height=canvas.height=window.innerHeight;});
 
-// Leaders data
-const leaders = [
-  {name: "Elon Musk", karma: 92, aura:"#4A90E2"},
-  {name: "Peter Thiel", karma: 87, aura:"#FFD700"},
-  {name: "Jeff Bezos", karma: 78, aura:"#778899"},
-  {name: "Mark Zuckerberg", karma: 89, aura:"#FF4500"},
-  {name: "Gavin Newsom", karma: 83, aura:"#FF6347"},
-  {name: "Donald Trump", karma: 85, aura:"#4682B4"},
-  {name: "Kim Jong Un", karma: 90, aura:"#778899"},
-  {name: "Vladimir Putin", karma: 75, aura:"#87CEEB"},
-  {name: "Xi Jinping", karma: 88, aura:"#FF69B4"},
-  {name: "Mohammed bin Salman", karma: 70, aura:"#FF6347"},
-  {name: "Hun Sen", karma: 88, aura:"#6A5ACD"},
-  {name: "Hun Manet", karma: 84, aura:"#FF8C00"},
-  {name: "Laura Mam", karma: 71, aura:"#483D8B"},
-  {name: "Sam Altman", karma: 95, aura:"#FF4500"},
-  {name: "Alex Pham", karma: 95, aura:"#87CEEB"},
-  {name: "Andrew Tevuth Mam", karma: 88, aura:"#00CED1"},
-  {name: "Ton Chanseyma", karma: 80, aura:"#FF69B4"},
-  {name: "Tep Boprek", karma: 82, aura:"#FF3399"},
-  {name: "Thida Mam", karma: 79, aura:"#9933FF"},
-  {name: "Preap Sovath", karma: 85, aura:"#FF6600"},
-  {name: "Kris Newton", karma: 90, aura:"#00FFAA"}
+let cosmicIntensity=0.5;
+let absorber={x:width/2,y:height/2,karma:0};
+let taoBalance=0;
+
+// People list (21 people)
+const people=[
+  {name:"Elon Musk", karma:92, aura:"#4A90E2"},
+  {name:"Peter Thiel", karma:87, aura:"#FFD700"},
+  {name:"Jeff Bezos", karma:78, aura:"#778899"},
+  {name:"Mark Zuckerberg", karma:89, aura:"#FF4500"},
+  {name:"Gavin Newsom", karma:83, aura:"#FF6347"},
+  {name:"Donald Trump", karma:85, aura:"#4682B4"},
+  {name:"Kim Jong Un", karma:90, aura:"#778899"},
+  {name:"Vladimir Putin", karma:75, aura:"#87CEEB"},
+  {name:"Xi Jinping", karma:88, aura:"#FF69B4"},
+  {name:"Mohammed bin Salman", karma:70, aura:"#FF6347"},
+  {name:"Hun Sen", karma:88, aura:"#6A5ACD"},
+  {name:"Hun Manet", karma:84, aura:"#FF8C00"},
+  {name:"Laura Mam", karma:71, aura:"#483D8B"},
+  {name:"Sam Altman", karma:95, aura:"#FF4500"},
+  {name:"Alex Pham", karma:95, aura:"#87CEEB"},
+  {name:"Andrew Tevuth Mam", karma:88, aura:"#00CED1"},
+  {name:"Ton Chanseyma", karma:80, aura:"#FF69B4"},
+  {name:"Tep Boprek", karma:82, aura:"#FF77AA"},
+  {name:"Thida Mam", karma:79, aura:"#88CCFF"},
+  {name:"Preap Sovath", karma:85, aura:"#FFAA33"},
+  {name:"Kris Newton", karma:90, aura:"#FFDD55"}
 ];
 
-// Angkor constellation nodes (mapped arbitrarily on screen)
-const nodes = [
-  {x: width*0.4, y: height*0.3, energy:0},
-  {x: width*0.6, y: height*0.25, energy:0},
-  {x: width*0.5, y: height*0.5, energy:0},
-  {x: width*0.3, y: height*0.6, energy:0},
-  {x: width*0.7, y: height*0.65, energy:0},
-  {x: width*0.4, y: height*0.75, energy:0},
-  {x: width*0.6, y: height*0.8, energy:0},
-  {x: width*0.5, y: height*0.9, energy:0},
-  {x: width*0.2, y: height*0.4, energy:0},
-  {x: width*0.8, y: height*0.35, energy:0},
-  {x: width*0.25, y: height*0.7, energy:0}
-];
+// Streams from people to absorber
+const streams=people.map(p=>({ x:Math.random()*width, y:Math.random()*height, target:absorber, aura:p.aura, speed:0.01+Math.random()*0.02 }));
 
-// Assign leaders to nodes cyclically
-leaders.forEach((leader,i)=>leader.node=nodes[i%nodes.length]);
+// Tarot cards orbiting absorber
+const tarotCards=[];
+for(let i=0;i<22;i++) tarotCards.push({ angle:Math.random()*Math.PI*2, radius:100+Math.random()*100, color:`hsl(${Math.random()*360},70%,60%)`, speed:0.002+Math.random()*0.003 });
 
-// Stream particles
-class Particle {
-  constructor(leader,node){
-    this.leader = leader;
-    this.node = node;
-    this.reset();
-  }
-  reset(){
-    this.x = Math.random()*width;
-    this.y = Math.random()*height;
-    this.speed = 0.02 + Math.random()*0.02;
-    this.progress = 0;
-    this.size = 2 + Math.random()*2;
-  }
-  update(){
-    this.progress += this.speed * (this.leader.karma/100);
-    if(this.progress >= 1){
-      this.node.energy = Math.min(this.node.energy + this.leader.karma*0.02,100);
-      this.progress = 0;
-      this.reset();
-    }
-    this.currentX = this.x + (this.node.x - this.x)*this.progress;
-    this.currentY = this.y + (this.node.y - this.y)*this.progress;
-  }
-  draw(ctx){
-    const gradient = ctx.createRadialGradient(this.currentX,this.currentY,0,this.currentX,this.currentY,this.size*3);
-    gradient.addColorStop(0, this.leader.aura);
-    gradient.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(this.currentX,this.currentY,this.size,0,Math.PI*2);
-    ctx.fill();
-  }
+// Three.js scene for Angkor Wat guardian
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(60,width/height,0.1,1000);
+const renderer=new THREE.WebGLRenderer({alpha:true});
+renderer.setSize(width,height); renderer.domElement.style.position='absolute'; renderer.domElement.style.top='0'; renderer.domElement.style.left='0';
+document.body.appendChild(renderer.domElement);
+const geometry=new THREE.ConeGeometry(1,2,4);
+const material=new THREE.MeshStandardMaterial({color:0xffcc99, wireframe:false});
+const guardian=new THREE.Mesh(geometry,material); scene.add(guardian); camera.position.z=5;
+const light=new THREE.PointLight(0xffffff,1,100); light.position.set(5,5,5); scene.add(light);
+
+function updateThree(){ guardian.rotation.y+=0.002+0.002*Math.cos(cosmicIntensity); light.intensity=0.5+absorber.karma/100; renderer.render(scene,camera); }
+
+function update(){
+  people.forEach(p=>{ let flow=(p.karma/100)*2; absorber.karma+=flow*0.05; taoBalance+=flow*0.01; });
+  absorber.karma=Math.min(absorber.karma,100); taoBalance=Math.min(taoBalance,100);
+  document.getElementById('total').textContent=people.length;
+  document.getElementById('absorberKarma').textContent=absorber.karma.toFixed(1);
+  document.getElementById('taoBalance').textContent=taoBalance.toFixed(1);
 }
 
-const particles = [];
-leaders.forEach(leader=>{
-  for(let i=0;i<50;i++){
-    particles.push(new Particle(leader,leader.node));
-  }
-});
-
-// Supermoon/Northern Lights intensity simulation
-let cosmicIntensity = 0.5;
-
-// Background aurora effect
-function drawAurora(){
-  const gradient = ctx.createLinearGradient(0,0,width,height);
-  const color1 = `rgba(${Math.floor(50+cosmicIntensity*205)},0,${Math.floor(150+cosmicIntensity*105)},0.2)`;
-  const color2 = `rgba(0,${Math.floor(100+cosmicIntensity*155)},${Math.floor(50+cosmicIntensity*205)},0.2)`;
-  gradient.addColorStop(0,color1);
-  gradient.addColorStop(1,color2);
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0,0,width,height);
-}
-
-// Main draw loop
 function draw(){
   ctx.clearRect(0,0,width,height);
-  drawAurora();
-
-  // Draw nodes
-  nodes.forEach(node=>{
-    const glow = 10 + node.energy*0.5;
+  // Northern Lights
+  for(let i=0;i<5;i++){
     ctx.beginPath();
-    ctx.arc(node.x,node.y,12,0,Math.PI*2);
-    ctx.fillStyle = `rgba(255,${200-node.energy},100,0.6)`;
-    ctx.shadowBlur = glow;
-    ctx.shadowColor = "rgba(255,255,200,0.8)";
-    ctx.fill();
-    ctx.shadowBlur = 0;
-  });
-
-  // Update and draw particles
-  particles.forEach(p=>{
-    p.update();
-    p.draw(ctx);
-  });
-
-  // Simulate cosmic intensity fluctuation
-  cosmicIntensity = 0.4 + 0.6*Math.abs(Math.sin(Date.now()*0.0001));
-  
-  requestAnimationFrame(draw);
+    for(let x=0;x<width;x+=10){ let y=Math.sin(x*0.01 + Date.now()*0.002 + i)*50*(0.5+cosmicIntensity)+100*i; ctx.lineTo(x,y);}
+    ctx.strokeStyle=`rgba(${50+cosmicIntensity*205},${100+cosmicIntensity*155},${150+cosmicIntensity*105},0.2)`; ctx.lineWidth=3; ctx.stroke();
+  }
+  // Supermoon
+  let pulse=1+0.2*Math.sin(Date.now()*0.002+absorber.karma/10);
+  let radius=50*pulse*(0.8+cosmicIntensity*0.4);
+  let gradient=ctx.createRadialGradient(width*0.8,height*0.2,radius*0.1,width*0.8,height*0.2,radius);
+  gradient.addColorStop(0,'rgba(255,255,255,0.9)'); gradient.addColorStop(0.5,'rgba(255,255,200,0.6)'); gradient.addColorStop(1,'rgba(255,255,150,0)');
+  ctx.fillStyle=gradient; ctx.beginPath(); ctx.arc(width*0.8,height*0.2,radius,0,Math.PI*2); ctx.fill();
+  // Streams
+  streams.forEach(s=>{ s.x+=(s.target.x-s.x)*s.speed; s.y+=(s.target.y-s.y)*s.speed; ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(s.target.x,s.target.y);
+    let color=s.aura.replace(')',',0.3)').replace('rgb','rgba'); ctx.strokeStyle=color; ctx.lineWidth=2+2*Math.sin(Date.now()*0.005); ctx.stroke(); });
+  // Absorber node
+  ctx.beginPath(); ctx.arc(absorber.x,absorber.y,50 + Math.sin(Date.now()*0.003)*10,0,Math.PI*2); ctx.fillStyle=`rgba(255,200,200,0.6)`; ctx.fill();
+  // Tarot cards
+  tarotCards.forEach(card=>{ card.angle+=card.speed*(0.5+cosmicIntensity); let x=absorber.x+Math.cos(card.angle)*card.radius; let y=absorber.y+Math.sin(card.angle)*card.radius;
+    ctx.save(); ctx.translate(x,y); ctx.rotate(card.angle*2); ctx.fillStyle=card.color; ctx.fillRect(-10,-15,20,30); ctx.restore(); });
 }
 
-draw();
-
-// Handle resize
-window.addEventListener('resize',()=>{
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-});
+function animate(){ update(); draw(); updateThree(); requestAnimationFrame(animate); }
+animate();
 </script>
 </body>
 </html>
