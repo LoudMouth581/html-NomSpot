@@ -2,686 +2,328 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Karmic Dashboard</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Dashboard</title>
     <style>
+      html,
       body {
-        background: #0b0c1a;
-        color: #eee;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        padding: 20px;
-      }
-      h1 {
-        text-align: center;
-        color: #ff5555;
-        text-shadow: 0 0 10px #ff5555;
-      }
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      .dashboard {
-        background: #1a1a2e;
-        border-radius: 12px;
-        padding: 15px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        box-shadow: 0 0 20px #661122 inset;
-      }
-      .stat {
-        text-align: center;
-      }
-      .stat .value {
-        font-size: 2em;
-        font-weight: bold;
-        color: #ff9999;
-      }
-      .sort-controls {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      .sort-controls button {
-        background: #331122;
-        border: none;
-        color: #ffaaaa;
-        font-weight: bold;
-        margin: 5px;
-        padding: 8px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background 0.3s;
-      }
-      .sort-controls button:hover {
-        background: #552233;
-        color: #fff;
-      }
-      .leader-card {
-        background: #1a1a2e;
-        border-radius: 15px;
-        padding: 20px;
-        margin: 20px 0;
-        display: flex;
-        gap: 20px;
-        align-items: flex-start;
-        box-shadow: 0 0 30px #aa2244 inset;
-        position: relative;
-        transition: transform 0.3s, box-shadow 0.3s;
-        cursor: pointer;
-        flex-wrap: wrap;
-      }
-      .leader-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 40px #bb3366 inset;
-      }
-      .leader-img {
-        border-radius: 15px;
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        box-shadow: 0 0 15px #ff5577;
-        border: 3px solid #ff5577;
-      }
-      .info {
-        flex: 1;
-        min-width: 250px;
-      }
-      .name {
-        font-size: 1.8em;
-        font-weight: 700;
-        color: #ff8899;
-        margin-bottom: 6px;
-        letter-spacing: 1.2px;
-      }
-      .karma-loop {
-        font-style: italic;
-        color: #bbb;
-        margin-bottom: 4px;
-      }
-      .houses-loop {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 10px;
-      }
-      .house {
-        flex: 1;
-        background: #330000;
-        padding: 12px;
-        border-radius: 12px;
-        box-shadow: 0 0 14px #bb4444;
-        text-align: center;
-        font-weight: 600;
-        color: #ffbbbb;
-      }
-      .house.active {
-        background: #bb4444;
-        color: #fff;
-        box-shadow: 0 0 24px #ff6666;
-        font-weight: 700;
-      }
-      .chakra-meter {
-        display: flex;
-        justify-content: space-between;
-        max-width: 280px;
-        margin-top: 10px;
-      }
-      .chakra {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        position: relative;
-        transition: all 0.4s ease;
-        cursor: default;
-      }
-      .chakra.active::after {
-        font-weight: bold;
-      }
-      .chakra::after {
-        content: attr(data-name);
-        position: absolute;
-        bottom: -18px;
-        font-size: 9px;
-        color: #ff99bbaa;
-        width: 100%;
-        text-align: center;
-        font-weight: 600;
-      }
-      .karma-impact-container {
-        margin-top: 10px;
-        background: #440000;
-        border-radius: 10px;
-        width: 100%;
-        height: 18px;
-        box-shadow: inset 0 0 8px #bb4444;
+        margin: 0;
+        padding: 0;
         overflow: hidden;
+        background: #00091a;
+        font-family: "Segoe UI", sans-serif;
+        color: #eee;
       }
-      .karma-impact-bar {
+      #canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
         height: 100%;
-        border-radius: 10px;
-        background: linear-gradient(90deg, #ff4444, #ff9999);
-        box-shadow: 0 0 10px #ff5555;
-        width: 0;
-        transition: width 1s ease;
+        z-index: 1;
       }
-      .karma-impact-text {
-        margin-top: 4px;
-        font-size: 0.9em;
-        color: #ffbbbb;
-        font-weight: 700;
-        letter-spacing: 0.8px;
-      }
-      .overlay {
+      .info-box {
         position: absolute;
-        top: 10px;
-        right: 10px;
-        color: #fff;
-        font-size: 0.9em;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 4px 8px;
-        border-radius: 6px;
-      }
-      .tarot-overlay {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        color: #ffeeaa;
-        font-size: 1em;
-        background: rgba(30, 0, 60, 0.7);
-        padding: 6px 10px;
-        border-radius: 8px;
-      }
-      .lunar-profile {
-        margin-top: 12px;
-        background: #222233;
+        background: rgba(0, 0, 30, 0.7);
         padding: 12px;
-        border-radius: 10px;
-        box-shadow: 0 0 14px #663366 inset;
-        font-size: 0.9em;
-        color: #ddccff;
+        border-radius: 8px;
+        border: 1px solid #444;
+        font-size: 13px;
+        pointer-events: none;
+        z-index: 10;
       }
-      .lunar-profile .field {
-        margin: 4px 0;
-      }
-      .lunar-profile .field label {
+      .info-title {
         font-weight: bold;
-        color: #ffbbdd;
+        margin-bottom: 6px;
+      }
+      .indicator {
+        margin-bottom: 4px;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>Karmic Dashboard</h1>
-
-      <div class="dashboard" id="dashboard">
-        <div class="stat">
-          <div>Total</div>
-          <div class="value" id="stat-count">0</div>
-        </div>
-        <div class="stat">
-          <div>Karma</div>
-          <div class="value" id="stat-average">0</div>
-        </div>
-      </div>
-
-      <div class="sort-controls">
-        <button onclick="sortByKarma()">Sort by Karma</button>
-        <button onclick="sortByName()">Sort by Name</button>
-      </div>
-
-      <div id="leaders"></div>
-    </div>
+    <canvas id="canvas"></canvas>
+    <div id="hoverInfo" class="info-box" style="display: none"></div>
 
     <script>
+    
+
+    
       const people = [
         {
           name: "Elon Musk",
-          birth: "1971-06-28",
-          karma: 92,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 92,
+          westernDOB: "1971-06-28",
+          chineseYear: 1971,
         },
         {
           name: "Peter Thiel",
-          birth: "1967-10-11",
-          karma: 87,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 87,
+          westernDOB: "1967-10-11",
+          chineseYear: 1967,
         },
         {
           name: "Jeff Bezos",
-          birth: "1964-01-12",
-          karma: 78,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 78,
+          westernDOB: "1964-01-12",
+          chineseYear: 1964,
         },
         {
           name: "Mark Zuckerberg",
-          birth: "1984-05-14",
-          karma: 89,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 89,
+          westernDOB: "1984-05-14",
+          chineseYear: 1984,
         },
         {
           name: "Gavin Newsom",
-          birth: "1967-10-10",
-          karma: 83,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 83,
+          westernDOB: "1967-10-10",
+          chineseYear: 1967,
         },
         {
           name: "Donald Trump",
-          birth: "1946-06-14",
-          karma: 85,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 85,
+          westernDOB: "1946-06-14",
+          chineseYear: 1946,
         },
         {
           name: "Kim Jong Un",
-          birth: "1984-01-08",
-          karma: 90,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 90,
+          westernDOB: "1984-01-08",
+          chineseYear: 1984,
         },
         {
           name: "Vladimir Putin",
-          birth: "1952-10-07",
-          karma: 75,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 75,
+          westernDOB: "1952-10-07",
+          chineseYear: 1952,
         },
         {
           name: "Xi Jinping",
-          birth: "1953-06-15",
-          karma: 88,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 88,
+          westernDOB: "1953-06-15",
+          chineseYear: 1953,
         },
         {
           name: "Mohammed bin Salman",
-          birth: "1985-08-31",
-          karma: 70,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 70,
+          westernDOB: "1985-08-31",
+          chineseYear: 1985,
         },
         {
           name: "Hun Sen",
-          birth: "1952-08-05",
-          karma: 88,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 88,
+          westernDOB: "1952-08-05",
+          chineseYear: 1952,
         },
         {
           name: "Hun Manet",
-          birth: "1977-10-20",
-          karma: 84,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
-        },
-        {
-          name: "Vannda Mann",
-          birth: "1997-01-22",
-          karma: 76,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 84,
+          westernDOB: "1977-10-20",
+          chineseYear: 1977,
         },
         {
           name: "Laura Mam",
-          birth: "1984-10-31",
-          karma: 71,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 71,
+          westernDOB: "1984-10-31",
+          chineseYear: 1984,
         },
         {
           name: "Sam Altman",
-          birth: "1985-04-22",
-          karma: 95,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 95,
+          westernDOB: "1985-04-22",
+          chineseYear: 1985,
         },
         {
           name: "Alex Pham",
-          birth: "1992-10-03",
-          karma: 95,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 95,
+          westernDOB: "1992-10-03",
+          chineseYear: 1992,
         },
         {
           name: "Andrew Tevuth Mam",
-          birth: "1988-01-01",
-          karma: 88,
-          lunar: {
-            moonSign: "",
-            nakshatra: "",
-            pada: "",
-            moonLord: "",
-            auraColor: "",
-            notes: "",
-          },
+          vedicKarma: 88,
+          westernDOB: "1988-01-01",
+          chineseYear: 1988,
+        },
+        {
+          name: "Ton Chanseyma",
+          vedicKarma: 80,
+          westernDOB: "1999-07-13",
+          chineseYear: 1999,
+        },
+        {
+          name: "Tep Boprek",
+          vedicKarma: 82,
+          westernDOB: "1993-09-30",
+          chineseYear: 1993,
+        },
+        {
+          name: "Thida Mam",
+          vedicKarma: 79,
+          westernDOB: "1990-02-14",
+          chineseYear: 1990,
+        },
+        {
+          name: "Preap Sovath",
+          vedicKarma: 85,
+          westernDOB: "1965-09-18",
+          chineseYear: 1965,
+        },
+        {
+          name: "Kris Newton",
+          vedicKarma: 86,
+          westernDOB: "1980-03-15",
+          chineseYear: 1980,
         },
       ];
 
-      const chakraNames = [
-        "Root",
-        "Sacral",
-        "Solar",
-        "Heart",
-        "Throat",
-        "Third Eye",
-        "Crown",
-      ];
-      const chakraColors = [
-        "#ff0000",
-        "#ff7f00",
-        "#ffff00",
-        "#00ff00",
-        "#0000ff",
-        "#4b0082",
-        "#9400d3",
-      ];
-      const houseLoop = [8, 12];
-      const zodiacSigns = [
-        "♈ Aries",
-        "♉ Taurus",
-        "♊ Gemini",
-        "♋ Cancer",
-        "♌ Leo",
-        "♍ Virgo",
-        "♎ Libra",
-        "♏ Scorpio",
-        "♐ Sagittarius",
-        "♑ Capricorn",
-        "♒ Aquarius",
-        "♓ Pisces",
-      ];
-      const planets = [
-        "☉ Sun",
-        "☾ Moon",
-        "☿ Mercury",
-        "♀ Venus",
-        "♂ Mars",
-        "♃ Jupiter",
-        "♄ Saturn",
-        "♅ Uranus",
-        "♆ Neptune",
-        "♇ Pluto",
-      ];
-      const tarotDeck = [
-        "The Fool",
-        "The Magician",
-        "The High Priestess",
-        "The Empress",
-        "The Emperor",
-        "The Hierophant",
-        "The Lovers",
-        "The Chariot",
-        "Strength",
-        "Hermit",
-        "Wheel of Fortune",
-        "Justice",
-        "The Hanged One",
-        "Death",
-        "Temperance",
-        "The Devil",
-        "The Tower",
-        "The Star",
-        "The Moon",
-        "The Sun",
-        "Judgement",
-        "The World",
-      ];
-
-      let leaders = [];
-
-      async function fetchLeaders() {
-        leaders = people.map((p, idx) => ({
-          ...p,
-          chakraIndex: Math.floor(Math.random() * chakraNames.length),
-          houseIndex: Math.floor(Math.random() * houseLoop.length),
-          zodiac: zodiacSigns[idx % zodiacSigns.length],
-          planet: planets[idx % planets.length],
-          tarot: tarotDeck[idx % tarotDeck.length],
-        }));
+     
+      function getWesternZodiac(dob) {
+        const d = new Date(dob);
+        const m = d.getUTCMonth() + 1,
+          day = d.getUTCDate();
+        const z = [
+          [120, "Capricorn"],
+          [219, "Aquarius"],
+          [321, "Pisces"],
+          [420, "Aries"],
+          [521, "Taurus"],
+          [621, "Gemini"],
+          [723, "Cancer"],
+          [823, "Leo"],
+          [923, "Virgo"],
+          [1023, "Libra"],
+          [1122, "Scorpio"],
+          [1222, "Sagittarius"],
+          [1231, "Capricorn"],
+        ];
+        const mmdd = m * 100 + day;
+        for (let i = 0; i < z.length; i++) {
+          if (mmdd <= z[i][0]) return z[i][1];
+        }
+        return "Capricorn";
       }
 
-      function updateDashboard() {
-        const count = leaders.length;
-        const avg = count
-          ? (leaders.reduce((sum, l) => sum + l.karma, 0) / count).toFixed(1)
-          : 0;
-        document.getElementById("stat-count").textContent = count;
-        document.getElementById("stat-average").textContent = avg;
+     
+      function getChineseZodiac(year) {
+        const names = [
+          "Monkey",
+          "Rooster",
+          "Dog",
+          "Pig",
+          "Rat",
+          "Ox",
+          "Tiger",
+          "Rabbit",
+          "Dragon",
+          "Snake",
+          "Horse",
+          "Goat",
+        ];
+        return names[year % 12];
       }
 
-      const leadersContainer = document.getElementById("leaders");
+     
+      const taoElements = ["Wood", "Fire", "Earth", "Metal", "Water"];
+     
+      people.forEach((p) => {
+        p.taoElement = taoElements[p.vedicKarma % 5];
+        p.westernSign = getWesternZodiac(p.westernDOB);
+        p.chineseSign = getChineseZodiac(p.chineseYear);
+      });
 
-      function renderLeaders() {
-        leadersContainer.innerHTML = "";
-        leaders.forEach((leader, idx) => {
-          const card = document.createElement("div");
-          card.className = "leader-card";
-          card.dataset.idx = idx;
+      
+      const scienceElements = {
+        Wood: "Cellulose, Forest Biome (Photosynthesis, Carbon cycle)",
+        Fire: "Plasma interactions; Combustion in Atmosphere",
+        Earth: "Lithosphere & Soil Science; minerals",
+        Metal: "Metallurgy & material science",
+        Water: "H2O: fluid dynamics & life chemistry",
+      };
 
-          const img = document.createElement("img");
-          img.className = "leader-img";
-          img.src = `https://via.placeholder.com/120x120?text=${encodeURIComponent(
-            leader.name
-          )}`;
-          img.alt = `Portrait of ${leader.name}`;
-          card.appendChild(img);
+    
+      const nodes = [];
+      people.forEach((p, i) => {
+        const angle = ((2 * Math.PI) / people.length) * i;
+        const r = Math.min(width, height) / 3;
+        nodes.push({
+          person: p,
+          x: width / 2 + r * Math.cos(angle),
+          y: height / 2 + r * Math.sin(angle),
+        });
+      });
 
-          const info = document.createElement("div");
-          info.className = "info";
+     
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
 
-          const nameDiv = document.createElement("div");
-          nameDiv.className = "name";
-          nameDiv.textContent = leader.name;
-          info.appendChild(nameDiv);
-
-          const karmaLoop = document.createElement("div");
-          karmaLoop.className = "karma-loop";
-          karmaLoop.textContent = `Karma: ${leader.karma}`;
-          info.appendChild(karmaLoop);
-
-          const karmaImpactContainer = document.createElement("div");
-          karmaImpactContainer.className = "karma-impact-container";
-          const karmaImpactBar = document.createElement("div");
-          karmaImpactBar.className = "karma-impact-bar";
-          karmaImpactBar.style.width = Math.min(leader.karma, 100) + "%";
-          karmaImpactContainer.appendChild(karmaImpactBar);
-          info.appendChild(karmaImpactContainer);
-
-          const karmaImpactText = document.createElement("div");
-          karmaImpactText.className = "karma-impact-text";
-          karmaImpactText.textContent = `Impact: ${leader.karma}%`;
-          info.appendChild(karmaImpactText);
-
-          const housesLoopDiv = document.createElement("div");
-          housesLoopDiv.className = "houses-loop";
-          houseLoop.forEach((h, hi) => {
-            const hd = document.createElement("div");
-            hd.className = "house";
-            hd.textContent = `${h}th`;
-            if (hi === leader.houseIndex) hd.classList.add("active");
-            housesLoopDiv.appendChild(hd);
-          });
-          info.appendChild(housesLoopDiv);
-
-          const chakraMeter = document.createElement("div");
-          chakraMeter.className = "chakra-meter";
-          chakraNames.forEach((cname, ci) => {
-            const cd = document.createElement("div");
-            cd.className = "chakra";
-            cd.dataset.name = cname;
-            cd.style.backgroundColor = chakraColors[ci];
-            cd.style.boxShadow = `0 0 10px ${chakraColors[ci]}, inset 0 0 6px ${chakraColors[ci]}`;
-            if (ci === leader.chakraIndex) cd.classList.add("active");
-            chakraMeter.appendChild(cd);
-          });
-          info.appendChild(chakraMeter);
-
-          const lunar = leader.lunar || {};
-          const lunarDiv = document.createElement("div");
-          lunarDiv.className = "lunar-profile";
-          lunarDiv.innerHTML = `
-            <div class="field"><label>Moon Sign:</label> ${
-              lunar.moonSign || "—"
-            }</div>
-            <div class="field"><label>Nakshatra:</label> ${
-              lunar.nakshatra || "—"
-            }</div>
-            <div class="field"><label>Pada:</label> ${lunar.pada || "—"}</div>
-            <div class="field"><label>Moon Lord:</label> ${
-              lunar.moonLord || "—"
-            }</div>
-            <div class="field"><label>Aura Color:</label> ${
-              lunar.auraColor || "—"
-            }</div>
-            <div class="field"><label>Notes:</label> ${lunar.notes || ""}</div>
-          `;
-          info.appendChild(lunarDiv);
-
-          const ov = document.createElement("div");
-          ov.className = "overlay";
-          ov.textContent = `${leader.zodiac}, ${leader.planet}`;
-          card.appendChild(ov);
-
-          const tarotOv = document.createElement("div");
-          tarotOv.className = "tarot-overlay";
-          tarotOv.textContent = leader.tarot;
-          card.appendChild(tarotOv);
-
-          card.appendChild(info);
-          leadersContainer.appendChild(card);
-
-          card.addEventListener("click", () => {
-            leader.karma = Math.min(leader.karma + 2, 100);
-            renderLeaders();
-          });
+       
+        nodes.forEach((n) => {
+          ctx.beginPath();
+          ctx.moveTo(width / 2, height / 2);
+          ctx.lineTo(n.x, n.y);
+          ctx.strokeStyle = "rgba(100,100,200,0.3)";
+          ctx.stroke();
         });
 
-        updateDashboard();
-      }
-
-      function cycleAnimation() {
-        leaders.forEach((l) => {
-          l.chakraIndex = (l.chakraIndex + 1) % chakraNames.length;
-          l.houseIndex = (l.houseIndex + 1) % houseLoop.length;
+        
+        nodes.forEach((n) => {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, 8, 0, Math.PI * 2);
+          ctx.fillStyle = "#66f";
+          ctx.fill();
         });
-        renderLeaders();
+
+        
+        ctx.beginPath();
+        ctx.arc(width / 2, height / 2, 12, 0, Math.PI * 2);
+        ctx.fillStyle = "#f55";
+        ctx.fill();
       }
 
-      function sortByKarma() {
-        leaders.sort((a, b) => b.karma - a.karma);
-        renderLeaders();
-      }
+      
+      const infoBox = document.getElementById("hoverInfo");
+      canvas.addEventListener("mousemove", (e) => {
+        const mx = e.clientX,
+          my = e.clientY;
+        let found = null;
+        nodes.forEach((n) => {
+          const dx = n.x - mx,
+            dy = n.y - my;
+          if (dx * dx + dy * dy < 64) found = n;
+        });
+        if (found) {
+          const p = found.person;
+          infoBox.style.display = "block";
+          infoBox.style.left = mx + 15 + "px";
+          infoBox.style.top = my + 15 + "px";
+          infoBox.innerHTML = `
+      <div class="info-title">${p.name}</div>
+      <div class="indicator">Tao Element: <strong>${p.taoElement}</strong></div>
+      <div class="indicator">Vedic Karma: <strong>${p.vedicKarma}</strong></div>
+      <div class="indicator">Western Zodiac: <strong>${
+        p.westernSign
+      }</strong></div>
+      <div class="indicator">Chinese Zodiac: <strong>${
+        p.chineseSign
+      }</strong></div>
+      <div class="indicator">Element Science: <strong>${
+        scienceElements[p.taoElement] || "N/A"
+      }</strong></div>
+    `;
+        } else {
+          infoBox.style.display = "none";
+        }
+      });
 
-      function sortByName() {
-        leaders.sort((a, b) => a.name.localeCompare(b.name));
-        renderLeaders();
+      
+      function animate() {
+        draw();
+        requestAnimationFrame(animate);
       }
-
-      (async () => {
-        await fetchLeaders();
-        renderLeaders();
-        setInterval(cycleAnimation, 5000);
-      })();
+      animate();
     </script>
   </body>
 </html>
+
