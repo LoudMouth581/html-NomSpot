@@ -2,328 +2,328 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
     <style>
-      html,
-      body {
+      body,
+      html {
         margin: 0;
         padding: 0;
-        overflow: hidden;
-        background: #00091a;
-        font-family: "Segoe UI", sans-serif;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        overflow-x: hidden;
+        background: #0b0c1a;
         color: #eee;
       }
-      #canvas {
+      h1 {
+        text-align: center;
+        color: #ffdd99;
+        text-shadow: 0 0 20px #ffdd99;
+        margin-top: 10px;
+      }
+      #container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 10px;
+      }
+      .absorber {
+        text-align: center;
+        padding: 20px;
+        margin-bottom: 30px;
+        font-weight: bold;
+        font-size: 1.4em;
+        color: #ffeeaa;
+        border: 2px dashed #ffeeaa;
+        border-radius: 15px;
+        box-shadow: 0 0 25px #ffeeaa;
+        position: relative;
+      }
+      .absorber::after {
+        content: "🕊️";
         position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2em;
+        animation: float 3s ease-in-out infinite;
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translate(-50%, 0);
+        }
+        50% {
+          transform: translate(-50%, -15px);
+        }
+      }
+      .leader-card {
+        position: relative;
+        background: rgba(26, 26, 46, 0.8);
+        border-radius: 15px;
+        margin: 15px 0;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 0 20px #661122 inset;
+        overflow: visible;
+      }
+      .leader-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #ff5577;
+        box-shadow: 0 0 15px #ff5577;
+        position: relative;
+        z-index: 2;
+      }
+      .aura {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        pointer-events: none;
+        animation: pulse 2s infinite alternate;
+        opacity: 0.7;
+      }
+      @keyframes pulse {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1.2);
+        }
+      }
+      .info {
+        flex: 1;
+        position: relative;
+      }
+      .name {
+        font-size: 1.3em;
+        font-weight: bold;
+        color: #ffbbbb;
+      }
+      .karma-bar-container {
+        background: #330000;
+        border-radius: 8px;
+        height: 16px;
+        overflow: hidden;
+        margin-top: 5px;
+        box-shadow: inset 0 0 6px #bb4444;
+      }
+      .karma-bar {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, #ff4444, #ff9999);
+        box-shadow: 0 0 8px #ff5555;
+        transition: width 0.5s linear;
+      }
+      .karma-text {
+        font-size: 0.9em;
+        color: #ffbbbb;
+        margin-top: 2px;
+      }
+      .tarot-card {
+        position: absolute;
+        width: 60px;
+        height: 90px;
+        top: -10px;
+        right: -70px;
+        background: linear-gradient(135deg, #ffccaa, #ff77aa);
+        border-radius: 10px;
+        box-shadow: 0 0 15px #ff77aa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #330011;
+        transform-style: preserve-3d;
+        animation: floatCard 3s ease-in-out infinite;
+      }
+      @keyframes floatCard {
+        0%,
+        100% {
+          transform: rotateY(0deg) translateY(0);
+        }
+        50% {
+          transform: rotateY(15deg) translateY(-10px);
+        }
+      }
+      body::before {
+        content: "";
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 1;
+        background: url("https://upload.wikimedia.org/wikipedia/commons/1/12/Angkor_Wat_from_southwest.jpg")
+          center/cover no-repeat;
+        filter: brightness(0.2) blur(1px);
+        z-index: -3;
       }
-      .info-box {
-        position: absolute;
-        background: rgba(0, 0, 30, 0.7);
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #444;
-        font-size: 13px;
-        pointer-events: none;
-        z-index: 10;
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 80% 20%, #88f, transparent 25%),
+          radial-gradient(circle at 20% 80%, #8ff, transparent 25%);
+        mix-blend-mode: screen;
+        animation: aurora 10s linear infinite alternate;
+        z-index: -2;
       }
-      .info-title {
-        font-weight: bold;
-        margin-bottom: 6px;
-      }
-      .indicator {
-        margin-bottom: 4px;
+      @keyframes aurora {
+        0% {
+          transform: translateX(0) translateY(0);
+        }
+        50% {
+          transform: translateX(30px) translateY(-20px);
+        }
+        100% {
+          transform: translateX(0) translateY(0);
+        }
       }
     </style>
   </head>
   <body>
-    <canvas id="canvas"></canvas>
-    <div id="hoverInfo" class="info-box" style="display: none"></div>
+    <div id="container">
+      <h1></h1>
+      <div class="absorber" id="absorber">
+      <span id="absorberKarma">0</span>
+      </div>
+      <div id="leaders"></div>
+    </div>
 
     <script>
-    
-
-    
       const people = [
-        {
-          name: "Elon Musk",
-          vedicKarma: 92,
-          westernDOB: "1971-06-28",
-          chineseYear: 1971,
-        },
-        {
-          name: "Peter Thiel",
-          vedicKarma: 87,
-          westernDOB: "1967-10-11",
-          chineseYear: 1967,
-        },
-        {
-          name: "Jeff Bezos",
-          vedicKarma: 78,
-          westernDOB: "1964-01-12",
-          chineseYear: 1964,
-        },
-        {
-          name: "Mark Zuckerberg",
-          vedicKarma: 89,
-          westernDOB: "1984-05-14",
-          chineseYear: 1984,
-        },
-        {
-          name: "Gavin Newsom",
-          vedicKarma: 83,
-          westernDOB: "1967-10-10",
-          chineseYear: 1967,
-        },
-        {
-          name: "Donald Trump",
-          vedicKarma: 85,
-          westernDOB: "1946-06-14",
-          chineseYear: 1946,
-        },
-        {
-          name: "Kim Jong Un",
-          vedicKarma: 90,
-          westernDOB: "1984-01-08",
-          chineseYear: 1984,
-        },
-        {
-          name: "Vladimir Putin",
-          vedicKarma: 75,
-          westernDOB: "1952-10-07",
-          chineseYear: 1952,
-        },
-        {
-          name: "Xi Jinping",
-          vedicKarma: 88,
-          westernDOB: "1953-06-15",
-          chineseYear: 1953,
-        },
-        {
-          name: "Mohammed bin Salman",
-          vedicKarma: 70,
-          westernDOB: "1985-08-31",
-          chineseYear: 1985,
-        },
-        {
-          name: "Hun Sen",
-          vedicKarma: 88,
-          westernDOB: "1952-08-05",
-          chineseYear: 1952,
-        },
-        {
-          name: "Hun Manet",
-          vedicKarma: 84,
-          westernDOB: "1977-10-20",
-          chineseYear: 1977,
-        },
-        {
-          name: "Laura Mam",
-          vedicKarma: 71,
-          westernDOB: "1984-10-31",
-          chineseYear: 1984,
-        },
-        {
-          name: "Sam Altman",
-          vedicKarma: 95,
-          westernDOB: "1985-04-22",
-          chineseYear: 1985,
-        },
-        {
-          name: "Alex Pham",
-          vedicKarma: 95,
-          westernDOB: "1992-10-03",
-          chineseYear: 1992,
-        },
-        {
-          name: "Andrew Tevuth Mam",
-          vedicKarma: 88,
-          westernDOB: "1988-01-01",
-          chineseYear: 1988,
-        },
-        {
-          name: "Ton Chanseyma",
-          vedicKarma: 80,
-          westernDOB: "1999-07-13",
-          chineseYear: 1999,
-        },
-        {
-          name: "Tep Boprek",
-          vedicKarma: 82,
-          westernDOB: "1993-09-30",
-          chineseYear: 1993,
-        },
-        {
-          name: "Thida Mam",
-          vedicKarma: 79,
-          westernDOB: "1990-02-14",
-          chineseYear: 1990,
-        },
-        {
-          name: "Preap Sovath",
-          vedicKarma: 85,
-          westernDOB: "1965-09-18",
-          chineseYear: 1965,
-        },
-        {
-          name: "Kris Newton",
-          vedicKarma: 86,
-          westernDOB: "1980-03-15",
-          chineseYear: 1980,
-        },
+        { name: "Elon Musk", karma: 92 },
+        { name: "Peter Thiel", karma: 87 },
+        { name: "Jeff Bezos", karma: 78 },
+        { name: "Mark Zuckerberg", karma: 89 },
+        { name: "Gavin Newsom", karma: 83 },
+        { name: "Donald Trump", karma: 85 },
+        { name: "Kim Jong Un", karma: 90 },
+        { name: "Vladimir Putin", karma: 75 },
+        { name: "Xi Jinping", karma: 88 },
+        { name: "Mohammed bin Salman", karma: 70 },
+        { name: "Hun Sen", karma: 88 },
+        { name: "Hun Manet", karma: 84 },
+        { name: "Laura Mam", karma: 71 },
+        { name: "Sam Altman", karma: 95 },
+        { name: "Alex Pham", karma: 95 },
+        { name: "Andrew Tevuth Mam", karma: 88 },
+        { name: "Thida Mam", karma: 82 },
+        { name: "Preap Sovath", karma: 80 },
+        { name: "Ton Chanseyma", karma: 90 },
+        { name: "Tep Boprek", karma: 85 },
+        { name: "Kris Newton", karma: 88 },
       ];
 
-     
-      function getWesternZodiac(dob) {
-        const d = new Date(dob);
-        const m = d.getUTCMonth() + 1,
-          day = d.getUTCDate();
-        const z = [
-          [120, "Capricorn"],
-          [219, "Aquarius"],
-          [321, "Pisces"],
-          [420, "Aries"],
-          [521, "Taurus"],
-          [621, "Gemini"],
-          [723, "Cancer"],
-          [823, "Leo"],
-          [923, "Virgo"],
-          [1023, "Libra"],
-          [1122, "Scorpio"],
-          [1222, "Sagittarius"],
-          [1231, "Capricorn"],
-        ];
-        const mmdd = m * 100 + day;
-        for (let i = 0; i < z.length; i++) {
-          if (mmdd <= z[i][0]) return z[i][1];
-        }
-        return "Capricorn";
-      }
+      const absorber = { name: "Energy", karma: 0 };
+      const absorbRate = 0.02; 
+      const leadersContainer = document.getElementById("leaders");
+      const absorberDisplay = document.getElementById("absorberKarma");
 
-     
-      function getChineseZodiac(year) {
-        const names = [
-          "Monkey",
-          "Rooster",
-          "Dog",
-          "Pig",
-          "Rat",
-          "Ox",
-          "Tiger",
-          "Rabbit",
-          "Dragon",
-          "Snake",
-          "Horse",
-          "Goat",
-        ];
-        return names[year % 12];
-      }
+      function renderLeaders() {
+        leadersContainer.innerHTML = "";
+        people.forEach((p) => {
+          const card = document.createElement("div");
+          card.className = "leader-card";
 
-     
-      const taoElements = ["Wood", "Fire", "Earth", "Metal", "Water"];
-     
-      people.forEach((p) => {
-        p.taoElement = taoElements[p.vedicKarma % 5];
-        p.westernSign = getWesternZodiac(p.westernDOB);
-        p.chineseSign = getChineseZodiac(p.chineseYear);
-      });
+          const img = document.createElement("img");
+          img.className = "leader-img";
+          img.src = `https://via.placeholder.com/100x100?text=${encodeURIComponent(
+            p.name
+          )}`;
+          img.alt = p.name;
+          card.appendChild(img);
 
-      
-      const scienceElements = {
-        Wood: "Cellulose, Forest Biome (Photosynthesis, Carbon cycle)",
-        Fire: "Plasma interactions; Combustion in Atmosphere",
-        Earth: "Lithosphere & Soil Science; minerals",
-        Metal: "Metallurgy & material science",
-        Water: "H2O: fluid dynamics & life chemistry",
-      };
+          
+          const aura = document.createElement("div");
+          aura.className = "aura";
+          aura.style.boxShadow = `0 0 ${10 + p.karma / 5}px ${
+            p.karma / 5
+          }px #ff${(200 - p.karma).toString(16)}aa`;
+          card.appendChild(aura);
 
-    
-      const nodes = [];
-      people.forEach((p, i) => {
-        const angle = ((2 * Math.PI) / people.length) * i;
-        const r = Math.min(width, height) / 3;
-        nodes.push({
-          person: p,
-          x: width / 2 + r * Math.cos(angle),
-          y: height / 2 + r * Math.sin(angle),
-        });
-      });
+          const info = document.createElement("div");
+          info.className = "info";
 
-     
-      function draw() {
-        ctx.clearRect(0, 0, width, height);
+          const nameDiv = document.createElement("div");
+          nameDiv.className = "name";
+          nameDiv.textContent = p.name;
+          info.appendChild(nameDiv);
 
-       
-        nodes.forEach((n) => {
-          ctx.beginPath();
-          ctx.moveTo(width / 2, height / 2);
-          ctx.lineTo(n.x, n.y);
-          ctx.strokeStyle = "rgba(100,100,200,0.3)";
-          ctx.stroke();
+          const karmaBarContainer = document.createElement("div");
+          karmaBarContainer.className = "karma-bar-container";
+          const karmaBar = document.createElement("div");
+          karmaBar.className = "karma-bar";
+          karmaBar.style.width = Math.min(p.karma, 100) + "%";
+          karmaBarContainer.appendChild(karmaBar);
+          info.appendChild(karmaBarContainer);
+
+          const karmaText = document.createElement("div");
+          karmaText.className = "karma-text";
+          karmaText.textContent = `Karma: ${p.karma.toFixed(1)}`;
+          info.appendChild(karmaText);
+
+          
+          const tarotCard = document.createElement("div");
+          tarotCard.className = "tarot-card";
+          tarotCard.textContent = [
+            "The Fool",
+            "Magician",
+            "High Priestess",
+            "Empress",
+            "Emperor",
+            "Hierophant",
+            "Lovers",
+            "Chariot",
+            "Strength",
+            "Hermit",
+            "Wheel",
+            "Justice",
+            "Hanged",
+            "Death",
+            "Temperance",
+            "Devil",
+            "Tower",
+            "Star",
+            "Moon",
+            "Sun",
+            "Judgement",
+            "World",
+          ][Math.floor(Math.random() * 22)];
+          card.appendChild(tarotCard);
+
+          card.appendChild(info);
+          leadersContainer.appendChild(card);
         });
 
-        
-        nodes.forEach((n) => {
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, 8, 0, Math.PI * 2);
-          ctx.fillStyle = "#66f";
-          ctx.fill();
+        absorberDisplay.textContent = absorber.karma.toFixed(1);
+      }
+
+      function updateKarmaFlow() {
+        people.forEach((p) => {
+          const transfer = p.karma * absorbRate;
+          p.karma -= transfer;
+          absorber.karma += transfer;
         });
 
         
-        ctx.beginPath();
-        ctx.arc(width / 2, height / 2, 12, 0, Math.PI * 2);
-        ctx.fillStyle = "#f55";
-        ctx.fill();
+        absorber.karma = Math.min(absorber.karma, 100);
+
+        renderLeaders();
       }
 
-      
-      const infoBox = document.getElementById("hoverInfo");
-      canvas.addEventListener("mousemove", (e) => {
-        const mx = e.clientX,
-          my = e.clientY;
-        let found = null;
-        nodes.forEach((n) => {
-          const dx = n.x - mx,
-            dy = n.y - my;
-          if (dx * dx + dy * dy < 64) found = n;
-        });
-        if (found) {
-          const p = found.person;
-          infoBox.style.display = "block";
-          infoBox.style.left = mx + 15 + "px";
-          infoBox.style.top = my + 15 + "px";
-          infoBox.innerHTML = `
-      <div class="info-title">${p.name}</div>
-      <div class="indicator">Tao Element: <strong>${p.taoElement}</strong></div>
-      <div class="indicator">Vedic Karma: <strong>${p.vedicKarma}</strong></div>
-      <div class="indicator">Western Zodiac: <strong>${
-        p.westernSign
-      }</strong></div>
-      <div class="indicator">Chinese Zodiac: <strong>${
-        p.chineseSign
-      }</strong></div>
-      <div class="indicator">Element Science: <strong>${
-        scienceElements[p.taoElement] || "N/A"
-      }</strong></div>
-    `;
-        } else {
-          infoBox.style.display = "none";
-        }
-      });
-
-      
-      function animate() {
-        draw();
-        requestAnimationFrame(animate);
-      }
-      animate();
+      renderLeaders();
+      setInterval(updateKarmaFlow, 1000);
     </script>
   </body>
 </html>
-
